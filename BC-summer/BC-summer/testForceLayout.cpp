@@ -1,11 +1,3 @@
-// Copyright 2004 The Trustees of Indiana University.
-
-// Use, modification and distribution is subject to the Boost Software
-// License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
-// http://www.boost.org/LICENSE_1_0.txt)
-
-//  Authors: Douglas Gregor
-//           Andrew Lumsdaine
 #include <boost/graph/fruchterman_reingold.hpp>
 #include <boost/graph/random_layout.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -13,29 +5,21 @@
 #include <boost/lexical_cast.hpp>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <vector>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/progress.hpp>
 #include <boost/shared_ptr.hpp>
 
-using namespace boost;
+#include <stdio.h>
+#include <GLUT/GLUT.h>
+#include <utility>
+#include <vector>
+#include <math.h>
+//
 
-void usage()
-{
-    std::cerr << "Usage: fr_layout [options] <width> <height>\n"
-    << "Arguments:\n"
-    << "\t<width>\tWidth of the display area (floating point)\n"
-    << "\t<Height>\tHeight of the display area (floating point)\n\n"
-    << "Options:\n"
-    << "\t--iterations n\tNumber of iterations to execute.\n"
-    << "\t\t\tThe default value is 100.\n"
-    << "Input:\n"
-    << "  Input is read from standard input as a list of edges, one per line.\n"
-    << "  Each edge contains two string labels (the endpoints) separated by a space.\n\n"
-    << "Output:\n"
-    << "  Vertices and their positions are written to standard output with the label,\n  x-position, and y-position of a vertex on each line, separated by spaces.\n";
-}
+using namespace boost;
 
 typedef boost::rectangle_topology<> topology_type;
 typedef topology_type::point_type point_type;
@@ -51,7 +35,7 @@ Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 {
     NameToVertex::iterator i = names.find(name);
     if (i == names.end())
-    i = names.insert(std::make_pair(name, add_vertex(name, g))).first;
+        i = names.insert(std::make_pair(name, add_vertex(name, g))).first;
     return i->second;
 }
 
@@ -74,63 +58,237 @@ public:
 private:
     shared_ptr<boost::progress_display> display;
 };
+//******* for openGL functions *************
 
-int main(int argc, char* argv[])
+
+
+#define DISTANCE(X,Y,CX,CY) sqrt((X-CX)*(X-CX)+(Y-CY)*(Y-CY))
+
+const int circlePoints = 100;
+const GLfloat r = 0.01f;
+
+GLint nodeSize = 6;
+std::vector<bool> selected;
+GLint edgeSize = 5;
+std::vector<bool> selectedEdge;
+
+
+std::vector<std::pair<GLfloat, GLfloat> > myNodes;
+std::vector<std::pair<GLint, GLint> > myEdges;
+
+
+const GLint windowX = 800, windowY = 800;
+const GLfloat scaleTime = 1;
+
+
+void coorTrans(const int wx, const int wy, float& x, float& y)
 {
-    int iterations = 100;
+    x = (wx-windowX/2)/(windowX/2/scaleTime);
+    y = -(wy-windowY/2)/(windowY/2/scaleTime);
+}
+
+
+void DrawCircle()
+{
+    for(int i = 0; i < myEdges.size(); i++)
+    {
+        glPushMatrix();
+        if(!selectedEdge[i])
+            glColor4f(0.5, 0.5, 0.5, 1.0);
+        else
+            glColor4f(0.5, 0.5, 0.5, 1.0);
+        glPopMatrix();
+        
+        glBegin(GL_LINE_STRIP);
+        GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
+        GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
+        
+        glVertex2f(startX,startY);
+        glVertex2f(endX,endY);
+        glEnd();
+    }
     
-    if (argc < 3) { usage(); return -1; }
     
-    double width = 0;
-    double height = 0;
+    for(int i = 0; i < myNodes.size(); i++)
+    {
+        glPushMatrix();
+        if(!selected[i])
+            glColor4f(1.0, 1.0, 1.0, 1.0);
+        else
+            glColor4f(1.0, 1.0, 0.0, 1.0);
+        glPopMatrix();
+        glBegin(GL_POLYGON);
+        for(int k=0; k<circlePoints; k++)
+            glVertex2f(myNodes[i].first+r*cos(2*M_PI/circlePoints*k), myNodes[i].second+r*sin(2*M_PI/circlePoints*k));
+        glEnd();
+    }
     
-    for (int arg_idx = 1; arg_idx < argc; ++arg_idx) {
-        std::string arg = argv[arg_idx];
-        if (arg == "--iterations") {
-            ++arg_idx;
-            if (arg_idx >= argc) { usage(); return -1; }
-            iterations = lexical_cast<int>(argv[arg_idx]);
-        } else {
-            if (width == 0.0) width = lexical_cast<double>(arg);
-            else if (height == 0.0) height = lexical_cast<double>(arg);
-            else {
-                usage();
-                return -1;
+    
+    glFlush();
+}
+
+
+void Mouse(int button, int state, int cursorX, int cursorY)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        printf("%d, %d\n", cursorX, cursorY);
+        float x = 0, y = 0;
+        for(int i = 0; i < myNodes.size(); i++)
+        {
+            coorTrans(cursorX, cursorY, x, y);
+            if(DISTANCE(x, y, myNodes[i].first, myNodes[i].second) < r)
+            {
+                printf("i = %d\n", i);
+                selected[i] = !selected[i];
+                DrawCircle();
             }
         }
+        
+    }
+}
+void myDisplay()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glScalef(1.0/scaleTime, 1.0/scaleTime, 1.0/scaleTime);
+    DrawCircle();
+}
+
+std::vector<std::string> getNextLineAndSplitIntoTokens(std::istream& str)
+{
+    std::vector<std::string>   result;
+    std::string                line;
+    std::getline(str,line);
+    
+    std::stringstream          lineStream(line);
+    std::string                cell;
+    
+    while(std::getline(lineStream,cell, ','))
+    {
+        result.push_back(cell);
+    }
+    return result;
+}
+
+void initFunc()
+{
+    
+//    myNodes.push_back(std::make_pair(0.0, 0.0));
+//    myNodes.push_back(std::make_pair(-3.0, -2.5));
+//    myNodes.push_back(std::make_pair(0.0, -4.0));
+//    myNodes.push_back(std::make_pair(2.0, 2.0));
+//    myNodes.push_back(std::make_pair(1.5, 4.0));
+//    myNodes.push_back(std::make_pair(3.5, 0.0));
+    std::ifstream nodeFile, edgeFile;
+    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+    
+    std::vector<std::string> result = getNextLineAndSplitIntoTokens(nodeFile);
+    while ((result = getNextLineAndSplitIntoTokens(nodeFile)).size()!=0) {
+        myNodes.push_back(std::make_pair(std::stod(result[1]), std::stod(result[2])));
     }
     
-    if (width == 0.0 || height == 0.0) {
-        usage();
-        return -1;
+    
+//    for(int i = 0; i < nodeSize; i++)
+//    {
+//        myNodes.push_back(std::make_pair(0.0, 0.0));
+//    }
+    
+    result = getNextLineAndSplitIntoTokens(edgeFile);
+    while ((result = getNextLineAndSplitIntoTokens(edgeFile)).size()!=0) {
+        myEdges.push_back(std::make_pair(std::stod(result[0]), std::stod(result[1])));
     }
     
-    Graph g;
-    NameToVertex names;
+//    myEdges.push_back(std::make_pair(0, 1));
+//    myEdges.push_back(std::make_pair(0, 2));
+//    myEdges.push_back(std::make_pair(0, 3));
+//    myEdges.push_back(std::make_pair(0, 4));
+//    myEdges.push_back(std::make_pair(3, 5));
     
-    std::string source, target;
-    while (std::cin >> source >> target) {
-        add_edge(get_vertex(source, g, names), get_vertex(target, g, names), g);
+    for(int i = 0; i < myNodes.size(); i++)
+    {
+        selected.push_back(false);
     }
-    
-    typedef std::vector<point_type> PositionVec;
-    PositionVec position_vec(num_vertices(g));
-    typedef iterator_property_map<PositionVec::iterator,
-    property_map<Graph, vertex_index_t>::type>
-    PositionMap;
-    PositionMap position(position_vec.begin(), get(vertex_index, g));
-    
-    minstd_rand gen;
-    topology_type topo(gen, -width/2, -height/2, width/2, height/2);
-    random_graph_layout(g, position, topo);
-    fruchterman_reingold_force_directed_layout
-    (g, position, topo,
-     cooling(progress_cooling(iterations)));
-    
-    graph_traits<Graph>::vertex_iterator vi, vi_end;
-    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-        std::cout << get(vertex_name, g, *vi) << '\t'
-        << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
+    for(int i = 0; i < myEdges.size(); i++)
+    {
+        selectedEdge.push_back(false);
     }
+}
+
+
+
+
+void idle()
+{
+    glutPostRedisplay();
+}
+int main(int argc, char* argv[])
+{
+    
+
+
+    
+    initFunc();
+    
+    
+//*************** do the force layout **************************
+//    int iterations = 100;
+//    
+//    double width = 5.0;
+//    double height = 5.0;
+//    Graph g;
+//    NameToVertex names;
+//    
+//    for(int i = 0; i < myEdges.size(); i++)
+//    {
+//        add_edge(get_vertex(std::to_string(myEdges[i].first), g, names), get_vertex(std::to_string(myEdges[i].second), g, names), g);
+//        
+//    }
+//    
+//    typedef std::vector<point_type> PositionVec;
+//    PositionVec position_vec(num_vertices(g));
+//    typedef iterator_property_map<PositionVec::iterator,
+//    property_map<Graph, vertex_index_t>::type>
+//    PositionMap;
+//    PositionMap position(position_vec.begin(), get(vertex_index, g));
+//    
+//    minstd_rand gen;
+//    topology_type topo(gen, -width/2, -height/2, width/2, height/2);
+//    random_graph_layout(g, position, topo);
+//    fruchterman_reingold_force_directed_layout
+//    (g, position, topo,
+//     cooling(progress_cooling(iterations)));
+//    
+//    graph_traits<Graph>::vertex_iterator vi, vi_end;
+//    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+//        std::cout << get(vertex_name, g, *vi) << '\t'
+//        << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
+//    }
+//    for(boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+//    {
+//        myNodes[std::stoi(get(vertex_name, g, *vi))].first = position[*vi][0];
+//        myNodes[std::stoi(get(vertex_name, g, *vi))].second = position[*vi][1];
+//    }
+    
+
+    //for openGL functions
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowPosition(100, 100);
+    glutInitWindowSize(windowX, windowY);
+    glutCreateWindow("Draw a circle");
+    glutDisplayFunc(myDisplay);
+    glutMouseFunc(Mouse);
+    glutIdleFunc(idle);
+    glutMainLoop();
+    
+
+    
+    
+    
+    
     return 0;
 }
