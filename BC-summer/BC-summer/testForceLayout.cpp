@@ -234,43 +234,44 @@ int main(int argc, char* argv[])
     
     
 //*************** do the force layout **************************
-//    int iterations = 100;
-//    
-//    double width = 5.0;
-//    double height = 5.0;
-//    Graph g;
-//    NameToVertex names;
-//    
-//    for(int i = 0; i < myEdges.size(); i++)
-//    {
-//        add_edge(get_vertex(std::to_string(myEdges[i].first), g, names), get_vertex(std::to_string(myEdges[i].second), g, names), g);
-//        
-//    }
-//    
-//    typedef std::vector<point_type> PositionVec;
-//    PositionVec position_vec(num_vertices(g));
-//    typedef iterator_property_map<PositionVec::iterator,
-//    property_map<Graph, vertex_index_t>::type>
-//    PositionMap;
-//    PositionMap position(position_vec.begin(), get(vertex_index, g));
-//    
-//    minstd_rand gen;
-//    topology_type topo(gen, -width/2, -height/2, width/2, height/2);
-//    random_graph_layout(g, position, topo);
-//    fruchterman_reingold_force_directed_layout
-//    (g, position, topo,
-//     cooling(progress_cooling(iterations)));
-//    
-//    graph_traits<Graph>::vertex_iterator vi, vi_end;
-//    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
-//        std::cout << get(vertex_name, g, *vi) << '\t'
-//        << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
-//    }
-//    for(boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
-//    {
-//        myNodes[std::stoi(get(vertex_name, g, *vi))].first = position[*vi][0];
-//        myNodes[std::stoi(get(vertex_name, g, *vi))].second = position[*vi][1];
-//    }
+    
+    int iterations = 100;
+    
+    double width = 2.0;
+    double height = 2.0;
+    Graph g;
+    NameToVertex names;
+    
+    for(int i = 0; i < myEdges.size(); i++)
+    {
+        add_edge(get_vertex(std::to_string(myEdges[i].first), g, names), get_vertex(std::to_string(myEdges[i].second), g, names), g);
+        
+    }
+    
+    typedef std::vector<point_type> PositionVec;
+    PositionVec position_vec(num_vertices(g));
+    typedef iterator_property_map<PositionVec::iterator,
+    property_map<Graph, vertex_index_t>::type>
+    PositionMap;
+    PositionMap position(position_vec.begin(), get(vertex_index, g));
+    
+    minstd_rand gen;
+    topology_type topo(gen, -width/2, -height/2, width/2, height/2);
+    random_graph_layout(g, position, topo);
+    fruchterman_reingold_force_directed_layout
+    (g, position, topo,
+     cooling(progress_cooling(iterations)));
+    
+    graph_traits<Graph>::vertex_iterator vi, vi_end;
+    for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
+        std::cout << get(vertex_name, g, *vi) << '\t'
+        << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
+    }
+    for(boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
+    {
+        myNodes[std::stoi(get(vertex_name, g, *vi))].first = position[*vi][0];
+        myNodes[std::stoi(get(vertex_name, g, *vi))].second = position[*vi][1];
+    }
     
 
     //for openGL functions
