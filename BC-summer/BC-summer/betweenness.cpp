@@ -77,56 +77,60 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
     {
         cout << i << ":" << vertex_centralities[i] << " ";
     }
+    
+    
+    
+    
     cout << endl;
-    //
-    if(needDerivs)
-    {
-        for(int i = 0; i < n; i++)
-        {
-            int numEdges = 0;
-            for(int gi = 0; gi < n; gi++)
-            {
-                float sumWeights = 0;
-                for(unsigned int k = 0; k < nodes[gi]->edges.size(); k++)
-                {
-                    Edge* edge = nodes[gi]->edges[k];
-                    float weight = 1.0;
-                    //custom the weight value here!!!
-                    sumWeights += weight;
-                }
-                for(unsigned int k=0;k<nodes[gi]->edges.size();k++) {
-                    Edge * edge = nodes[gi]->edges[k];
-                    int gj = edge->getNode1()->getIndex();
-                    float weight = 1.0;
-                    //custom the weight value here!!!
-                    weights[numEdges] = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
-                    numEdges++;
-                }
-            }
-            graph_traits < Graph >::edge_iterator e, e_end;
-            int k=0;
-            for (boost::tie(e, e_end) = edges(g); e != e_end; ++e) {
-                //printf("Weight[%d] = %f\n", k, weights[k]);
-                w[*e] = weights[k++];
-            }
-            std::vector<double> centrality2(n);
-            
-            brandes_betweenness_centrality(g,
-                                           centrality_map(
-                                                          make_iterator_property_map(centrality2.begin(),
-                                                                                     get(vertex_index, g),
-                                                                                     double()))
-                                           .vertex_index_map(get(vertex_index, g))
-                                           .weight_map(get(boost::edge_weight, g))
-                                           );
-            cout << "sensitivity: " << endl;
-            for(int i = 0; i < centrality2.size(); ++i)
-            {
-                cout << i << ":" <<centrality2[i] << " ";
-            }
-            cout << endl;
-        }
-    }
+    // for the sensitivity...
+//    if(needDerivs)
+//    {
+//        for(int i = 0; i < n; i++)
+//        {
+//            int numEdges = 0;
+//            for(int gi = 0; gi < n; gi++)
+//            {
+//                float sumWeights = 0;
+//                for(unsigned int k = 0; k < nodes[gi]->edges.size(); k++)
+//                {
+//                    Edge* edge = nodes[gi]->edges[k];
+//                    float weight = 1.0;
+//                    //custom the weight value here!!!
+//                    sumWeights += weight;
+//                }
+//                for(unsigned int k=0;k<nodes[gi]->edges.size();k++) {
+//                    Edge * edge = nodes[gi]->edges[k];
+//                    int gj = edge->getNode1()->getIndex();
+//                    float weight = 1.0;
+//                    //custom the weight value here!!!
+//                    weights[numEdges] = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
+//                    numEdges++;
+//                }
+//            }
+//            graph_traits < Graph >::edge_iterator e, e_end;
+//            int k=0;
+//            for (boost::tie(e, e_end) = edges(g); e != e_end; ++e) {
+//                //printf("Weight[%d] = %f\n", k, weights[k]);
+//                w[*e] = weights[k++];
+//            }
+//            std::vector<double> centrality2(n);
+//            
+//            brandes_betweenness_centrality(g,
+//                                           centrality_map(
+//                                                          make_iterator_property_map(centrality2.begin(),
+//                                                                                     get(vertex_index, g),
+//                                                                                     double()))
+//                                           .vertex_index_map(get(vertex_index, g))
+//                                           .weight_map(get(boost::edge_weight, g))
+//                                           );
+//            cout << "sensitivity: " << endl;
+//            for(int i = 0; i < centrality2.size(); ++i)
+//            {
+//                cout << i << ":" <<centrality2[i] << " ";
+//            }
+//            cout << endl;
+//        }
+//    }
     
     return 0;
 }
