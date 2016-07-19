@@ -201,7 +201,6 @@ void initFunc()
     while ((result = getNextLineAndSplitIntoTokens(edgeFile)).size()!=0) {
         myEdges.push_back(std::make_pair(std::stod(result[0]), std::stod(result[1])));
     }
-    
 //    myEdges.push_back(std::make_pair(0, 1));
 //    myEdges.push_back(std::make_pair(0, 2));
 //    myEdges.push_back(std::make_pair(0, 3));
