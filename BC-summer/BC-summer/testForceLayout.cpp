@@ -3,11 +3,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/topology.hpp>
 #include <boost/lexical_cast.hpp>
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <map>
-#include <vector>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/progress.hpp>
 #include <boost/shared_ptr.hpp>
@@ -17,6 +12,14 @@
 #include <utility>
 #include <vector>
 #include <math.h>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <vector>
+
+#include "betweenness.hpp"
+#include "graph.hpp"
 //
 
 using namespace boost;
@@ -272,6 +275,49 @@ int main(int argc, char* argv[])
         myNodes[std::stoi(get(vertex_name, g, *vi))].first = position[*vi][0];
         myNodes[std::stoi(get(vertex_name, g, *vi))].second = position[*vi][1];
     }
+    
+    
+//******** for bc ***********
+    Betweenness bc;
+    std::vector<Node*> nodes;
+    std::vector<Edge*> edges;
+    for(int i = 0; i < myNodes.size(); i++)
+    {
+        Node* tmpNode = new Node();
+        tmpNode->setIndex(i);
+        nodes.push_back(tmpNode);
+    }
+    
+    nodes[0]->addEdge(nodes[1]);
+    nodes[0]->addEdge(nodes[2]);
+    nodes[0]->addEdge(nodes[3]);
+    nodes[0]->addEdge(nodes[4]);
+    
+    nodes[1]->addEdge(nodes[0]);
+    
+    nodes[2]->addEdge(nodes[0]);
+    
+    nodes[3]->addEdge(nodes[0]);
+    
+    nodes[4]->addEdge(nodes[0]);
+    nodes[4]->addEdge(nodes[5]);
+    nodes[4]->addEdge(nodes[6]);
+    nodes[4]->addEdge(nodes[7]);
+    
+    nodes[5]->addEdge(nodes[4]);
+    nodes[6]->addEdge(nodes[4]);
+    
+    nodes[7]->addEdge(nodes[4]);
+    nodes[7]->addEdge(nodes[8]);
+    
+    nodes[8]->addEdge(nodes[7]);
+    
+    bc.compute(nodes, true);
+
+    
+//***************************
+    
+    
     
 
     //for openGL functions

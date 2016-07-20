@@ -13,7 +13,7 @@
 //        nodes.push_back(tmpNode);
 //    }
 //    
-//    //you should add all the edges on the graph!!!!
+//    // should add all the edges on the graph!!!!
 //    nodes[0]->addEdge(nodes[1]);
 //    nodes[0]->addEdge(nodes[2]);
 //    nodes[0]->addEdge(nodes[3]);
