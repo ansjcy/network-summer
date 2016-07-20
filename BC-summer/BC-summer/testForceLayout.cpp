@@ -17,6 +17,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 #include "betweenness.hpp"
 #include "graph.hpp"
@@ -72,6 +73,7 @@ const GLfloat r = 0.01f;
 
 GLint nodeSize = 6;
 std::vector<bool> selected;
+int selectNode = -1;
 GLint edgeSize = 5;
 std::vector<bool> selectedEdge;
 
@@ -79,9 +81,14 @@ std::vector<bool> selectedEdge;
 std::vector<std::pair<GLfloat, GLfloat> > myNodes;
 std::vector<std::pair<GLint, GLint> > myEdges;
 
+Betweenness bc;
+std::vector<Node*> nodes;
+std::vector<Edge*> edges;
+
 
 const GLint windowX = 800, windowY = 800;
 const GLfloat scaleTime = 1;
+
 
 
 void coorTrans(const int wx, const int wy, float& x, float& y)
@@ -90,16 +97,64 @@ void coorTrans(const int wx, const int wy, float& x, float& y)
     y = -(wy-windowY/2)/(windowY/2/scaleTime);
 }
 
+//double colorStart[] = {1.0, 0.0, 0.0};
+//double colorEnd[] = {0.0, 0.0, 1.0};
 
 void DrawCircle()
 {
+    
     for(int i = 0; i < myEdges.size(); i++)
     {
         glPushMatrix();
-        if(!selectedEdge[i])
-            glColor4f(0.5, 0.5, 0.5, 1.0);
+//        if(!selectedEdge[i])
+//            glColor4f(0.5, 0.5, 0.5, 1.0);
+//        else
+//            glColor4f(0.5, 0.5, 0.5, 1.0);
+        
+        if(selectNode < 0)
+        {
+//            glColor4f(0.0, 0.0, 0.0, 1.0);
+            auto minMaxvalue = std::minmax_element(std::begin(nodes[myEdges[i].first]->sensitivityValues), std::end(nodes[myEdges[i].first]->sensitivityValues));
+            double red = 0.0, blue = 0.0;
+            double sensitivity = nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second];
+            if(sensitivity < 0)
+            {
+                //red
+                red = sensitivity/(*minMaxvalue.first)+0.2;
+            }
+            else
+            {
+                blue = sensitivity/(*minMaxvalue.second)+0.2;
+            }
+            glColor4f(red, 0.0, blue, 1.0);
+            
+        }
         else
-            glColor4f(0.5, 0.5, 0.5, 1.0);
+            glColor4f(0.1, 0.1, 0.1, 1.0);
+        
+        
+        
+        //color the edges according to the sensitivity value
+        if(selectNode == myEdges[i].first)
+        {
+            auto minMaxvalue = std::minmax_element(std::begin(nodes[selectNode]->sensitivityValues), std::end(nodes[selectNode]->sensitivityValues));
+            double red = 0.0, blue = 0.0;
+            double sensitivity = nodes[selectNode]->sensitivityValues[myEdges[i].second];
+            
+            if(sensitivity < 0)
+            {
+                //red
+                red = sensitivity/(*minMaxvalue.first)+0.2;
+            }
+            else
+            {
+                blue = sensitivity/(*minMaxvalue.second)+0.2;
+            }
+//            = (nodes[selectNode]->sensitivityValues[myEdges[i].second] - *minMaxvalue.first)*1.0/(*minMaxvalue.second- *minMaxvalue.first);
+            
+            glColor4f(red, 0.0, blue, 1.0);
+        }
+        
         glPopMatrix();
         
         glBegin(GL_LINE_STRIP);
@@ -115,10 +170,27 @@ void DrawCircle()
     for(int i = 0; i < myNodes.size(); i++)
     {
         glPushMatrix();
-        if(!selected[i])
+//        if(!selected[i])
+//            glColor4f(1.0, 1.0, 1.0, 1.0);
+//        else
+//            glColor4f(1.0, 1.0, 0.0, 1.0);
+        if(selectNode <= 0)
             glColor4f(1.0, 1.0, 1.0, 1.0);
+        
         else
-            glColor4f(1.0, 1.0, 0.0, 1.0);
+        {
+            double signValue = nodes[selectNode]->sensitivityValues[i];
+//            if(selectNode == i)
+//                glColor4f(1.0, 1.0, 1.0, 1.0);
+//            else
+//            {
+                if(signValue < 0)
+                    glColor4f(1.0, 0.0, 0.0, 1.0);
+                else
+                    glColor4f(0.0, 0.0, 1.0, 1.0);
+            //}
+            
+        }
         glPopMatrix();
         glBegin(GL_POLYGON);
         for(int k=0; k<circlePoints; k++)
@@ -144,6 +216,10 @@ void Mouse(int button, int state, int cursorX, int cursorY)
             {
                 printf("i = %d\n", i);
                 selected[i] = !selected[i];
+                if(selectNode == i)
+                    selectNode = -1;
+                else
+                    selectNode = i;
                 DrawCircle();
             }
         }
@@ -186,8 +262,10 @@ void initFunc()
 //    myNodes.push_back(std::make_pair(1.5, 4.0));
 //    myNodes.push_back(std::make_pair(3.5, 0.0));
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/celegansneural.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/celegansneural.edges.csv");
     
     std::vector<std::string> result = getNextLineAndSplitIntoTokens(nodeFile);
     while ((result = getNextLineAndSplitIntoTokens(nodeFile)).size()!=0) {
@@ -278,14 +356,12 @@ int main(int argc, char* argv[])
     
     
 //******** for bc ***********
-    Betweenness bc;
-    std::vector<Node*> nodes;
-    std::vector<Edge*> edges;
+
     for(int i = 0; i < myNodes.size(); i++)
     {
         Node* tmpNode = new Node();
         tmpNode->setIndex(i);
-        tmpNode->sensitivityValues = (double*)malloc(myNodes.size()*sizeof(double));
+        //tmpNode->sensitivityValues = (double*)malloc(myNodes.size()*sizeof(double));
         nodes.push_back(tmpNode);
     }
     for(int i = 0; i < myEdges.size(); i++)
@@ -324,9 +400,7 @@ int main(int argc, char* argv[])
 //    std::cout<<nodes[0]->centralityValue;
 
 //***************************
-    
-    
-    
+
 
     //for openGL functions
     glutInit(&argc, argv);

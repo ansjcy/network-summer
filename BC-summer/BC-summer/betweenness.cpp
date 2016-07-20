@@ -131,14 +131,16 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
 //            cout << "sensitivity: " << i << endl;
 //            for(int j = 0; j < centrality2.size(); ++j)
 //            {
-//                cout << j << ":" <<centrality2[j] << " ";
+//                cout << j << ":" <<centrality2[j]-vertex_centralities[j] << " ";
 //            }
 //            cout << endl;
         
             for(int j = 0; j < centrality2.size(); ++j)
             {
-                nodes[i]->sensitivityValues[j] = centrality2[j];
+                //nodes[i]->sensitivityValues[j] = centrality2[j];
+                nodes[i]->sensitivityValues.push_back(centrality2[j]-vertex_centralities[j]);
             }
+            std::cout<<"finish iteration: " << i << endl;
         }
     }
 

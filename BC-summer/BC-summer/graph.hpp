@@ -20,7 +20,8 @@ public:
     std::vector<Edge*> edges;
     int index;
     double centralityValue;
-    double *sensitivityValues;
+    std::vector<double> sensitivityValues;
+//    double *sensitivityValues;
     
 //    std::string property;
     Node(){ index = -1; }

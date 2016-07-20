@@ -6,17 +6,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BC-summer/testForceLayout.cpp"
-            timestampString = "490668554.192158"
+            filePath = "BC-summer/betweenness.cpp"
+            timestampString = "490744812.680214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "324"
-            endingLineNumber = "324"
-            landmarkName = "main(int argc, char* argv[])"
-            landmarkType = "7">
+            startingLineNumber = "66"
+            endingLineNumber = "66"
+            landmarkName = "Betweenness::compute(std::vector&lt;Node *&gt; &amp;nodes, bool needDerivs)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -25,14 +25,77 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "BC-summer/testForceLayout.cpp"
-            timestampString = "490668807.46452"
+            filePath = "BC-summer/betweenness.cpp"
+            timestampString = "490744831.888248"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
-            landmarkName = "main(int argc, char* argv[])"
-            landmarkType = "7">
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "Betweenness::compute(std::vector&lt;Node *&gt; &amp;nodes, bool needDerivs)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "BC-summer/betweenness.cpp"
+            timestampString = "490745020.182773"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
+            landmarkName = "Betweenness::compute(std::vector&lt;Node *&gt; &amp;nodes, bool needDerivs)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Betweenness::compute(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;, bool)"
+                  moduleName = "BC-summer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anakin/github/network-summer/BC-summer/BC-summer/betweenness.cpp"
+                  timestampString = "490744859.508352"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "148"
+                  endingLineNumber = "148"
+                  offsetFromSymbolStart = "2104">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Betweenness::compute(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;, bool)"
+                  moduleName = "BC-summer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anakin/github/network-summer/BC-summer/BC-summer/betweenness.cpp"
+                  timestampString = "490744859.508534"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "148"
+                  endingLineNumber = "148"
+                  offsetFromSymbolStart = "3134">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Betweenness::compute(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;, bool)"
+                  moduleName = "BC-summer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/anakin/github/network-summer/BC-summer/BC-summer/betweenness.cpp"
+                  timestampString = "490744859.508656"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "148"
+                  endingLineNumber = "148"
+                  offsetFromSymbolStart = "5985">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
