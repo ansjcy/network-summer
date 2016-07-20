@@ -77,6 +77,11 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
     {
         cout << i << ":" << vertex_centralities[i] << " ";
     }
+    //save the node centrality values:
+    for(int i = 0; i < vertex_centralities.size(); ++i)
+    {
+        nodes[i]->centralityValue = vertex_centralities[i];
+    }
     
     
     
@@ -123,12 +128,17 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                                            .vertex_index_map(get(vertex_index, g))
                                            .weight_map(get(boost::edge_weight, g))
                                            );
-            cout << "sensitivity: " << endl;
-            for(int i = 0; i < centrality2.size(); ++i)
+//            cout << "sensitivity: " << i << endl;
+//            for(int j = 0; j < centrality2.size(); ++j)
+//            {
+//                cout << j << ":" <<centrality2[j] << " ";
+//            }
+//            cout << endl;
+        
+            for(int j = 0; j < centrality2.size(); ++j)
             {
-                cout << i << ":" <<centrality2[i] << " ";
+                nodes[i]->sensitivityValues[j] = centrality2[j];
             }
-            cout << endl;
         }
     }
 

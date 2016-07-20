@@ -285,36 +285,44 @@ int main(int argc, char* argv[])
     {
         Node* tmpNode = new Node();
         tmpNode->setIndex(i);
+        tmpNode->sensitivityValues = (double*)malloc(myNodes.size()*sizeof(double));
         nodes.push_back(tmpNode);
     }
+    for(int i = 0; i < myEdges.size(); i++)
+    {
+        nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second]);
+        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first]);
+    }
     
-    nodes[0]->addEdge(nodes[1]);
-    nodes[0]->addEdge(nodes[2]);
-    nodes[0]->addEdge(nodes[3]);
-    nodes[0]->addEdge(nodes[4]);
+//    nodes[0]->addEdge(nodes[1]);
+//    nodes[0]->addEdge(nodes[2]);
+//    nodes[0]->addEdge(nodes[3]);
+//    nodes[0]->addEdge(nodes[4]);
+//    
+//    nodes[1]->addEdge(nodes[0]);
+//    
+//    nodes[2]->addEdge(nodes[0]);
+//    
+//    nodes[3]->addEdge(nodes[0]);
+//    
+//    nodes[4]->addEdge(nodes[0]);
+//    nodes[4]->addEdge(nodes[5]);
+//    nodes[4]->addEdge(nodes[6]);
+//    nodes[4]->addEdge(nodes[7]);
+//    
+//    nodes[5]->addEdge(nodes[4]);
+//    nodes[6]->addEdge(nodes[4]);
+//    
+//    nodes[7]->addEdge(nodes[4]);
+//    nodes[7]->addEdge(nodes[8]);
+//    
+//    nodes[8]->addEdge(nodes[7]);
     
-    nodes[1]->addEdge(nodes[0]);
     
-    nodes[2]->addEdge(nodes[0]);
-    
-    nodes[3]->addEdge(nodes[0]);
-    
-    nodes[4]->addEdge(nodes[0]);
-    nodes[4]->addEdge(nodes[5]);
-    nodes[4]->addEdge(nodes[6]);
-    nodes[4]->addEdge(nodes[7]);
-    
-    nodes[5]->addEdge(nodes[4]);
-    nodes[6]->addEdge(nodes[4]);
-    
-    nodes[7]->addEdge(nodes[4]);
-    nodes[7]->addEdge(nodes[8]);
-    
-    nodes[8]->addEdge(nodes[7]);
     
     bc.compute(nodes, true);
+//    std::cout<<nodes[0]->centralityValue;
 
-    
 //***************************
     
     

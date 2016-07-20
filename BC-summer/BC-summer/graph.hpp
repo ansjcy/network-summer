@@ -19,6 +19,9 @@ class Node
 public:
     std::vector<Edge*> edges;
     int index;
+    double centralityValue;
+    double *sensitivityValues;
+    
 //    std::string property;
     Node(){ index = -1; }
     ~Node()
@@ -41,8 +44,10 @@ class Edge
 public:
     int multiplicity;
     float weight;
+    double centralityValue;
     Node* node0;
     Node* node1;
+    
     Edge(){ node0 = 0; node1 = 0; multiplicity = 0; weight = 0; }
     void setNode0(Node* n){ node0 = n; }
     void setNode1(Node* n){ node1 = n; }

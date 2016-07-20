@@ -52,7 +52,7 @@ void run_unweighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::
 class Betweenness
 {
 public:
-    double btwValue[];
+//    double btwValue[];
     int compute(std::vector<Node*> &nodes, bool needDerivs);
 };
 #endif /* betweenness_hpp */
