@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <GLUT/GLUT.h>
+#include <OpenGL/OpenGL.h>
 #include <utility>
 #include <vector>
 #include <math.h>
@@ -106,10 +107,6 @@ void DrawCircle()
     for(int i = 0; i < myEdges.size(); i++)
     {
         glPushMatrix();
-//        if(!selectedEdge[i])
-//            glColor4f(0.5, 0.5, 0.5, 1.0);
-//        else
-//            glColor4f(0.5, 0.5, 0.5, 1.0);
         
         if(selectNode < 0)
         {
@@ -150,7 +147,6 @@ void DrawCircle()
             {
                 blue = sensitivity/(*minMaxvalue.second)+0.2;
             }
-//            = (nodes[selectNode]->sensitivityValues[myEdges[i].second] - *minMaxvalue.first)*1.0/(*minMaxvalue.second- *minMaxvalue.first);
             
             glColor4f(red, 0.0, blue, 1.0);
         }
@@ -175,25 +171,23 @@ void DrawCircle()
 //        else
 //            glColor4f(1.0, 1.0, 0.0, 1.0);
         if(selectNode <= 0)
-            glColor4f(1.0, 1.0, 1.0, 1.0);
+            glColor4f(0.1, 0.1, 0.1, 1.0);
         
         else
         {
             double signValue = nodes[selectNode]->sensitivityValues[i];
-//            if(selectNode == i)
-//                glColor4f(1.0, 1.0, 1.0, 1.0);
-//            else
-//            {
-                if(signValue < 0)
-                    glColor4f(1.0, 0.0, 0.0, 1.0);
-                else
-                    glColor4f(0.0, 0.0, 1.0, 1.0);
-            //}
+            if(signValue < 0)
+                glColor4f(1.0, 0.0, 0.0, 1.0);
+            else
+                glColor4f(0.0, 0.0, 1.0, 1.0);
             
         }
         glPopMatrix();
         //
         glBegin(GL_POLYGON);
+        
+        
+        
         //gldrawarray.. gltranangle
         for(int k=0; k<circlePoints; k++)
             glVertex2f(myNodes[i].first+r*cos(2*M_PI/circlePoints*k), myNodes[i].second+r*sin(2*M_PI/circlePoints*k));
@@ -231,6 +225,7 @@ void Mouse(int button, int state, int cursorX, int cursorY)
 void myDisplay()
 {
     glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.9f, 0.9f, 0.9f, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_BLEND);
     glEnable(GL_LINE_SMOOTH);
@@ -258,13 +253,7 @@ std::vector<std::string> getNextLineAndSplitIntoTokens(std::istream& str)
 
 void initFunc()
 {
-    
-//    myNodes.push_back(std::make_pair(0.0, 0.0));
-//    myNodes.push_back(std::make_pair(-3.0, -2.5));
-//    myNodes.push_back(std::make_pair(0.0, -4.0));
-//    myNodes.push_back(std::make_pair(2.0, 2.0));
-//    myNodes.push_back(std::make_pair(1.5, 4.0));
-//    myNodes.push_back(std::make_pair(3.5, 0.0));
+
     std::ifstream nodeFile, edgeFile;
     nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
     edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
@@ -277,21 +266,10 @@ void initFunc()
     }
     
     
-    
-//    for(int i = 0; i < nodeSize; i++)
-//    {
-//        myNodes.push_back(std::make_pair(0.0, 0.0));
-//    }
-    
     result = getNextLineAndSplitIntoTokens(edgeFile);
     while ((result = getNextLineAndSplitIntoTokens(edgeFile)).size()!=0) {
         myEdges.push_back(std::make_pair(std::stod(result[0]), std::stod(result[1])));
     }
-//    myEdges.push_back(std::make_pair(0, 1));
-//    myEdges.push_back(std::make_pair(0, 2));
-//    myEdges.push_back(std::make_pair(0, 3));
-//    myEdges.push_back(std::make_pair(0, 4));
-//    myEdges.push_back(std::make_pair(3, 5));
     
     for(int i = 0; i < myNodes.size(); i++)
     {
@@ -312,10 +290,7 @@ void idle()
 }
 int main(int argc, char* argv[])
 {
-    
 
-
-    
     initFunc();
     
     
@@ -366,7 +341,6 @@ int main(int argc, char* argv[])
     {
         Node* tmpNode = new Node();
         tmpNode->setIndex(i);
-        //tmpNode->sensitivityValues = (double*)malloc(myNodes.size()*sizeof(double));
         nodes.push_back(tmpNode);
     }
     for(int i = 0; i < myEdges.size(); i++)
@@ -374,35 +348,8 @@ int main(int argc, char* argv[])
         nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second]);
         nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first]);
     }
-    
-//    nodes[0]->addEdge(nodes[1]);
-//    nodes[0]->addEdge(nodes[2]);
-//    nodes[0]->addEdge(nodes[3]);
-//    nodes[0]->addEdge(nodes[4]);
-//    
-//    nodes[1]->addEdge(nodes[0]);
-//    
-//    nodes[2]->addEdge(nodes[0]);
-//    
-//    nodes[3]->addEdge(nodes[0]);
-//    
-//    nodes[4]->addEdge(nodes[0]);
-//    nodes[4]->addEdge(nodes[5]);
-//    nodes[4]->addEdge(nodes[6]);
-//    nodes[4]->addEdge(nodes[7]);
-//    
-//    nodes[5]->addEdge(nodes[4]);
-//    nodes[6]->addEdge(nodes[4]);
-//    
-//    nodes[7]->addEdge(nodes[4]);
-//    nodes[7]->addEdge(nodes[8]);
-//    
-//    nodes[8]->addEdge(nodes[7]);
-    
-    
-    
+
     bc.compute(nodes, true);
-//    std::cout<<nodes[0]->centralityValue;
 
 //***************************
 
