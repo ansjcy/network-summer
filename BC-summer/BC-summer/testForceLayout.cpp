@@ -192,7 +192,9 @@ void DrawCircle()
             
         }
         glPopMatrix();
+        //
         glBegin(GL_POLYGON);
+        //gldrawarray.. gltranangle
         for(int k=0; k<circlePoints; k++)
             glVertex2f(myNodes[i].first+r*cos(2*M_PI/circlePoints*k), myNodes[i].second+r*sin(2*M_PI/circlePoints*k));
         glEnd();
@@ -231,6 +233,8 @@ void myDisplay()
     glClear(GL_COLOR_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glScalef(1.0/scaleTime, 1.0/scaleTime, 1.0/scaleTime);
     DrawCircle();
@@ -262,15 +266,16 @@ void initFunc()
 //    myNodes.push_back(std::make_pair(1.5, 4.0));
 //    myNodes.push_back(std::make_pair(3.5, 0.0));
     std::ifstream nodeFile, edgeFile;
-//    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
-    nodeFile.open("/Users/anakin/Downloads/data/celegansneural.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/celegansneural.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/celegansneural.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/celegansneural.edges.csv");
     
     std::vector<std::string> result = getNextLineAndSplitIntoTokens(nodeFile);
     while ((result = getNextLineAndSplitIntoTokens(nodeFile)).size()!=0) {
         myNodes.push_back(std::make_pair(std::stod(result[1]), std::stod(result[2])));
     }
+    
     
     
 //    for(int i = 0; i < nodeSize; i++)
