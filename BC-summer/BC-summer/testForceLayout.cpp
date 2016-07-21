@@ -112,18 +112,22 @@ void DrawCircle()
         {
 //            glColor4f(0.0, 0.0, 0.0, 1.0);
             auto minMaxvalue = std::minmax_element(std::begin(nodes[myEdges[i].first]->sensitivityValues), std::end(nodes[myEdges[i].first]->sensitivityValues));
-            double red = 0.0, blue = 0.0;
+            double red = 0.0, blue = 0.0, green = 0.0;
             double sensitivity = nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second];
             if(sensitivity < 0)
             {
                 //red
-                red = sensitivity/(*minMaxvalue.first)+0.2;
+                red = sensitivity/(*minMaxvalue.first) * (215.0/255);
+                green = sensitivity/(*minMaxvalue.first) * (25.0/255);
+                blue = sensitivity/(*minMaxvalue.first) * (28.0/255);
             }
             else
             {
-                blue = sensitivity/(*minMaxvalue.second)+0.2;
+                red = sensitivity/(*minMaxvalue.second) * (43.0/255);
+                green = sensitivity/(*minMaxvalue.second) * (131.0/255);
+                blue = sensitivity/(*minMaxvalue.second) * (186.0/255);
             }
-            glColor4f(red, 0.0, blue, 1.0);
+            glColor4f(red, green, blue, 1.0);
             
         }
         else
@@ -225,7 +229,7 @@ void Mouse(int button, int state, int cursorX, int cursorY)
 void myDisplay()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.9f, 0.9f, 0.9f, 0.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glEnable(GL_BLEND);
     glEnable(GL_LINE_SMOOTH);
