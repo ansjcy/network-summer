@@ -103,67 +103,90 @@ void coorTrans(const int wx, const int wy, float& x, float& y)
 
 void DrawCircle()
 {
+    double whiteValue = 0.9;
+    
+    //draw edge with sensitivity = 0 first
+    for(int i = 0; i < myEdges.size(); i++)
+    {
+        if(fabs(nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second]-0) < 1e-9 || (selectNode >= 0 && selectNode != myEdges[i].first))
+        {
+            glColor4f(whiteValue, whiteValue, whiteValue, 1.0);
+            glBegin(GL_LINE_STRIP);
+            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
+            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
+            glVertex2f(startX,startY);
+            glVertex2f(endX,endY);
+            glEnd();
+        }
+    }
     
     for(int i = 0; i < myEdges.size(); i++)
     {
-        glPushMatrix();
         
-        if(selectNode < 0)
+        if(fabs(nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second]-0) < 1e-9)
+            continue;
+        
+        if(selectNode < 0 || selectNode == myEdges[i].first)
         {
-//            glColor4f(0.0, 0.0, 0.0, 1.0);
             auto minMaxvalue = std::minmax_element(std::begin(nodes[myEdges[i].first]->sensitivityValues), std::end(nodes[myEdges[i].first]->sensitivityValues));
-            double red = 0.0, blue = 0.0, green = 0.0;
+            
+            double red = whiteValue, blue = whiteValue, green = whiteValue;
             double sensitivity = nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second];
+//            double valueRange = *minMaxvalue.second - *minMaxvalue.first;
             if(sensitivity < 0)
             {
                 //red
-                red = sensitivity/(*minMaxvalue.first) * (215.0/255);
-                green = sensitivity/(*minMaxvalue.first) * (25.0/255);
-                blue = sensitivity/(*minMaxvalue.first) * (28.0/255);
+                red = (sensitivity / *minMaxvalue.first) * (1-whiteValue) + whiteValue;
+                green = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
+                blue = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
+                
             }
-            else
+            else if(sensitivity > 0)
             {
-                red = sensitivity/(*minMaxvalue.second) * (43.0/255);
-                green = sensitivity/(*minMaxvalue.second) * (131.0/255);
-                blue = sensitivity/(*minMaxvalue.second) * (186.0/255);
+                blue = (sensitivity / *minMaxvalue.second) * (1-whiteValue) + whiteValue;
+                green = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
+                red = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
             }
+
             glColor4f(red, green, blue, 1.0);
+            glBegin(GL_LINE_STRIP);
+            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
+            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
+            
+            glVertex2f(startX,startY);
+            glVertex2f(endX,endY);
+            glEnd();
             
         }
-        else
-            glColor4f(0.1, 0.1, 0.1, 1.0);
-        
-        
-        
         //color the edges according to the sensitivity value
-        if(selectNode == myEdges[i].first)
-        {
-            auto minMaxvalue = std::minmax_element(std::begin(nodes[selectNode]->sensitivityValues), std::end(nodes[selectNode]->sensitivityValues));
-            double red = 0.0, blue = 0.0;
-            double sensitivity = nodes[selectNode]->sensitivityValues[myEdges[i].second];
-            
-            if(sensitivity < 0)
-            {
-                //red
-                red = sensitivity/(*minMaxvalue.first)+0.2;
-            }
-            else
-            {
-                blue = sensitivity/(*minMaxvalue.second)+0.2;
-            }
-            
-            glColor4f(red, 0.0, blue, 1.0);
-        }
+//        else if(selectNode == myEdges[i].first)
+//        {
+//            auto minMaxvalue = std::minmax_element(std::begin(nodes[selectNode]->sensitivityValues), std::end(nodes[selectNode]->sensitivityValues));
+//            double red = whiteValue, blue = whiteValue, green = whiteValue;
+//            double sensitivity = nodes[selectNode]->sensitivityValues[myEdges[i].second];
+//            
+//            if(sensitivity < 0)
+//            {
+//                //red
+//                red = sensitivity/(*minMaxvalue.first)+0.2;
+//            }
+//            else
+//            {
+//                blue = sensitivity/(*minMaxvalue.second)+0.2;
+//            }
+//            
+//            glColor4f(red, 0.0, blue, 1.0);
+//            glBegin(GL_LINE_STRIP);
+//            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
+//            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
+//            
+//            glVertex2f(startX,startY);
+//            glVertex2f(endX,endY);
+//            glEnd();
+//        }
         
-        glPopMatrix();
         
-        glBegin(GL_LINE_STRIP);
-        GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
-        GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
         
-        glVertex2f(startX,startY);
-        glVertex2f(endX,endY);
-        glEnd();
     }
     
     

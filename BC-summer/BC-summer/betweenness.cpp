@@ -128,12 +128,12 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                                            .vertex_index_map(get(vertex_index, g))
                                            .weight_map(get(boost::edge_weight, g))
                                            );
-            cout << "sensitivity: " << i << endl;
-            for(int j = 0; j < centrality2.size(); ++j)
-            {
-                cout << j << ":" <<centrality2[j]-vertex_centralities[j] << " ";
-            }
-            cout << endl;
+//            cout << "sensitivity: " << i << endl;
+//            for(int j = 0; j < centrality2.size(); ++j)
+//            {
+//                cout << j << ":" <<centrality2[j]-vertex_centralities[j] << " ";
+//            }
+//            cout << endl;
         
             for(int j = 0; j < centrality2.size(); ++j)
             {
