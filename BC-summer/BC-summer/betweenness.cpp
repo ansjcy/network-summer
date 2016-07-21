@@ -65,6 +65,8 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
     std::vector<double> edge_centralities(num_edges(g));
     run_weighted_test((Digraph*)0, n, edgesweighted, numEdges, edge_centralities, vertex_centralities);
     
+    
+#ifdef DEBGU_CENTRALITY
     //output the results:
     cout << "edge centralities: " << endl;
     for(int i = 0; i < edge_centralities.size(); ++i)
@@ -77,16 +79,13 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
     {
         cout << i << ":" << vertex_centralities[i] << " ";
     }
+    cout << endl;
+#endif
     //save the node centrality values:
     for(int i = 0; i < vertex_centralities.size(); ++i)
     {
         nodes[i]->centralityValue = vertex_centralities[i];
     }
-    
-    
-    
-    
-    cout << endl;
 //******************** for the sensitivity *****************************
     if(needDerivs)
     {
@@ -128,20 +127,90 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                                            .vertex_index_map(get(vertex_index, g))
                                            .weight_map(get(boost::edge_weight, g))
                                            );
-//            cout << "sensitivity: " << i << endl;
-//            for(int j = 0; j < centrality2.size(); ++j)
-//            {
-//                cout << j << ":" <<centrality2[j]-vertex_centralities[j] << " ";
-//            }
-//            cout << endl;
+#ifdef DEBUG_SENSITIVITY
+            cout << "sensitivity: " << i << endl;
+            for(int j = 0; j < centrality2.size(); ++j)
+            {
+                cout << j << ":" <<centrality2[j]-vertex_centralities[j] << " ";
+            }
+            cout << endl;
+#endif
+        
         
             for(int j = 0; j < centrality2.size(); ++j)
             {
-                //nodes[i]->sensitivityValues[j] = centrality2[j];
                 nodes[i]->sensitivityValues.push_back(centrality2[j]-vertex_centralities[j]);
             }
-            //std::cout<<"finish iteration: " << i << endl;
+#ifdef DEBUG_CHECK_ITERATION
+            std::cout<<"finish iteration: " << i << endl;
+#endif
         }
+        
+        //compute the mean value and variance value
+        std::map<int, double> sensitivityHash;
+        std::map<int, double>::iterator iter;
+        
+        for(int i = 0; i < nodes.size(); i++)
+            sensitivityHash.insert(make_pair(i, 0));
+        
+        for(int i = 0; i < nodes.size(); i++)
+        {
+            for(int j = 0; j < nodes[i]->sensitivityValues.size(); j++)
+            {
+                if(j != i)
+                {
+                    sensitivityHash[j] += nodes[i]->sensitivityValues[j];
+                }
+            }
+        }
+    
+        for(int i = 0; i < nodes.size(); i++)
+        {
+            nodes[i]->sensitivityMean = sensitivityHash[i] / (nodes.size() - 1);
+        }
+        
+        std::map<int, double> sensitivityHash2;
+        
+        for(int i = 0; i < nodes.size(); i++)
+            sensitivityHash2.insert(make_pair(i, 0));
+        
+        for(int i = 0; i < nodes.size(); i++)
+        {
+            for(int j = 0; j < nodes[i]->sensitivityValues.size(); j++)
+            {
+                if(j != i)
+                {
+                    sensitivityHash2[j] += (nodes[i]->sensitivityValues[j]-nodes[j]->sensitivityMean)*(nodes[i]->sensitivityValues[j]-nodes[j]->sensitivityMean);
+                }
+            }
+        }
+        
+        for(int i = 0; i < nodes.size(); i++)
+            nodes[i]->sensitivityVariance = sqrt(sensitivityHash2[i]/(nodes.size()-1));
+        
+#ifdef DEBUG_MEAN_VARIANCE
+        for(int i = 0; i < nodes.size(); i++)
+        {
+            cout << "the mean value and variance for node "<< i << endl;
+            cout << nodes[i]->sensitivityMean << endl;
+            cout << nodes[i]->sensitivityVariance << endl;
+        }
+#endif
+#ifdef DEBUG_SENSITIVITY_CSV
+        ofstream outputCSV;
+        outputCSV.open("/Users/anakin/github/network-summer/BC-summer/BC-summer/sensitivityRes.csv");
+        for(int j = 0; j < nodes.size(); ++j)
+        {
+            outputCSV << j << ",";
+            for(int i = 0; i < nodes[j]->sensitivityValues.size(); i++)
+            {
+                outputCSV << nodes[j]->sensitivityValues[i] << ",";
+            }
+            outputCSV << "\n";
+        }
+        outputCSV.close();
+#endif
+        
     }
 
 //****************************************************

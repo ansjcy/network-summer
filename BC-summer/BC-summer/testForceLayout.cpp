@@ -22,6 +22,7 @@
 
 #include "betweenness.hpp"
 #include "graph.hpp"
+#include "define.hpp"
 //
 
 using namespace boost;
@@ -158,47 +159,38 @@ void DrawCircle()
             glEnd();
             
         }
-        //color the edges according to the sensitivity value
-//        else if(selectNode == myEdges[i].first)
-//        {
-//            auto minMaxvalue = std::minmax_element(std::begin(nodes[selectNode]->sensitivityValues), std::end(nodes[selectNode]->sensitivityValues));
-//            double red = whiteValue, blue = whiteValue, green = whiteValue;
-//            double sensitivity = nodes[selectNode]->sensitivityValues[myEdges[i].second];
-//            
-//            if(sensitivity < 0)
-//            {
-//                //red
-//                red = sensitivity/(*minMaxvalue.first)+0.2;
-//            }
-//            else
-//            {
-//                blue = sensitivity/(*minMaxvalue.second)+0.2;
-//            }
-//            
-//            glColor4f(red, 0.0, blue, 1.0);
-//            glBegin(GL_LINE_STRIP);
-//            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
-//            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
-//            
-//            glVertex2f(startX,startY);
-//            glVertex2f(endX,endY);
-//            glEnd();
-//        }
-        
-        
-        
     }
+    
     
     
     for(int i = 0; i < myNodes.size(); i++)
     {
         glPushMatrix();
-//        if(!selected[i])
-//            glColor4f(1.0, 1.0, 1.0, 1.0);
-//        else
-//            glColor4f(1.0, 1.0, 0.0, 1.0);
-        if(selectNode <= 0)
-            glColor4f(0.1, 0.1, 0.1, 1.0);
+        if(selectNode < 0)
+        {
+            auto minMaxvalue = std::minmax_element(std::begin(nodes[i]->sensitivityValues), std::end(nodes[i]->sensitivityValues));
+            
+            double red = whiteValue, blue = whiteValue, green = whiteValue;
+            double sensitivity = nodes[i]->sensitivityValues[myEdges[i].second];
+            if(sensitivity < 0)
+            {
+                //red
+                red = (sensitivity / *minMaxvalue.first) * (1-whiteValue) + whiteValue;
+                green = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
+                blue = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
+                
+            }
+            else if(sensitivity > 0)
+            {
+                blue = (sensitivity / *minMaxvalue.second) * (1-whiteValue) + whiteValue;
+                green = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
+                red = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
+            }
+            
+            glColor4f(red, green, blue, 1.0);
+            
+        }
+//            glColor4f(0.1, 0.1, 0.1, 1.0);
         
         else
         {
@@ -351,10 +343,12 @@ int main(int argc, char* argv[])
      cooling(progress_cooling(iterations)));
     
     graph_traits<Graph>::vertex_iterator vi, vi_end;
+#ifdef DEBUG_FORCE_LAYOUT_POS
     for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi) {
         std::cout << get(vertex_name, g, *vi) << '\t'
         << position[*vi][0] << '\t' << position[*vi][1] << std::endl;
     }
+#endif
     for(boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi)
     {
         myNodes[std::stoi(get(vertex_name, g, *vi))].first = position[*vi][0];

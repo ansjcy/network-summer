@@ -14,6 +14,8 @@
 #include <algorithm>                 // for std::for_each
 #include <limits.h>
 #include <vector>
+#include <map>
+#include <fstream>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/betweenness_centrality.hpp>
@@ -31,6 +33,8 @@
 #include <boost/graph/named_function_params.hpp>
 
 #include "graph.hpp"
+#include "define.hpp"
+
 using namespace boost;
 struct weighted_edge
 {

@@ -21,6 +21,8 @@ public:
     int index;
     double centralityValue;
     std::vector<double> sensitivityValues;
+    double sensitivityMean;
+    double sensitivityVariance;
 //    double *sensitivityValues;
     
 //    std::string property;
