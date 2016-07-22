@@ -202,6 +202,22 @@ void DrawThings()
         }
     }
     
+    
+    
+    //draw shadows
+    for(int i = 0; i < myNodes.size(); i++)
+    {
+        glColor4f(0.3, 0.3, 0.3, 0.3);
+        glBegin(GL_POLYGON);
+        
+        //gldrawarray.. gltranangle
+        for(int k=0; k<circlePoints; k++)
+            glVertex2f(myNodes[i].first+r*0.2+r*cos(2*M_PI/circlePoints*k), myNodes[i].second-r*0.2+r*sin(2*M_PI/circlePoints*k));
+        glEnd();
+        
+        DrawCircle(myNodes[i].first+r*0.2, myNodes[i].second-r*0.2, r*1.1, circlePoints);
+    }
+    
     std::vector<double> sensitivityMeans;
     std::vector<double> sensitivityVariances;
     std::vector<double> centralityValues;
