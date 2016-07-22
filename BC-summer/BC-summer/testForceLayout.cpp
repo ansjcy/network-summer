@@ -76,7 +76,7 @@ private:
 #define DISTANCE(X,Y,CX,CY) sqrt((X-CX)*(X-CX)+(Y-CY)*(Y-CY))
 
 const int circlePoints = 100;
-const GLfloat r = 0.01f;
+const GLfloat r = 0.008f;
 
 GLint nodeSize = 6;
 std::vector<bool> selected;
@@ -93,7 +93,7 @@ std::vector<Node*> nodes;
 std::vector<Edge*> edges;
 
 
-const GLint windowX = 800, windowY = 800;
+const GLint windowX = 850, windowY = 850;
 const GLfloat scaleTime = 1;
 
 enum Mode{
@@ -378,10 +378,11 @@ void initFunc()
 {
 
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.edges.csv");
-//    nodeFile.open("/Users/anakin/Downloads/data/celegansneural.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data/celegansneural.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.edges.csv");
+    
+    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
     
     std::vector<std::string> result = getNextLineAndSplitIntoTokens(nodeFile);
     while ((result = getNextLineAndSplitIntoTokens(nodeFile)).size()!=0) {
@@ -420,8 +421,8 @@ int main(int argc, char* argv[])
     
     int iterations = 1000;
     
-    double width = 2.0;
-    double height = 2.0;
+    double width = 1.8;
+    double height = 1.8;
     Graph g;
     NameToVertex names;
     
@@ -495,7 +496,7 @@ int main(int argc, char* argv[])
     //for openGL functions
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowPosition(100, 100);
+    glutInitWindowPosition(0, 0);
     glutInitWindowSize(windowX, windowY);
     glutCreateWindow("Draw a circle");
     glutDisplayFunc(myDisplay);
