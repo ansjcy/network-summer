@@ -255,7 +255,12 @@
 		3EEDB5441D38519500D16D18 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/boost/1.60.0_1/include/;
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					/usr/local/Cellar/boost/1.60.0_1/include/,
+					/opt/local/include/,
+				);
+				LIBRARY_SEARCH_PATHS = /opt/local/lib/;
+				OTHER_LDFLAGS = "-lGLEW";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -263,7 +268,12 @@
 		3EEDB5451D38519500D16D18 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/Cellar/boost/1.60.0_1/include/;
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					/usr/local/Cellar/boost/1.60.0_1/include/,
+					/opt/local/include/,
+				);
+				LIBRARY_SEARCH_PATHS = /opt/local/lib/;
+				OTHER_LDFLAGS = "-lGLEW";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

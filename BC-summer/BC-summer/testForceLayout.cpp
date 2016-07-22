@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <GLUT/GLUT.h>
 #include <OpenGL/OpenGL.h>
+#include <GLUT/gutil.h>
+#include <OpenGL/glext.h>
 #include <utility>
 #include <vector>
 #include <math.h>
@@ -26,6 +28,7 @@
 #include "graph.hpp"
 #include "define.hpp"
 //
+
 
 using namespace boost;
 
@@ -110,7 +113,29 @@ void coorTrans(const int wx, const int wy, float& x, float& y)
 //double colorStart[] = {1.0, 0.0, 0.0};
 //double colorEnd[] = {0.0, 0.0, 1.0};
 
-void DrawCircle()
+void DrawCircle(float cx, float cy, float r, int num_segments)
+{
+    float theta = 2 * M_PI / float(num_segments);
+    float c = cosf(theta);//precalculate the sine and cosine
+    float s = sinf(theta);
+    float t;
+    
+    float x = r;//we start at angle = 0
+    float y = 0;
+    
+    glBegin(GL_LINE_LOOP);
+    for(int ii = 0; ii < num_segments; ii++)
+    {
+        glVertex2f(x + cx, y + cy);//output vertex
+        //apply the rotation matrix
+        t = x;
+        x = c * x - s * y;
+        y = s * t + c * y;
+    } 
+    glEnd(); 
+}
+
+void DrawThings()
 {
     double whiteValue = 0.9;
     
@@ -247,13 +272,13 @@ void DrawCircle()
         }
         //
         glBegin(GL_POLYGON);
-        
-        
-        
+
         //gldrawarray.. gltranangle
         for(int k=0; k<circlePoints; k++)
             glVertex2f(myNodes[i].first+r*cos(2*M_PI/circlePoints*k), myNodes[i].second+r*sin(2*M_PI/circlePoints*k));
         glEnd();
+        
+        DrawCircle(myNodes[i].first, myNodes[i].second, r*1.1, circlePoints);
     }
     
     
@@ -280,7 +305,7 @@ void Mouse(int button, int state, int cursorX, int cursorY)
                     selectNode = i;
                 std::cout << "mean: " << nodes[i]->sensitivityMean;
                 
-                DrawCircle();
+                DrawThings();
             }
         }
         
@@ -314,7 +339,7 @@ void myDisplay()
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glScalef(1.0/scaleTime, 1.0/scaleTime, 1.0/scaleTime);
-    DrawCircle();
+    DrawThings();
 }
 
 std::vector<std::string> getNextLineAndSplitIntoTokens(std::istream& str)
@@ -374,8 +399,7 @@ int main(int argc, char* argv[])
 {
 
     initFunc();
-    
-    
+
 //*************** do the force layout **************************
     
     int iterations = 1000;
