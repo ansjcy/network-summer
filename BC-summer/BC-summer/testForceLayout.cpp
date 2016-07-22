@@ -378,11 +378,11 @@ void initFunc()
 {
 
     std::ifstream nodeFile, edgeFile;
-//    nodeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.edges.csv");
     
-    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
     
     std::vector<std::string> result = getNextLineAndSplitIntoTokens(nodeFile);
     while ((result = getNextLineAndSplitIntoTokens(nodeFile)).size()!=0) {

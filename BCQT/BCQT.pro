@@ -13,9 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    betweenness.cpp \
+    graph.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    betweenness.h \
+    graph.h \
+    define.h
 
 FORMS    += mainwindow.ui
 macx {

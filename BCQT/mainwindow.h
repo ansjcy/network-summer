@@ -21,8 +21,13 @@ public:
 protected:
     bool datachanged, colorchanged;
 
-   //add by me
+//variables added by ansjcy
+private:
+    const GLfloat scaleTime = 1;
 
+//functions added by ansjcy
+//private:
+//    void drawThings();
 
 signals:
     void emitUpdate();
