@@ -7,6 +7,8 @@
 #include <boost/progress.hpp>
 #include <boost/shared_ptr.hpp>
 
+
+
 #include <stdio.h>
 #include <GLUT/GLUT.h>
 #include <OpenGL/OpenGL.h>
@@ -91,6 +93,12 @@ std::vector<Edge*> edges;
 const GLint windowX = 800, windowY = 800;
 const GLfloat scaleTime = 1;
 
+enum Mode{
+    CENTRALITY,
+    SENSITIVITY_MEAN,
+    SENSITIVITY_VARIANCE
+} MODE = CENTRALITY;
+
 
 
 void coorTrans(const int wx, const int wy, float& x, float& y)
@@ -118,6 +126,7 @@ void DrawCircle()
             glVertex2f(startX,startY);
             glVertex2f(endX,endY);
             glEnd();
+            
         }
     }
     
@@ -134,22 +143,28 @@ void DrawCircle()
             double red = whiteValue, blue = whiteValue, green = whiteValue;
             double sensitivity = nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second];
 //            double valueRange = *minMaxvalue.second - *minMaxvalue.first;
-            if(sensitivity < 0)
-            {
-                //red
-                red = (sensitivity / *minMaxvalue.first) * (1-whiteValue) + whiteValue;
-                green = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
-                blue = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
-                
-            }
-            else if(sensitivity > 0)
-            {
-                blue = (sensitivity / *minMaxvalue.second) * (1-whiteValue) + whiteValue;
-                green = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
-                red = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
-            }
+//            if(sensitivity < 0)
+//            {
+//                //red
+//                
+//                red = (sensitivity / *minMaxvalue.first) * (1-whiteValue) + whiteValue;
+//                green = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
+//                blue = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
+//                
+//            }
+//            else if(sensitivity > 0)
+//            {
+//                
+//                blue = (sensitivity / *minMaxvalue.second) * (1-whiteValue) + whiteValue;
+//                green = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
+//                red = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
+//            }
+//            glColor4f(red, green, blue, 1.0);
+            
+            rgb colors = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, sensitivity);
+            glColor4f(colors.r/255, colors.g/255, colors.b/255, 1.0);
+            
 
-            glColor4f(red, green, blue, 1.0);
             glBegin(GL_LINE_STRIP);
             GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
             GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
@@ -161,36 +176,59 @@ void DrawCircle()
         }
     }
     
+    std::vector<double> sensitivityMeans;
+    std::vector<double> sensitivityVariances;
+    std::vector<double> centralityValues;
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        sensitivityMeans.push_back(nodes[i]->sensitivityMean);
+        sensitivityVariances.push_back(nodes[i]->sensitivityVariance);
+        centralityValues.push_back(nodes[i]->centralityValue);
+    }
     
+    //default mode is centrality mode
+    auto minMaxvalue = std::minmax_element(std::begin(centralityValues), std::end(centralityValues));
+    if(MODE == SENSITIVITY_MEAN)
+        minMaxvalue = std::minmax_element(std::begin(sensitivityMeans), std::end(sensitivityMeans));
+    else if(MODE == SENSITIVITY_VARIANCE)
+        minMaxvalue = std::minmax_element(std::begin(sensitivityVariances), std::end(sensitivityVariances));
     
     for(int i = 0; i < myNodes.size(); i++)
     {
-        glPushMatrix();
         if(selectNode < 0)
         {
-            auto minMaxvalue = std::minmax_element(std::begin(nodes[i]->sensitivityValues), std::end(nodes[i]->sensitivityValues));
-            
             double red = whiteValue, blue = whiteValue, green = whiteValue;
-            double sensitivity = nodes[i]->sensitivityValues[myEdges[i].second];
-            if(sensitivity < 0)
-            {
-                //red
-                red = (sensitivity / *minMaxvalue.first) * (1-whiteValue) + whiteValue;
-                green = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
-                blue = whiteValue - (sensitivity / *minMaxvalue.first) * whiteValue;
-                
-            }
-            else if(sensitivity > 0)
-            {
-                blue = (sensitivity / *minMaxvalue.second) * (1-whiteValue) + whiteValue;
-                green = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
-                red = whiteValue - (sensitivity / *minMaxvalue.second) * whiteValue;
-            }
             
-            glColor4f(red, green, blue, 1.0);
+            double value = centralityValues[i];
+            if(MODE == SENSITIVITY_MEAN)
+                value = sensitivityMeans[i];
+            else if(MODE == SENSITIVITY_VARIANCE)
+                value = sensitivityVariances[i];
+            
+            //rgb:: negative: 230, 0, 0 to positive: 0, 0, 230,
+            //hsv:: negative: 0, 100%, 90% to positive: 240, 100%, 90%..
+            
+//            if(value < 0)
+//            {
+//                //red
+//                red = (value / *minMaxvalue.first) * (1-whiteValue) + whiteValue;
+//                green = whiteValue - (value / *minMaxvalue.first) * whiteValue;
+//                blue = whiteValue - (value / *minMaxvalue.first) * whiteValue;
+//                
+//            }
+//            else if(value > 0)
+//            {
+//                blue = (value / *minMaxvalue.second) * (1-whiteValue) + whiteValue;
+//                green = whiteValue - (value / *minMaxvalue.second) * whiteValue;
+//                red = whiteValue - (value / *minMaxvalue.second) * whiteValue;
+//            }
+//            glColor4f(red, green, blue, 1.0);
+            
+            rgb test = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, value);
+            glColor4f(test.r/255, test.g/255, test.b/255, 1);
             
         }
-//            glColor4f(0.1, 0.1, 0.1, 1.0);
+
         
         else
         {
@@ -201,7 +239,6 @@ void DrawCircle()
                 glColor4f(0.0, 0.0, 1.0, 1.0);
             
         }
-        glPopMatrix();
         //
         glBegin(GL_POLYGON);
         
@@ -235,10 +272,30 @@ void Mouse(int button, int state, int cursorX, int cursorY)
                     selectNode = -1;
                 else
                     selectNode = i;
+                std::cout << "mean: " << nodes[i]->sensitivityMean;
+                
                 DrawCircle();
             }
         }
         
+    }
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+        case 'q':
+            MODE = CENTRALITY;
+            break;
+        case 'w':
+            MODE = SENSITIVITY_MEAN;
+            break;
+        case 'e':
+            MODE = SENSITIVITY_VARIANCE;
+            break;
+        default:
+            break;
     }
 }
 void myDisplay()
@@ -374,7 +431,21 @@ int main(int argc, char* argv[])
 
 //***************************
 
-
+//    rgb test;
+//    test.r = 255*0.6;
+//    test.g = 255*0.6;
+//    test.b = 255*0.6;
+//    hsv testRes = rgb2hsv(test);
+//    std::cout << testRes.h << " " << testRes.s << " " << testRes.v << std::endl;
+//    
+//    hsv test2;
+//    test2.h = 0;
+//    test2.s = 1;
+//    test2.v = 255;
+//    rgb testRes2 = hsv2rgb(test2);
+//    std::cout << testRes2.r << " " << testRes2.g << " " << testRes2.b << std::endl;
+    
+    
     //for openGL functions
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
@@ -383,13 +454,11 @@ int main(int argc, char* argv[])
     glutCreateWindow("Draw a circle");
     glutDisplayFunc(myDisplay);
     glutMouseFunc(Mouse);
+    glutKeyboardFunc(keyboard);
     glutIdleFunc(idle);
     glutMainLoop();
     
 
-    
-    
-    
     
     return 0;
 }

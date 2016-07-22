@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <cmath>
 //#include "properties.hpp"
 class Edge;
 class Node
@@ -58,4 +59,25 @@ public:
     Node* getNode1(){return node1;}
 };
 
+
+typedef struct {
+    double r;       // percent
+    double g;       // percent
+    double b;       // percent
+} rgb;
+
+typedef struct {
+    double h;       // angle in degrees
+    double s;       // percent
+    double v;       // percent
+} hsv;
+
+static hsv   rgb2hsv(rgb in);
+static rgb   hsv2rgb(hsv in);
+
+hsv rgb2hsv(rgb in);
+rgb hsv2rgb(hsv in);
+//rgb:: negative: 230, 0, 0 to positive: 0, 0, 230,
+//hsv:: negative: 0, 100%, 90% to positive: 240, 100%, 90%..
+rgb getRGBValue(double startValue, double endValue, double value);
 #endif /* graph_hpp */
