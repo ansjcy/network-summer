@@ -119,7 +119,7 @@ void DrawCircle()
     {
         if(fabs(nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second]-0) < 1e-9 || (selectNode >= 0 && selectNode != myEdges[i].first))
         {
-            glColor4f(whiteValue, whiteValue, whiteValue, 1.0);
+            glColor4f(whiteValue, whiteValue, whiteValue, 0.6);
             glBegin(GL_LINE_STRIP);
             GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
             GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
@@ -140,9 +140,10 @@ void DrawCircle()
         {
             auto minMaxvalue = std::minmax_element(std::begin(nodes[myEdges[i].first]->sensitivityValues), std::end(nodes[myEdges[i].first]->sensitivityValues));
             
-            double red = whiteValue, blue = whiteValue, green = whiteValue;
+            
             double sensitivity = nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second];
 //            double valueRange = *minMaxvalue.second - *minMaxvalue.first;
+//            double red = whiteValue, blue = whiteValue, green = whiteValue;
 //            if(sensitivity < 0)
 //            {
 //                //red
@@ -162,7 +163,7 @@ void DrawCircle()
 //            glColor4f(red, green, blue, 1.0);
             
             rgb colors = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, sensitivity);
-            glColor4f(colors.r/255, colors.g/255, colors.b/255, 1.0);
+            glColor4f(colors.r/255, colors.g/255, colors.b/255, 0.6);
             
 
             glBegin(GL_LINE_STRIP);
@@ -197,7 +198,6 @@ void DrawCircle()
     {
         if(selectNode < 0)
         {
-            double red = whiteValue, blue = whiteValue, green = whiteValue;
             
             double value = centralityValues[i];
             if(MODE == SENSITIVITY_MEAN)
@@ -207,7 +207,7 @@ void DrawCircle()
             
             //rgb:: negative: 230, 0, 0 to positive: 0, 0, 230,
             //hsv:: negative: 0, 100%, 90% to positive: 240, 100%, 90%..
-            
+//            double red = whiteValue, blue = whiteValue, green = whiteValue;
 //            if(value < 0)
 //            {
 //                //red
@@ -232,11 +232,17 @@ void DrawCircle()
         
         else
         {
-            double signValue = nodes[selectNode]->sensitivityValues[i];
-            if(signValue < 0)
-                glColor4f(1.0, 0.0, 0.0, 1.0);
-            else
-                glColor4f(0.0, 0.0, 1.0, 1.0);
+//            double signValue = nodes[selectNode]->sensitivityValues[i];
+//            if(signValue < 0)
+//                glColor4f(1.0, 0.0, 0.0, 1.0);
+//            else
+//                glColor4f(0.0, 0.0, 1.0, 1.0);
+            
+            auto minMaxvalue = std::minmax_element(std::begin(nodes[selectNode]->sensitivityValues), std::end(nodes[selectNode]->sensitivityValues));
+            double sensitivity = nodes[selectNode]->sensitivityValues[i];
+
+            rgb colors = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, sensitivity);
+            glColor4f(colors.r/255, colors.g/255, colors.b/255, 1);
             
         }
         //
@@ -331,8 +337,8 @@ void initFunc()
 {
 
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.edges.csv");
 //    nodeFile.open("/Users/anakin/Downloads/data/celegansneural.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data/celegansneural.edges.csv");
     
@@ -372,7 +378,7 @@ int main(int argc, char* argv[])
     
 //*************** do the force layout **************************
     
-    int iterations = 100;
+    int iterations = 1000;
     
     double width = 2.0;
     double height = 2.0;
