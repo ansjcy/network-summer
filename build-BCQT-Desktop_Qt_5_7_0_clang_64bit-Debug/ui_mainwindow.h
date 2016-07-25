@@ -13,55 +13,72 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QListView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
 
-class Ui_MainWindow
+class Ui_Window
 {
 public:
+    QWidget *centralWidget;
+    QListView *listView;
+    QRadioButton *lineSmooth;
+    QDoubleSpinBox *nodeSize;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
-    QWidget *centralWidget;
     QStatusBar *statusBar;
 
-    void setupUi(QMainWindow *MainWindow)
+    void setupUi(QMainWindow *Window)
     {
-        if (MainWindow->objectName().isEmpty())
-            MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(400, 300);
-        menuBar = new QMenuBar(MainWindow);
-        menuBar->setObjectName(QStringLiteral("menuBar"));
-        MainWindow->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(MainWindow);
-        mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-        MainWindow->addToolBar(mainToolBar);
-        centralWidget = new QWidget(MainWindow);
+        if (Window->objectName().isEmpty())
+            Window->setObjectName(QStringLiteral("Window"));
+        Window->resize(548, 409);
+        centralWidget = new QWidget(Window);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        MainWindow->setCentralWidget(centralWidget);
-        statusBar = new QStatusBar(MainWindow);
+        listView = new QListView(centralWidget);
+        listView->setObjectName(QStringLiteral("listView"));
+        listView->setGeometry(QRect(435, -19, 261, 391));
+        lineSmooth = new QRadioButton(centralWidget);
+        lineSmooth->setObjectName(QStringLiteral("lineSmooth"));
+        lineSmooth->setGeometry(QRect(440, 0, 100, 20));
+        nodeSize = new QDoubleSpinBox(centralWidget);
+        nodeSize->setObjectName(QStringLiteral("nodeSize"));
+        nodeSize->setGeometry(QRect(450, 30, 67, 24));
+        Window->setCentralWidget(centralWidget);
+        menuBar = new QMenuBar(Window);
+        menuBar->setObjectName(QStringLiteral("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 548, 22));
+        Window->setMenuBar(menuBar);
+        mainToolBar = new QToolBar(Window);
+        mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
+        Window->addToolBar(Qt::TopToolBarArea, mainToolBar);
+        statusBar = new QStatusBar(Window);
         statusBar->setObjectName(QStringLiteral("statusBar"));
-        MainWindow->setStatusBar(statusBar);
+        Window->setStatusBar(statusBar);
 
-        retranslateUi(MainWindow);
+        retranslateUi(Window);
 
-        QMetaObject::connectSlotsByName(MainWindow);
+        QMetaObject::connectSlotsByName(Window);
     } // setupUi
 
-    void retranslateUi(QMainWindow *MainWindow)
+    void retranslateUi(QMainWindow *Window)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        Window->setWindowTitle(QApplication::translate("Window", "MainWindow", 0));
+        lineSmooth->setText(QApplication::translate("Window", "line smooth", 0));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class MainWindow: public Ui_MainWindow {};
+    class Window: public Ui_Window {};
 } // namespace Ui
 
 QT_END_NAMESPACE

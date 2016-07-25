@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-
+#include "widget.h"
+#include "ui_widget.h"
 
 using namespace boost;
 
@@ -10,35 +10,42 @@ enum Mode{
 } MODE = CENTRALITY;
 
 
-
-Window::Window()
-  : QOpenGLWidget()
+Widget::Widget(QOpenGLWidget *parent) :
+    QOpenGLWidget(parent),
+    ui(new Ui::Widget)
 {
-  QSurfaceFormat format;
-  format.setSamples(8);
-  format.setStencilBufferSize(8);
-  setFormat(format);
-  printf("Version Major:%d minor:%d \n",format.version().first, format.version().second);
-  datachanged = colorchanged = true;
+    ui->setupUi(this);
+
+    QSurfaceFormat format;
+    format.setSamples(8);
+    format.setStencilBufferSize(8);
+    setFormat(format);
+    printf("Version Major:%d minor:%d \n",format.version().first, format.version().second);
+    datachanged = colorchanged = true;
 }
 
-void Window::updateWindow(){
+Widget::~Widget()
+{
+    delete ui;
+}
+
+void Widget::updateWindow(){
   datachanged = colorchanged = true;
   update();
 }
 
-void Window::updateData(){
+void Widget::updateData(){
   datachanged = true;
   update();
 }
 
-void Window::updateColor(){
+void Widget::updateColor(){
   colorchanged = true;
   update();
 }
 
 //*********** helper functions *****************
-std::vector<std::string> Window::getNextLineAndSplitIntoTokens(std::istream& str)
+std::vector<std::string> Widget::getNextLineAndSplitIntoTokens(std::istream& str)
 {
     std::vector<std::string>   result;
     std::string                line;
@@ -54,7 +61,7 @@ std::vector<std::string> Window::getNextLineAndSplitIntoTokens(std::istream& str
     return result;
 }
 
-Vertex Window::get_vertex(const std::string& name, Graph& g, NameToVertex& names)
+Vertex Widget::get_vertex(const std::string& name, Graph& g, NameToVertex& names)
 {
     NameToVertex::iterator i = names.find(name);
     if (i == names.end())
@@ -62,13 +69,13 @@ Vertex Window::get_vertex(const std::string& name, Graph& g, NameToVertex& names
     return i->second;
 }
 
-void Window::coorTrans(const int wx, const int wy, float& x, float& y)
+void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
 {
     x = (wx-windowX/2)/(windowX/2/scaleTotal);
     y = -(wy-windowY/2)/(windowY/2/scaleTotal);
 }
 
-void Window::DrawCircle(float cx, float cy, float r, int num_segments)
+void Widget::DrawCircle(float cx, float cy, float r, int num_segments)
 {
     float theta = 2 * M_PI / float(num_segments);
     float c = cosf(theta);//precalculate the sine and cosine
@@ -90,8 +97,10 @@ void Window::DrawCircle(float cx, float cy, float r, int num_segments)
     glEnd();
 }
 
-void Window::initFunc()
+void Widget::initFunc()
 {
+
+    this->setFocus();
 
     std::ifstream nodeFile, edgeFile;
     nodeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.nodes.csv");
@@ -123,16 +132,18 @@ void Window::initFunc()
 
 
 //*************** main functions *******************
-void Window::keyPressEvent(QKeyEvent *event)
+void Widget::keyPressEvent(QKeyEvent *event)
 {
     scaleFlag = false;
     transformFlag = false;
+    std::cout << "key::" << event->key() << std::endl;
     switch (event->key())
         {
     case Qt::Key_Q:
         MODE = CENTRALITY;
         break;
     case Qt::Key_W:
+        std::cout << "hereW" << std::endl;
         MODE = SENSITIVITY_MEAN;
         break;
     case Qt::Key_E:
@@ -174,8 +185,9 @@ void Window::keyPressEvent(QKeyEvent *event)
     this->update();
 
 }
-void Window::mousePressEvent(QMouseEvent *event)
+void Widget::mousePressEvent(QMouseEvent *event)
 {
+    this->setFocus();
     if(event->button() == Qt::LeftButton)
     {
          std::cout << event->x() << " " << event->y() << std::endl;
@@ -203,12 +215,12 @@ void Window::mousePressEvent(QMouseEvent *event)
     QOpenGLWidget::mousePressEvent(event);
 }
 
-void Window::resizeGL(int width, int height){
+void Widget::resizeGL(int width, int height){
   (void) width;
   (void) height;
 }
 
-void Window::initializeGL(){
+void Widget::initializeGL(){
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -280,7 +292,7 @@ void Window::initializeGL(){
     bc.compute(nodes, true);
 }
 
-void Window::paintGL(){
+void Widget::paintGL(){
     std::cout << "scaleTime::" << scaleTime << std::endl;
 
     if(scaleFlag)
@@ -423,3 +435,4 @@ void Window::paintGL(){
     }
     glFlush();
 }
+
