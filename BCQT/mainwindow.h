@@ -26,6 +26,8 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 #include "betweenness.h"
 #include "graph.h"
@@ -49,6 +51,9 @@ public:
     virtual void initializeGL();
     virtual void paintGL();
     virtual void resizeGL(int width, int height);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+//    virtual void mouseMoveEvent(QMouseEvent *event);
 
     void updateWindow();
     void updateData();
@@ -72,7 +77,7 @@ private:
     std::vector<Node*> nodes;
     std::vector<Edge*> edges;
     const GLint windowX = 850, windowY = 850;
-    const GLfloat scaleTime = 1;
+    GLfloat scaleTime = 1;
 
 
 

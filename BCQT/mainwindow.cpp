@@ -123,6 +123,69 @@ void Window::initFunc()
 
 
 //*************** main functions *******************
+void Window::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key())
+        {
+    case Qt::Key_Q:
+        MODE = CENTRALITY;
+        break;
+    case Qt::Key_W:
+        MODE = SENSITIVITY_MEAN;
+        break;
+    case Qt::Key_E:
+        MODE = SENSITIVITY_VARIANCE;
+        break;
+    case Qt::Key_U:
+        scaleTime -= 0.1;
+        break;
+    case Qt::Key_O:
+        scaleTime += 0.1;
+        break;
+    case Qt::Key_I:
+        scaleTime -= 0.1;
+        break;
+    case Qt::Key_K:
+        scaleTime -= 0.1;
+        break;
+    case Qt::Key_J:
+        scaleTime -= 0.1;
+        break;
+    case Qt::Key_L:
+        scaleTime -= 0.1;
+        break;
+            default:
+                break;
+        }
+    this->repaint();
+
+}
+void Window::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+         std::cout << event->x() << " " << event->y() << std::endl;
+         float x = 0, y = 0;
+         for(int i = 0; i < myNodes.size(); i++)
+         {
+             coorTrans(event->x(), event->y(), x, y);
+             if(DISTANCE(x, y, myNodes[i].first, myNodes[i].second) < r)
+             {
+                 printf("i = %d\n", i);
+                 selected[i] = !selected[i];
+                 if(selectNode == i)
+                     selectNode = -1;
+                 else
+                     selectNode = i;
+                 std::cout << "mean: " << nodes[i]->sensitivityMean << std::endl;
+             }
+         }
+        this->repaint();
+     }
+
+    QOpenGLWidget::mousePressEvent(event);
+}
+
 void Window::resizeGL(int width, int height){
   (void) width;
   (void) height;
@@ -299,14 +362,32 @@ void Window::paintGL(){
 
         }
         //
-        glBegin(GL_POLYGON);
+//        glBegin(GL_POLYGON);
 
-        //gldrawarray.. gltranangle
-        for(int k=0; k<circlePoints; k++)
-            glVertex2f(myNodes[i].first+r*cos(2*M_PI/circlePoints*k), myNodes[i].second+r*sin(2*M_PI/circlePoints*k));
-        glEnd();
+//        //gldrawarray.. gltranangle
+//        for(int k=0; k<circlePoints; k++)
+//            glVertex2f(myNodes[i].first+r*cos(2*M_PI/circlePoints*k), myNodes[i].second+r*sin(2*M_PI/circlePoints*k));
+//        glEnd();
 
-        DrawCircle(myNodes[i].first, myNodes[i].second, r*1.1, circlePoints);
+//        DrawCircle(myNodes[i].first, myNodes[i].second, r*1.1, circlePoints);
+
+        int k;
+        int triangleAmount = 20; //# of triangles used to draw circle
+
+            //GLfloat radius = 0.8f; //radius
+        GLfloat twicePi = 2.0f * M_PI;
+        GLfloat x = myNodes[i].first, y = myNodes[i].second;
+
+            glBegin(GL_TRIANGLE_FAN);
+                glVertex2f(x, y); // center of circle
+                for(k = 0; k <= triangleAmount;k++) {
+                    glVertex2f(
+                            x + (r * cos(k *  twicePi / triangleAmount)),
+                        y + (r * sin(k * twicePi / triangleAmount))
+                    );
+                }
+            glEnd();
+
     }
     glFlush();
 }
