@@ -64,8 +64,8 @@ Vertex Window::get_vertex(const std::string& name, Graph& g, NameToVertex& names
 
 void Window::coorTrans(const int wx, const int wy, float& x, float& y)
 {
-    x = (wx-windowX/2)/(windowX/2/scaleTime);
-    y = -(wy-windowY/2)/(windowY/2/scaleTime);
+    x = (wx-windowX/2)/(windowX/2/scaleTotal);
+    y = -(wy-windowY/2)/(windowY/2/scaleTotal);
 }
 
 void Window::DrawCircle(float cx, float cy, float r, int num_segments)
@@ -125,6 +125,8 @@ void Window::initFunc()
 //*************** main functions *******************
 void Window::keyPressEvent(QKeyEvent *event)
 {
+    scaleFlag = false;
+    transformFlag = false;
     switch (event->key())
         {
     case Qt::Key_Q:
@@ -137,27 +139,39 @@ void Window::keyPressEvent(QKeyEvent *event)
         MODE = SENSITIVITY_VARIANCE;
         break;
     case Qt::Key_U:
-        scaleTime -= 0.1;
+        scaleFlag = true;
+        scaleTime = 1.1;
         break;
     case Qt::Key_O:
-        scaleTime += 0.1;
+        scaleFlag =true;
+        scaleTime = 0.9;
         break;
     case Qt::Key_I:
-        scaleTime -= 0.1;
+        transformFlag = true;
+        transformX = 0;
+        transformY = 0.1;
         break;
     case Qt::Key_K:
-        scaleTime -= 0.1;
+        transformFlag = true;
+        transformX = 0;
+        transformY = -0.1;
         break;
     case Qt::Key_J:
-        scaleTime -= 0.1;
+        transformFlag = true;
+        transformX = -0.1;
+        transformY = 0;
         break;
     case Qt::Key_L:
-        scaleTime -= 0.1;
+        transformFlag = true;
+        transformX = 0.1;
+        transformY = 0;
         break;
             default:
                 break;
         }
-    this->repaint();
+    std::cout << "before repaint:: " << scaleTime << std::endl;
+//    this->repaint();
+    this->update();
 
 }
 void Window::mousePressEvent(QMouseEvent *event)
@@ -180,7 +194,10 @@ void Window::mousePressEvent(QMouseEvent *event)
                  std::cout << "mean: " << nodes[i]->sensitivityMean << std::endl;
              }
          }
-        this->repaint();
+         transformFlag = false;
+         scaleFlag = false;
+         this->repaint();
+//         this->update();
      }
 
     QOpenGLWidget::mousePressEvent(event);
@@ -190,6 +207,7 @@ void Window::resizeGL(int width, int height){
   (void) width;
   (void) height;
 }
+
 void Window::initializeGL(){
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -199,7 +217,7 @@ void Window::initializeGL(){
     glEnable(GL_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glScalef(1.0/scaleTime, 1.0/scaleTime, 1.0/scaleTime);
+
 
     glClearDepthf(1.0f);
     glDepthFunc(GL_LEQUAL);
@@ -263,6 +281,20 @@ void Window::initializeGL(){
 }
 
 void Window::paintGL(){
+    std::cout << "scaleTime::" << scaleTime << std::endl;
+
+    if(scaleFlag)
+    {
+        glScalef(1.0/scaleTime, 1.0/scaleTime, 1.0/scaleTime);
+        scaleTotal *= scaleTime;
+    }
+    if(transformFlag)
+    {
+        glTranslatef(transformX, transformY,0.0f);
+        transformXTotal += transformX;
+        transformYTotal += transformY;
+    }
+
     double whiteValue = 0.9;
 
     //draw edge with sensitivity = 0 first

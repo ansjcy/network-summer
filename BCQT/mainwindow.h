@@ -78,6 +78,13 @@ private:
     std::vector<Edge*> edges;
     const GLint windowX = 850, windowY = 850;
     GLfloat scaleTime = 1;
+    GLfloat scaleTotal = 1;
+    GLfloat transformX = 0;
+    GLfloat transformY = 0;
+    GLfloat transformXTotal = 0;
+    GLfloat transformYTotal = 0;
+    bool scaleFlag = false;
+    bool transformFlag = false;
 
 
 
