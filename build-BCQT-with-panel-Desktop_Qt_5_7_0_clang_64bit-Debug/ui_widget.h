@@ -55,6 +55,9 @@ public:
         nodeTran = new QDoubleSpinBox(Widget);
         nodeTran->setObjectName(QStringLiteral("nodeTran"));
         nodeTran->setGeometry(QRect(700, 50, 67, 24));
+        nodeTran->setMaximum(1);
+        nodeTran->setSingleStep(0.1);
+        nodeTran->setValue(1);
         label = new QLabel(Widget);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(700, 30, 59, 16));
@@ -64,18 +67,24 @@ public:
         nodeSize = new QDoubleSpinBox(Widget);
         nodeSize->setObjectName(QStringLiteral("nodeSize"));
         nodeSize->setGeometry(QRect(700, 100, 67, 24));
+        nodeSize->setSingleStep(0.1);
+        nodeSize->setValue(1);
         label_3 = new QLabel(Widget);
         label_3->setObjectName(QStringLiteral("label_3"));
         label_3->setGeometry(QRect(700, 130, 59, 16));
         edgeTran = new QDoubleSpinBox(Widget);
         edgeTran->setObjectName(QStringLiteral("edgeTran"));
         edgeTran->setGeometry(QRect(700, 150, 67, 24));
+        edgeTran->setSingleStep(0.1);
+        edgeTran->setValue(1);
         label_4 = new QLabel(Widget);
         label_4->setObjectName(QStringLiteral("label_4"));
         label_4->setGeometry(QRect(700, 180, 59, 16));
         edgeSize = new QDoubleSpinBox(Widget);
         edgeSize->setObjectName(QStringLiteral("edgeSize"));
         edgeSize->setGeometry(QRect(700, 200, 67, 24));
+        edgeSize->setSingleStep(0.1);
+        edgeSize->setValue(1);
 
         retranslateUi(Widget);
 

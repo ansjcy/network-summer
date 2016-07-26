@@ -96,7 +96,7 @@ protected:
         GLfloat nodeSize = 1.0;
         GLfloat nodeTran = 1.0;
         GLfloat edgeSize = 1.0;
-        GLfloat edgeTran = 1;
+        GLfloat edgeTran = 1.0;
 
 
 
@@ -119,6 +119,12 @@ protected:
 
 private slots:
         void on_nodeTran_valueChanged(double arg1);
+
+        void on_nodeSize_valueChanged(double arg1);
+
+        void on_edgeTran_valueChanged(double arg1);
+
+        void on_edgeSize_valueChanged(double arg1);
 
 private:
     Ui::Widget *ui;

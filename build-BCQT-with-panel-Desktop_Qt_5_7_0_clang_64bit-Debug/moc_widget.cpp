@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_Widget_t {
-    QByteArrayData data[7];
-    char stringdata0[80];
+    QByteArrayData data[10];
+    char stringdata0[155];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,12 +35,17 @@ QT_MOC_LITERAL(2, 18, 0), // ""
 QT_MOC_LITERAL(3, 19, 15), // "emitColorUpdate"
 QT_MOC_LITERAL(4, 35, 14), // "emitDataUpdate"
 QT_MOC_LITERAL(5, 50, 24), // "on_nodeTran_valueChanged"
-QT_MOC_LITERAL(6, 75, 4) // "arg1"
+QT_MOC_LITERAL(6, 75, 4), // "arg1"
+QT_MOC_LITERAL(7, 80, 24), // "on_nodeSize_valueChanged"
+QT_MOC_LITERAL(8, 105, 24), // "on_edgeTran_valueChanged"
+QT_MOC_LITERAL(9, 130, 24) // "on_edgeSize_valueChanged"
 
     },
     "Widget\0emitUpdate\0\0emitColorUpdate\0"
     "emitDataUpdate\0on_nodeTran_valueChanged\0"
-    "arg1"
+    "arg1\0on_nodeSize_valueChanged\0"
+    "on_edgeTran_valueChanged\0"
+    "on_edgeSize_valueChanged"
 };
 #undef QT_MOC_LITERAL
 
@@ -50,7 +55,7 @@ static const uint qt_meta_data_Widget[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -58,12 +63,15 @@ static const uint qt_meta_data_Widget[] = {
        3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   34,    2, 0x06 /* Public */,
-       3,    0,   35,    2, 0x06 /* Public */,
-       4,    0,   36,    2, 0x06 /* Public */,
+       1,    0,   49,    2, 0x06 /* Public */,
+       3,    0,   50,    2, 0x06 /* Public */,
+       4,    0,   51,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       5,    1,   37,    2, 0x08 /* Private */,
+       5,    1,   52,    2, 0x08 /* Private */,
+       7,    1,   55,    2, 0x08 /* Private */,
+       8,    1,   58,    2, 0x08 /* Private */,
+       9,    1,   61,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void,
@@ -71,6 +79,9 @@ static const uint qt_meta_data_Widget[] = {
     QMetaType::Void,
 
  // slots: parameters
+    QMetaType::Void, QMetaType::Double,    6,
+    QMetaType::Void, QMetaType::Double,    6,
+    QMetaType::Void, QMetaType::Double,    6,
     QMetaType::Void, QMetaType::Double,    6,
 
        0        // eod
@@ -86,6 +97,9 @@ void Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 1: _t->emitColorUpdate(); break;
         case 2: _t->emitDataUpdate(); break;
         case 3: _t->on_nodeTran_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 4: _t->on_nodeSize_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 5: _t->on_edgeTran_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
+        case 6: _t->on_edgeSize_valueChanged((*reinterpret_cast< double(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -140,13 +154,13 @@ int Widget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 4)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 4;
+        _id -= 7;
     }
     return _id;
 }

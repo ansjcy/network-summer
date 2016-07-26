@@ -69,10 +69,18 @@ Vertex Widget::get_vertex(const std::string& name, Graph& g, NameToVertex& names
     return i->second;
 }
 
+/*
+ * transfom window such as 0 - 800 to -1 -> 1 (divided by the scale factor)
+ *      |y
+ *      |
+ * ---------->x
+ *      |
+ *      |
+ */
 void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
 {
-    x = (wx-windowX/2)/(windowX/2/scaleTotal);
-    y = -(wy-windowY/2)/(windowY/2/scaleTotal);
+    x = (wx-windowX/2)/(windowX/2/scaleTotal) - transformXTotal;
+    y = -((wy-windowY/2)/(windowY/2/scaleTotal) + transformYTotal);
 }
 
 //void Widget::DrawCircle(float cx, float cy, float r, int num_segments)
@@ -177,6 +185,8 @@ void Widget::keyPressEvent(QKeyEvent *event)
         transformX = 0.1;
         transformY = 0;
         break;
+    case Qt::Key_Escape:
+        this->close();
             default:
                 break;
         }
@@ -195,7 +205,7 @@ void Widget::mousePressEvent(QMouseEvent *event)
          for(int i = 0; i < myNodes.size(); i++)
          {
              coorTrans(event->x(), event->y(), x, y);
-             if(DISTANCE(x, y, myNodes[i].first, myNodes[i].second) < r)
+             if(DISTANCE(x, y, myNodes[i].first, myNodes[i].second) < r*nodeSize)
              {
                  printf("i = %d\n", i);
                  selected[i] = !selected[i];
@@ -208,8 +218,8 @@ void Widget::mousePressEvent(QMouseEvent *event)
          }
          transformFlag = false;
          scaleFlag = false;
-         this->repaint();
-//         this->update();
+//         this->repaint();
+         this->update();
      }
 
     QOpenGLWidget::mousePressEvent(event);
@@ -349,14 +359,6 @@ void Widget::paintGL(){
         {
             drawALine(myNodes[myEdges[i].first].first, myNodes[myEdges[i].first].second, myNodes[myEdges[i].second].first, myNodes[myEdges[i].second].second,
                     edgeSize, whiteValue, edgeTran);
-//            glColor4f(whiteValue.r/255, whiteValue.g/255, whiteValue.b/255, edgeTran);
-//            glBegin(GL_LINE_STRIP);
-//            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
-//            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
-//            glVertex2f(startX,startY);
-//            glVertex2f(endX,endY);
-//            glEnd();
-
         }
     }
 
@@ -374,18 +376,6 @@ void Widget::paintGL(){
 
             drawALine(myNodes[myEdges[i].first].first, myNodes[myEdges[i].first].second, myNodes[myEdges[i].second].first, myNodes[myEdges[i].second].second,
                     edgeSize, colors, edgeTran);
-
-//            glColor4f(colors.r/255, colors.g/255, colors.b/255, edgeTran);
-
-
-//            glBegin(GL_LINE_STRIP);
-//            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
-//            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
-
-//            glVertex2f(startX,startY);
-//            glVertex2f(endX,endY);
-//            glEnd();
-
         }
     }
 
@@ -397,7 +387,7 @@ void Widget::paintGL(){
         colors.g = 0.3;
         colors.b = 0.3;
 
-        drawACircle(myNodes[i].first+r*0.2, myNodes[i].second-r*0.2, r, colors, 0.3);
+        drawACircle(myNodes[i].first+r*0.2, myNodes[i].second-r*0.2, r*nodeSize, colors, 0.3*nodeTran);
     }
 
     std::vector<double> sensitivityMeans;
@@ -444,7 +434,7 @@ void Widget::paintGL(){
 
         }
 
-        drawACircle(myNodes[i].first, myNodes[i].second, r, colors, 1);
+        drawACircle(myNodes[i].first, myNodes[i].second, r*nodeSize, colors, nodeTran);
 
     }
     glFlush();
@@ -453,5 +443,24 @@ void Widget::paintGL(){
 
 void Widget::on_nodeTran_valueChanged(double arg1)
 {
+    nodeTran = arg1;
+    this->update();
+}
 
+void Widget::on_nodeSize_valueChanged(double arg1)
+{
+    nodeSize = arg1;
+    this->update();
+}
+
+void Widget::on_edgeTran_valueChanged(double arg1)
+{
+    edgeTran = arg1;
+    this->update();
+}
+
+void Widget::on_edgeSize_valueChanged(double arg1)
+{
+    edgeSize = arg1;
+    this->update();
 }
