@@ -75,27 +75,27 @@ void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
     y = -(wy-windowY/2)/(windowY/2/scaleTotal);
 }
 
-void Widget::DrawCircle(float cx, float cy, float r, int num_segments)
-{
-    float theta = 2 * M_PI / float(num_segments);
-    float c = cosf(theta);//precalculate the sine and cosine
-    float s = sinf(theta);
-    float t;
+//void Widget::DrawCircle(float cx, float cy, float r, int num_segments)
+//{
+//    float theta = 2 * M_PI / float(num_segments);
+//    float c = cosf(theta);//precalculate the sine and cosine
+//    float s = sinf(theta);
+//    float t;
 
-    float x = r;//we start at angle = 0
-    float y = 0;
+//    float x = r;//we start at angle = 0
+//    float y = 0;
 
-    glBegin(GL_LINE_LOOP);
-    for(int ii = 0; ii < num_segments; ii++)
-    {
-        glVertex2f(x + cx, y + cy);//output vertex
-        //apply the rotation matrix
-        t = x;
-        x = c * x - s * y;
-        y = s * t + c * y;
-    }
-    glEnd();
-}
+//    glBegin(GL_LINE_LOOP);
+//    for(int ii = 0; ii < num_segments; ii++)
+//    {
+//        glVertex2f(x + cx, y + cy);//output vertex
+//        //apply the rotation matrix
+//        t = x;
+//        x = c * x - s * y;
+//        y = s * t + c * y;
+//    }
+//    glEnd();
+//}
 
 void Widget::initFunc()
 {
@@ -103,8 +103,8 @@ void Widget::initFunc()
     this->setFocus();
 
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/serengeti-foodweb.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
 
 //    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
@@ -291,6 +291,36 @@ void Widget::initializeGL(){
 
     bc.compute(nodes, true);
 }
+void Widget::drawACircle(float cx, float cy, float r, rgb colors, float alpha)
+{
+    int triangleAmount = 20; //# of triangles used to draw circle
+
+        //GLfloat radius = 0.8f; //radius
+    GLfloat twicePi = 2.0f * M_PI;
+    GLfloat x = cx, y = cy;
+
+    glColor4f(colors.r/255, colors.g/255, colors.b/255, alpha);
+
+    glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(x, y); // center of circle
+        for(int k = 0; k <= triangleAmount;k++) {
+            glVertex2f(
+                    x + (r * nodeSize * cos(k *  twicePi / triangleAmount)),
+                y + (r * nodeSize * sin(k * twicePi / triangleAmount))
+            );
+        }
+    glEnd();
+}
+void Widget::drawALine(float startX, float startY, float endX, float endY, float lineWidth, rgb colors, float alpha)
+{
+    glLineWidth(lineWidth);
+    glColor4f(colors.r/255, colors.g/255, colors.b/255, alpha);
+    glBegin(GL_LINE_STRIP);
+
+    glVertex2f(startX,startY);
+    glVertex2f(endX,endY);
+    glEnd();
+}
 
 void Widget::paintGL(){
     std::cout << "scaleTime::" << scaleTime << std::endl;
@@ -307,20 +337,25 @@ void Widget::paintGL(){
         transformYTotal += transformY;
     }
 
-    double whiteValue = 0.9;
+    rgb whiteValue;
+    whiteValue.r = 229;
+    whiteValue.g = 229;
+    whiteValue.b = 229;
 
     //draw edge with sensitivity = 0 first
     for(int i = 0; i < myEdges.size(); i++)
     {
         if(fabs(nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second]-0) < 1e-9 || (selectNode >= 0 && selectNode != myEdges[i].first))
         {
-            glColor4f(whiteValue, whiteValue, whiteValue, 1);
-            glBegin(GL_LINE_STRIP);
-            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
-            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
-            glVertex2f(startX,startY);
-            glVertex2f(endX,endY);
-            glEnd();
+            drawALine(myNodes[myEdges[i].first].first, myNodes[myEdges[i].first].second, myNodes[myEdges[i].second].first, myNodes[myEdges[i].second].second,
+                    edgeSize, whiteValue, edgeTran);
+//            glColor4f(whiteValue.r/255, whiteValue.g/255, whiteValue.b/255, edgeTran);
+//            glBegin(GL_LINE_STRIP);
+//            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
+//            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
+//            glVertex2f(startX,startY);
+//            glVertex2f(endX,endY);
+//            glEnd();
 
         }
     }
@@ -336,16 +371,20 @@ void Widget::paintGL(){
             double sensitivity = nodes[myEdges[i].first]->sensitivityValues[myEdges[i].second];
 
             rgb colors = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, sensitivity);
-            glColor4f(colors.r/255, colors.g/255, colors.b/255, 0.6);
+
+            drawALine(myNodes[myEdges[i].first].first, myNodes[myEdges[i].first].second, myNodes[myEdges[i].second].first, myNodes[myEdges[i].second].second,
+                    edgeSize, colors, edgeTran);
+
+//            glColor4f(colors.r/255, colors.g/255, colors.b/255, edgeTran);
 
 
-            glBegin(GL_LINE_STRIP);
-            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
-            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
+//            glBegin(GL_LINE_STRIP);
+//            GLfloat startX = myNodes[myEdges[i].first].first, startY = myNodes[myEdges[i].first].second;
+//            GLfloat endX = myNodes[myEdges[i].second].first, endY = myNodes[myEdges[i].second].second;
 
-            glVertex2f(startX,startY);
-            glVertex2f(endX,endY);
-            glEnd();
+//            glVertex2f(startX,startY);
+//            glVertex2f(endX,endY);
+//            glEnd();
 
         }
     }
@@ -353,15 +392,12 @@ void Widget::paintGL(){
     //draw shadows
     for(int i = 0; i < myNodes.size(); i++)
     {
-        glColor4f(0.3, 0.3, 0.3, 0.3);
-        glBegin(GL_POLYGON);
+        rgb colors;
+        colors.r = 0.3;
+        colors.g = 0.3;
+        colors.b = 0.3;
 
-        //gldrawarray.. gltranangle
-        for(int k=0; k<circlePoints; k++)
-            glVertex2f(myNodes[i].first+r*0.2+r*cos(2*M_PI/circlePoints*k), myNodes[i].second-r*0.2+r*sin(2*M_PI/circlePoints*k));
-        glEnd();
-
-        DrawCircle(myNodes[i].first+r*0.2, myNodes[i].second-r*0.2, r*1.1, circlePoints);
+        drawACircle(myNodes[i].first+r*0.2, myNodes[i].second-r*0.2, r, colors, 0.3);
     }
 
     std::vector<double> sensitivityMeans;
@@ -381,8 +417,10 @@ void Widget::paintGL(){
     else if(MODE == SENSITIVITY_VARIANCE)
         minMaxvalue = std::minmax_element(std::begin(sensitivityVariances), std::end(sensitivityVariances));
 
+
     for(int i = 0; i < myNodes.size(); i++)
     {
+        rgb colors;
         if(selectNode < 0)
         {
 
@@ -392,8 +430,8 @@ void Widget::paintGL(){
             else if(MODE == SENSITIVITY_VARIANCE)
                 value = sensitivityVariances[i];
 
-            rgb test = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, value);
-            glColor4f(test.r/255, test.g/255, test.b/255, 1);
+            colors = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, value);
+            //glColor4f(colors.r/255, colors.g/255, colors.b/255, 1);
 
         }
         else
@@ -401,38 +439,19 @@ void Widget::paintGL(){
             auto minMaxvalue = std::minmax_element(std::begin(nodes[selectNode]->sensitivityValues), std::end(nodes[selectNode]->sensitivityValues));
             double sensitivity = nodes[selectNode]->sensitivityValues[i];
 
-            rgb colors = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, sensitivity);
-            glColor4f(colors.r/255, colors.g/255, colors.b/255, 1);
+            colors = getRGBValue(*minMaxvalue.first, *minMaxvalue.second, sensitivity);
+            //glColor4f(colors.r/255, colors.g/255, colors.b/255, 1);
 
         }
-        //
-//        glBegin(GL_POLYGON);
 
-//        //gldrawarray.. gltranangle
-//        for(int k=0; k<circlePoints; k++)
-//            glVertex2f(myNodes[i].first+r*cos(2*M_PI/circlePoints*k), myNodes[i].second+r*sin(2*M_PI/circlePoints*k));
-//        glEnd();
-
-//        DrawCircle(myNodes[i].first, myNodes[i].second, r*1.1, circlePoints);
-
-        int k;
-        int triangleAmount = 20; //# of triangles used to draw circle
-
-            //GLfloat radius = 0.8f; //radius
-        GLfloat twicePi = 2.0f * M_PI;
-        GLfloat x = myNodes[i].first, y = myNodes[i].second;
-
-            glBegin(GL_TRIANGLE_FAN);
-                glVertex2f(x, y); // center of circle
-                for(k = 0; k <= triangleAmount;k++) {
-                    glVertex2f(
-                            x + (r * cos(k *  twicePi / triangleAmount)),
-                        y + (r * sin(k * twicePi / triangleAmount))
-                    );
-                }
-            glEnd();
+        drawACircle(myNodes[i].first, myNodes[i].second, r, colors, 1);
 
     }
     glFlush();
 }
 
+
+void Widget::on_nodeTran_valueChanged(double arg1)
+{
+
+}

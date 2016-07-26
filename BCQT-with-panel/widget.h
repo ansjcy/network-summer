@@ -73,16 +73,16 @@ protected:
     private:
         const int circlePoints = 100;
         const GLfloat r = 0.008f;
-        GLint nodeSize = 6;
+
         std::vector<bool> selected;
         int selectNode = -1;
-        GLint edgeSize = 5;
         std::vector<bool> selectedEdge;
         std::vector<std::pair<GLfloat, GLfloat> > myNodes;
         std::vector<std::pair<GLint, GLint> > myEdges;
         Betweenness bc;
         std::vector<Node*> nodes;
         std::vector<Edge*> edges;
+
         const GLint windowX = 800, windowY = 800;
         GLfloat scaleTime = 1;
         GLfloat scaleTotal = 1;
@@ -93,6 +93,12 @@ protected:
         bool scaleFlag = false;
         bool transformFlag = false;
 
+        GLfloat nodeSize = 1.0;
+        GLfloat nodeTran = 1.0;
+        GLfloat edgeSize = 1.0;
+        GLfloat edgeTran = 1;
+
+
 
 
     //functions added by ansjcy
@@ -100,13 +106,19 @@ protected:
         Vertex get_vertex(const std::string& name, Graph& g, NameToVertex& names);
         void initFunc();
         void coorTrans(const int wx, const int wy, float& x, float& y);
-        void DrawCircle(float cx, float cy, float r, int num_segments);
+        //void DrawCircle(float cx, float cy, float r, int num_segments);
+        void drawACircle(float cx, float cy, float r, rgb color, float alpha);
+        void drawALine(float startX, float startY, float endX, float endY, float lineWidth, rgb color, float alpha);
+
         std::vector<std::string> getNextLineAndSplitIntoTokens(std::istream& str);
 
     signals:
         void emitUpdate();
         void emitColorUpdate();
         void emitDataUpdate();
+
+private slots:
+        void on_nodeTran_valueChanged(double arg1);
 
 private:
     Ui::Widget *ui;

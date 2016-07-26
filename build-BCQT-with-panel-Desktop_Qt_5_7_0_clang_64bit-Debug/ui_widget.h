@@ -29,14 +29,14 @@ public:
     QTableView *tableView;
     QListView *listView;
     QRadioButton *lineSmooth;
-    QDoubleSpinBox *doubleSpinBox;
+    QDoubleSpinBox *nodeTran;
     QLabel *label;
     QLabel *label_2;
-    QDoubleSpinBox *doubleSpinBox_2;
+    QDoubleSpinBox *nodeSize;
     QLabel *label_3;
-    QDoubleSpinBox *doubleSpinBox_3;
+    QDoubleSpinBox *edgeTran;
     QLabel *label_4;
-    QDoubleSpinBox *doubleSpinBox_4;
+    QDoubleSpinBox *edgeSize;
 
     void setupUi(QWidget *Widget)
     {
@@ -52,30 +52,30 @@ public:
         lineSmooth = new QRadioButton(Widget);
         lineSmooth->setObjectName(QStringLiteral("lineSmooth"));
         lineSmooth->setGeometry(QRect(700, 0, 100, 20));
-        doubleSpinBox = new QDoubleSpinBox(Widget);
-        doubleSpinBox->setObjectName(QStringLiteral("doubleSpinBox"));
-        doubleSpinBox->setGeometry(QRect(700, 50, 67, 24));
+        nodeTran = new QDoubleSpinBox(Widget);
+        nodeTran->setObjectName(QStringLiteral("nodeTran"));
+        nodeTran->setGeometry(QRect(700, 50, 67, 24));
         label = new QLabel(Widget);
         label->setObjectName(QStringLiteral("label"));
         label->setGeometry(QRect(700, 30, 59, 16));
         label_2 = new QLabel(Widget);
         label_2->setObjectName(QStringLiteral("label_2"));
         label_2->setGeometry(QRect(700, 80, 59, 16));
-        doubleSpinBox_2 = new QDoubleSpinBox(Widget);
-        doubleSpinBox_2->setObjectName(QStringLiteral("doubleSpinBox_2"));
-        doubleSpinBox_2->setGeometry(QRect(700, 100, 67, 24));
+        nodeSize = new QDoubleSpinBox(Widget);
+        nodeSize->setObjectName(QStringLiteral("nodeSize"));
+        nodeSize->setGeometry(QRect(700, 100, 67, 24));
         label_3 = new QLabel(Widget);
         label_3->setObjectName(QStringLiteral("label_3"));
         label_3->setGeometry(QRect(700, 130, 59, 16));
-        doubleSpinBox_3 = new QDoubleSpinBox(Widget);
-        doubleSpinBox_3->setObjectName(QStringLiteral("doubleSpinBox_3"));
-        doubleSpinBox_3->setGeometry(QRect(700, 150, 67, 24));
+        edgeTran = new QDoubleSpinBox(Widget);
+        edgeTran->setObjectName(QStringLiteral("edgeTran"));
+        edgeTran->setGeometry(QRect(700, 150, 67, 24));
         label_4 = new QLabel(Widget);
         label_4->setObjectName(QStringLiteral("label_4"));
         label_4->setGeometry(QRect(700, 180, 59, 16));
-        doubleSpinBox_4 = new QDoubleSpinBox(Widget);
-        doubleSpinBox_4->setObjectName(QStringLiteral("doubleSpinBox_4"));
-        doubleSpinBox_4->setGeometry(QRect(700, 200, 67, 24));
+        edgeSize = new QDoubleSpinBox(Widget);
+        edgeSize->setObjectName(QStringLiteral("edgeSize"));
+        edgeSize->setGeometry(QRect(700, 200, 67, 24));
 
         retranslateUi(Widget);
 
