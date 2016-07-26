@@ -59,6 +59,7 @@ public:
     virtual void paintGL();
     virtual void resizeGL(int width, int height);
     virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
 //    virtual void mouseMoveEvent(QMouseEvent *event);
 
@@ -97,6 +98,8 @@ protected:
         GLfloat nodeTran = 1.0;
         GLfloat edgeSize = 1.0;
         GLfloat edgeTran = 1.0;
+
+        bool dragFlag = false;
 
 
 

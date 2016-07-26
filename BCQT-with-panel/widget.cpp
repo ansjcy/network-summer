@@ -79,8 +79,15 @@ Vertex Widget::get_vertex(const std::string& name, Graph& g, NameToVertex& names
  */
 void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
 {
-    x = (wx-windowX/2)/(windowX/2/scaleTotal) - transformXTotal;
-    y = -((wy-windowY/2)/(windowY/2/scaleTotal) + transformYTotal);
+//    x = (wx-windowX/2)/(windowX/2/scaleTotal) - transformXTotal;
+//    y = -((wy-windowY/2)/(windowY/2/scaleTotal) + transformYTotal);
+    x = (1.0*(wx-windowX/2)/(windowX/2) - transformXTotal)*scaleTotal;
+    y = -(1.0*(wy-windowY/2)/(windowY/2) + transformYTotal)*scaleTotal;
+
+#ifdef DEBUG_WINDOW_TRANS_POS
+    std::cout << "window pos::" << wx << " " << wy << std::endl;
+    std::cout << "trans pos::" << x << " " << y << std::endl;
+#endif
 }
 
 //void Widget::DrawCircle(float cx, float cy, float r, int num_segments)
@@ -144,7 +151,10 @@ void Widget::keyPressEvent(QKeyEvent *event)
 {
     scaleFlag = false;
     transformFlag = false;
-    std::cout << "key::" << event->key() << std::endl;
+//    if(event->key() == Qt::Key_C && event->isAutoRepeat())
+//    {
+//        std::cout << "long push!!!" << std::endl;
+//    }
     switch (event->key())
         {
     case Qt::Key_Q:
@@ -157,6 +167,7 @@ void Widget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_E:
         MODE = SENSITIVITY_VARIANCE;
         break;
+
     case Qt::Key_U:
         scaleFlag = true;
         scaleTime = 1.1;
@@ -165,6 +176,7 @@ void Widget::keyPressEvent(QKeyEvent *event)
         scaleFlag =true;
         scaleTime = 0.9;
         break;
+
     case Qt::Key_I:
         transformFlag = true;
         transformX = 0;
@@ -185,27 +197,42 @@ void Widget::keyPressEvent(QKeyEvent *event)
         transformX = 0.1;
         transformY = 0;
         break;
+
+    case Qt::Key_C:
+        dragFlag = true;
+        break;
+
     case Qt::Key_Escape:
         this->close();
             default:
                 break;
         }
-    std::cout << "before repaint:: " << scaleTime << std::endl;
-//    this->repaint();
     this->update();
 
 }
+
+void Widget::keyReleaseEvent(QKeyEvent *event)
+{
+
+    switch(event->key())
+    {
+    case Qt::Key_C:
+        dragFlag = false;
+        break;
+    }
+}
+
 void Widget::mousePressEvent(QMouseEvent *event)
 {
     this->setFocus();
-    if(event->button() == Qt::LeftButton)
+    if(event->button() == Qt::LeftButton && !dragFlag)
     {
          std::cout << event->x() << " " << event->y() << std::endl;
          float x = 0, y = 0;
          for(int i = 0; i < myNodes.size(); i++)
          {
              coorTrans(event->x(), event->y(), x, y);
-             if(DISTANCE(x, y, myNodes[i].first, myNodes[i].second) < r*nodeSize)
+             if(DISTANCE(x, y, myNodes[i].first, myNodes[i].second) < (r*1.1)*nodeSize)
              {
                  printf("i = %d\n", i);
                  selected[i] = !selected[i];
@@ -221,6 +248,13 @@ void Widget::mousePressEvent(QMouseEvent *event)
 //         this->repaint();
          this->update();
      }
+    else if(event->button() == Qt::LeftButton && dragFlag)
+    {
+        transformFlag = true;
+        transformX = 0;
+        transformY = -0.1;
+        this->update();
+    }
 
     QOpenGLWidget::mousePressEvent(event);
 }
@@ -333,7 +367,6 @@ void Widget::drawALine(float startX, float startY, float endX, float endY, float
 }
 
 void Widget::paintGL(){
-    std::cout << "scaleTime::" << scaleTime << std::endl;
 
     if(scaleFlag)
     {
@@ -343,8 +376,8 @@ void Widget::paintGL(){
     if(transformFlag)
     {
         glTranslatef(transformX, transformY,0.0f);
-        transformXTotal += transformX;
-        transformYTotal += transformY;
+        transformXTotal += transformX/scaleTotal;
+        transformYTotal += transformY/scaleTotal;
     }
 
     rgb whiteValue;
@@ -387,7 +420,7 @@ void Widget::paintGL(){
         colors.g = 0.3;
         colors.b = 0.3;
 
-        drawACircle(myNodes[i].first+r*0.2, myNodes[i].second-r*0.2, r*nodeSize, colors, 0.3*nodeTran);
+        drawACircle(myNodes[i].first+r*0.15, myNodes[i].second-r*0.15, r*nodeSize, colors, 0.3*nodeTran);
     }
 
     std::vector<double> sensitivityMeans;
