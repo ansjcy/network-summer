@@ -247,13 +247,11 @@ void Widget::mousePressEvent(QMouseEvent *event)
          scaleFlag = false;
          this->update();
      }
-//    else if(event->button() == Qt::LeftButton && dragFlag)
-//    {
-//        transformFlag = true;
-//        transformX = 0;
-//        transformY = -0.1;
-//        this->update();
-//    }
+    else if(event->button() == Qt::LeftButton && dragFlag)
+    {
+        prevX = event->x();
+        prevY = event->y();
+    }
 
     QOpenGLWidget::mousePressEvent(event);
 }
@@ -261,9 +259,22 @@ void Widget::mousePressEvent(QMouseEvent *event)
 
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
-    std::cout << event->x() << " " << event->y() << std::endl;
+    if(dragFlag)
+    {
+        transformFlag = true;
+        transformX = (event->x() - prevX)*1.0/(windowX/2)*scaleTotal;
+        transformY = -(event->y() - prevY)*1.0/(windowY/2)*scaleTotal;
+        prevX = event->x();
+        prevY = event->y();
+        this->update();
+    }
 }
-
+void Widget::mouseReleaseEvent(QMouseEvent *event)
+{
+    transformFlag = false;
+    scaleFlag = false;
+    dragFlag = false;
+}
 
 void Widget::resizeGL(int width, int height){
   (void) width;
