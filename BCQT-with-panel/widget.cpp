@@ -81,8 +81,8 @@ void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
 {
 //    x = (wx-windowX/2)/(windowX/2/scaleTotal) - transformXTotal;
 //    y = -((wy-windowY/2)/(windowY/2/scaleTotal) + transformYTotal);
-    x = (1.0*(wx-windowX/2)/(windowX/2) - transformXTotal)*scaleTotal;
-    y = -(1.0*(wy-windowY/2)/(windowY/2) + transformYTotal)*scaleTotal;
+    x = (1.0*(wx-windowX/2)/(windowX/2) - transformX)*scaleTime;
+    y = -(1.0*(wy-windowY/2)/(windowY/2) + transformY)*scaleTime;
 
 #ifdef DEBUG_WINDOW_TRANS_POS
     std::cout << "window pos::" << wx << " " << wy << std::endl;
@@ -170,11 +170,11 @@ void Widget::keyPressEvent(QKeyEvent *event)
 
     case Qt::Key_U:
         scaleFlag = true;
-        scaleTime = 1.1;
+        scaleTime *= 1.1;
         break;
     case Qt::Key_O:
         scaleFlag =true;
-        scaleTime = 0.9;
+        scaleTime *= 0.9;
         break;
 
     case Qt::Key_I:
@@ -262,13 +262,40 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
     if(dragFlag)
     {
         transformFlag = true;
-        transformX = (event->x() - prevX)*1.0/(windowX/2)*scaleTotal;
-        transformY = -(event->y() - prevY)*1.0/(windowY/2)*scaleTotal;
+        transformX += (event->x() - prevX)*1.0/(windowX/2)/scaleTime;
+        transformY += -(event->y() - prevY)*1.0/(windowY/2)/scaleTime;
         prevX = event->x();
         prevY = event->y();
         this->update();
     }
 }
+void Widget::wheelEvent(QWheelEvent *event)
+{
+    std::cout << "delta: " << event->delta()/8
+              << " x:" << event->x() << " y: " << event->y()
+              << " globalX: " << event->globalX() << " globalY: " << event->globalY()
+              << std::endl;
+
+    if(event->delta() < 0)
+    {
+//        transformFlag = true;
+//        transformX = (400 - event->x())*1.0/(windowX/2)*scaleTotal * 0.1;
+//        transformY = -(400 - event->y())*1.0/(windowY/2)*scaleTotal * 0.1;
+        scaleFlag = true;
+        scaleTime *= 0.9;
+        this->update();
+    }
+    if(event->delta() > 0)
+    {
+//        transformFlag = true;
+//        transformX = (event->x() - 400)*1.0/(windowX/2)*scaleTotal * 0.1;
+//        transformY = -(event->y() - 400)*1.0/(windowY/2)*scaleTotal * 0.1;
+        scaleFlag = true;
+        scaleTime *= 1.1;
+        this->update();
+    }
+}
+
 void Widget::mouseReleaseEvent(QMouseEvent *event)
 {
     transformFlag = false;
@@ -385,17 +412,22 @@ void Widget::drawALine(float startX, float startY, float endX, float endY, float
 
 void Widget::paintGL(){
 
-    if(scaleFlag)
+
+    if(scaleFlag || transformFlag)
     {
-        glScalef(1.0/scaleTime, 1.0/scaleTime, 1.0/scaleTime);
-        scaleTotal *= scaleTime;
-    }
-    if(transformFlag)
-    {
+//        scaleTotal *= scaleTime;
+        glLoadIdentity();
+        glScalef(scaleTime, scaleTime, scaleTime);
         glTranslatef(transformX, transformY,0.0f);
-        transformXTotal += transformX/scaleTotal;
-        transformYTotal += transformY/scaleTotal;
+
     }
+//    if(transformFlag)
+//    {
+//        glLoadIdentity();
+//        glTranslatef(transformX, transformY,0.0f);
+////        transformXTotal += transformX/scaleTime;
+////        transformYTotal += transformY/scaleTime;
+//    }
 
     rgb whiteValue;
     whiteValue.r = 229;
