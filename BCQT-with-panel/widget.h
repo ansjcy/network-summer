@@ -61,6 +61,8 @@ public:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
+
 //    virtual void mouseMoveEvent(QMouseEvent *event);
 
     void updateWindow();
@@ -100,6 +102,7 @@ protected:
         GLfloat edgeTran = 1.0;
 
         bool dragFlag = false;
+        double prevX, prevY;
 
 
 
