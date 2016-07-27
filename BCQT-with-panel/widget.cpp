@@ -81,8 +81,8 @@ void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
 {
 //    x = (wx-windowX/2)/(windowX/2/scaleTotal) - transformXTotal;
 //    y = -((wy-windowY/2)/(windowY/2/scaleTotal) + transformYTotal);
-    x = (1.0*(wx-windowX/2)/(windowX/2) - transformX)*scaleTime;
-    y = -(1.0*(wy-windowY/2)/(windowY/2) + transformY)*scaleTime;
+    x = (1.0*(wx-windowX/2)/(windowX/2) - transformX)/scaleTime;
+    y = -(1.0*(wy-windowY/2)/(windowY/2) + transformY)/scaleTime;
 
 #ifdef DEBUG_WINDOW_TRANS_POS
     std::cout << "window pos::" << wx << " " << wy << std::endl;
