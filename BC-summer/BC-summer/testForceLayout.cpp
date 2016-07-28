@@ -474,7 +474,8 @@ int main(int argc, char* argv[])
         nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first]);
     }
 
-    bc.compute(nodes, true);
+    bc.compute(nodes, false);
+    bc.brandes_implementation(nodes);
 
 //***************************
 

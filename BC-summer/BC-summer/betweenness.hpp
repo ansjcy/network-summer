@@ -15,7 +15,11 @@
 #include <limits.h>
 #include <vector>
 #include <map>
+#include <queue>
+#include <stack>
+#include <list>
 #include <fstream>
+#include <float.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/betweenness_centrality.hpp>
@@ -34,6 +38,8 @@
 
 #include "graph.hpp"
 #include "define.hpp"
+
+
 
 using namespace boost;
 struct weighted_edge
@@ -58,5 +64,6 @@ class Betweenness
 public:
 //    double btwValue[];
     int compute(std::vector<Node*> &nodes, bool needDerivs);
+    void brandes_implementation(std::vector<Node*> &nodes);
 };
 #endif /* betweenness_hpp */

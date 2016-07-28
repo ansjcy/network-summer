@@ -14,34 +14,50 @@
 //    }
 //    
 //    // should add all the edges on the graph!!!!
-//    nodes[0]->addEdge(nodes[1]);
-//    nodes[0]->addEdge(nodes[2]);
-//    nodes[0]->addEdge(nodes[3]);
-//    nodes[0]->addEdge(nodes[4]);
-//    
-//    nodes[1]->addEdge(nodes[0]);
-//    
-//    nodes[2]->addEdge(nodes[0]);
-//    
-//    nodes[3]->addEdge(nodes[0]);
-//    
-//    nodes[4]->addEdge(nodes[0]);
-//    nodes[4]->addEdge(nodes[5]);
-//    nodes[4]->addEdge(nodes[6]);
-//    nodes[4]->addEdge(nodes[7]);
-//    
-//    nodes[5]->addEdge(nodes[4]);
-//    nodes[6]->addEdge(nodes[4]);
-//    
-//    nodes[7]->addEdge(nodes[4]);
-//    nodes[7]->addEdge(nodes[8]);
-//    
-//    nodes[8]->addEdge(nodes[7]);
-//    
-//    bc.compute(nodes, true);
+////    nodes[0]->addEdge(nodes[1]);
+////    nodes[0]->addEdge(nodes[2]);
+////    nodes[0]->addEdge(nodes[3]);
+////    nodes[0]->addEdge(nodes[4]);
+////    
+////    nodes[1]->addEdge(nodes[0]);
+////    
+////    nodes[2]->addEdge(nodes[0]);
+////    
+////    nodes[3]->addEdge(nodes[0]);
+////    
+////    nodes[4]->addEdge(nodes[0]);
+////    nodes[4]->addEdge(nodes[5]);
+////    nodes[4]->addEdge(nodes[6]);
+////    nodes[4]->addEdge(nodes[7]);
+////    
+////    nodes[5]->addEdge(nodes[4]);
+////    nodes[6]->addEdge(nodes[4]);
+////    
+////    nodes[7]->addEdge(nodes[4]);
+////    nodes[7]->addEdge(nodes[8]);
+////    
+////    nodes[8]->addEdge(nodes[7]);
+////    
+////    bc.compute(nodes, true);
 //    
 ////    for (int i = 0; i < 7; i++) {
 ////        cout<<nodes[i]->index<<endl;
 ////    }
+//    
+//    std::queue<int> qq;
+//    std::stack<int> ss;
+//    qq.push(1);
+//    qq.push(2);
+//    qq.push(3);
+//    ss.push(1);
+//    ss.push(2);
+//    ss.push(3);
+//    std::cout << "qq :" << qq.front() << std::endl;
+//    qq.pop();
+//    std::cout << "qq :" << qq.front() << std::endl;
+//    std::cout << "ss :" << ss.top() << std::endl;
+//    ss.pop();
+//    std::cout << "ss :" << ss.top() << std::endl;
+//    
 //    
 //}

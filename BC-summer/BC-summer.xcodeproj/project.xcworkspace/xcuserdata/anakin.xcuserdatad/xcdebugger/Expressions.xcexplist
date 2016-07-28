@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "void run_weighted_test&lt;boost::adjacency_list&lt;boost::listS, boost::listS, boost::directedS, boost::property&lt;boost::vertex_index_t, int, boost::no_property&gt;, boost::property&lt;boost::edge_weight_t, double, boost::property&lt;boost::edge_index_t, unsigned long, boost::no_property&gt; &gt;, boost::no_property, boost::listS&gt; &gt;(boost::adjacency_list&lt;boost::listS, boost::listS, boost::directedS, boost::property&lt;boost::vertex_index_t, int, boost::no_property&gt;, boost::property&lt;boost::edge_weight_t, double, boost::property&lt;boost::edge_index_t, unsigned long, boost::no_property&gt; &gt;, boost::no_property, boost::listS&gt;*, int, weighted_edge*, int, std::__1::vector&lt;double, std::__1::allocator&lt;double&gt; &gt;&amp;, std::__1::vector&lt;double, std::__1::allocator&lt;double&gt; &gt;&amp;):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "path_count">
+            </PersistentString>
+            <PersistentString
+               value = "distance">
+            </PersistentString>
+            <PersistentString
+               value = "dependency">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

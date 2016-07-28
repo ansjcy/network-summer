@@ -127,6 +127,7 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                                            .vertex_index_map(get(vertex_index, g))
                                            .weight_map(get(boost::edge_weight, g))
                                            );
+            
 #ifdef DEBUG_SENSITIVITY
             cout << "sensitivity: " << i << endl;
             for(int j = 0; j < centrality2.size(); ++j)
@@ -249,7 +250,55 @@ void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::ve
     brandes_betweenness_centrality(g,
                                    centrality_map(make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()))
                                    .edge_centrality_map(make_iterator_property_map(edge_centrality2.begin(), get(edge_index, g), double()))
-                                   .vertex_index_map(get(vertex_index, g)).weight_map(get(edge_weight, g)));
+                                   .vertex_index_map(get(vertex_index, g))
+                                   .weight_map(get(edge_weight, g)));
+    
+    
+    //***************** my try to read sigma, distance values from the function *****
+    typedef typename graph_traits<GraphW>::degree_size_type degree_size_type;
+    typedef typename graph_traits<GraphW>::edge_descriptor edge_descriptor;
+    typedef decltype(make_iterator_property_map(centrality.begin(), get(vertex_index, g), double())) a_centrality_map;
+    typedef typename property_traits<a_centrality_map>::value_type centrality_type;
+
+    
+    std::vector<std::vector<edge_descriptor> > incoming(V);
+    std::vector<centrality_type> distance(V);
+    std::vector<centrality_type> dependency(V);
+    std::vector<degree_size_type> path_count(V);
+    
+//    auto incoming_map = make_iterator_property_map(incoming.begin(), get(vertex_index, g));
+//    auto distance_map = make_iterator_property_map(distance.begin(), get(vertex_index, g));
+//    auto dependency_map = make_iterator_property_map(dependency.begin(), get(vertex_index, g));
+//    auto path_count_map = make_iterator_property_map(path_count.begin(), get(vertex_index, g));
+    
+    brandes_betweenness_centrality(g,
+                                   make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()),
+                                   make_iterator_property_map(edge_centrality2.begin(), get(edge_index, g), double()),
+                                   make_iterator_property_map(incoming.begin(), get(vertex_index, g)),
+                                   make_iterator_property_map(distance.begin(), get(vertex_index, g)),
+                                   make_iterator_property_map(dependency.begin(), get(vertex_index, g)),
+                                   make_iterator_property_map(path_count.begin(), get(vertex_index, g)),
+                                   get(vertex_index, g),
+                                   get(edge_weight, g));
+    
+    
+    auto aa = path_count[0];
+    std::cout << "here";
+    
+    /*
+     brandes_betweenness_centrality(const Graph& g,
+     CentralityMap centrality,     // C_B
+     EdgeCentralityMap edge_centrality_map,
+     IncomingMap incoming, // P
+     DistanceMap distance,         // d
+     DependencyMap dependency,     // delta
+     PathCountMap path_count,      // sigma
+     VertexIndexMap vertex_index,
+     WeightMap weight_map
+     */
+
+//********************************
+    
     centralities.clear();
     for(int i = 0; i < E; i++)
     {
@@ -263,37 +312,78 @@ void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::ve
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
+{
+    std::map<Node*, double> CB;
+    for(int i = 0; i < nodes.size(); i++)
+        CB[nodes[i]] = 0;
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        auto r = nodes[i];
+        std::stack<Node*> S;
+        std::queue<Node*> Q;
+        std::map<Node*, std::vector<Node*> > P;
+        std::map<Node*, int> sigma;
+        std::map<Node*, double> distance;
+        for(int j = 0; j < nodes.size(); j++)
+        {
+            sigma[nodes[j]] = 0;
+            distance[nodes[j]] = DBL_MAX;
+            if(j == i)
+            {
+                sigma[nodes[j]] = 1;
+                distance[nodes[j]] = 0;
+            }
+        }
+        
+        Q.push(r);
+        
+        //BFS traversal
+        while(!Q.empty())
+        {
+            auto v = Q.front();
+            Q.pop();
+            S.push(v);
+            for(int e = 0; e < v->edges.size(); e++)
+            {
+                auto w = v->edges[e]->getNode1();
+                if(distance[w] == DBL_MAX)
+                {
+                    Q.push(w);
+                    distance[w] = distance[v] + 1;
+                }
+                if(distance[w] == distance[v] + 1)
+                {
+                    sigma[w] = sigma[w] + sigma[v];
+                    P[w].push_back(v);
+                }
+            }
+        }
+        
+        // dependency accumulation
+        std::map<Node*, double> delta;
+        for(int j = 0; j < nodes.size(); j++)
+            delta[nodes[j]] = 0;
+        while (!S.empty()) {
+            auto w = S.top();
+            S.pop();
+            for(int j = 0; j < P[w].size(); j++)
+            {
+                auto v = P[w][j];
+                delta[v] = delta[v] + (sigma[v]*1.0)/(sigma[w])*(1 + delta[w]);
+            }
+            if(w != r)
+            {
+                CB[w] = CB[w] + delta[w];
+            }
+        }
+    }
+    
+    cout << "my result!!" << endl;
+    for(int i = 0; i < nodes.size(); i++)
+        cout << i << ":" << CB[nodes[i]] << " ";
+    
+}
 
 
 
