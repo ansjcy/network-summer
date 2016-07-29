@@ -440,7 +440,7 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
                 sigma_store[x][z] = 0;
                 P_store[x][z].clear();
             }
-            if()
+          
         }
     }
     
