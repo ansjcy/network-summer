@@ -440,7 +440,30 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
                 sigma_store[x][z] = 0;
                 P_store[x][z].clear();
             }
-          
+            if(isIn(make_pair(x, z), pairsDone))
+                pairsDone.erase(find(pairsDone.begin(), pairsDone.end(), make_pair(x, z)));
+            distance_store[x][z] = alt;
+        }
+        if(alt == distance_store[x][z] && distance_store[x][z] != DBL_MAX)
+        {
+            if(!isIn(make_pair(x, z), pairsDone))
+            {
+                if(!isIn(make_pair(x, z), sigma_old))
+                    reduceBetweenness(x, z);
+                if(sigma_store[x][z] != 0)
+                    sigma_old[x][z] = sigma_store[x][z];
+                
+                sigma_store[x][z] = sigma_store[x][z] + (sigma_store[x][src] * 1 * sigma_store[dest][z]);
+                P_store[x][y].push_back(x);
+                for(int iter = 0; iter < P_store[y][z].size(); iter++)
+                {
+                    P_store[x][z].push_back(P_store[y][z][iter]);
+                }
+            }
+            pairsDone.push_back(make_pair(x, z));
+            affectedVertices.push_back(x);
+            // need pred(x)...
+            
         }
     }
     
