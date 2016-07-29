@@ -473,7 +473,7 @@ int main(int argc, char* argv[])
     for(int i = 0; i < myEdges.size(); i++)
     {
         nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
-        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
+//        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
         //for pred(x)
         nodes[myEdges[i].second]->pred[weight] = nodes[myEdges[i].first];
         
