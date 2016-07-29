@@ -50,7 +50,7 @@ Edge* Node::getEdge(int idx)
     }
     return 0;
 }
-Edge* Node::addEdge(Node *n)
+Edge* Node::addEdge(Node *n, double weight)
 {
     int k = findEdge(n);
     if(k == -1)
@@ -59,7 +59,7 @@ Edge* Node::addEdge(Node *n)
         e->setNode0(this);
         e->setNode1(n);
         e->multiplicity = 1;
-        e->weight = 1;      //needs to be modified..
+        e->weight = weight;      //needs to be modified..
         edges.push_back(e);
         return e;
     }
