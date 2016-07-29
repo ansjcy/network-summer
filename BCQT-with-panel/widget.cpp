@@ -271,10 +271,11 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
 }
 void Widget::wheelEvent(QWheelEvent *event)
 {
-    std::cout << "delta: " << event->delta()/8
-              << " x:" << event->x() << " y: " << event->y()
-              << " globalX: " << event->globalX() << " globalY: " << event->globalY()
-              << std::endl;
+
+//    std::cout << "delta: " << event->delta()/8
+//              << " x:" << event->x() << " y: " << event->y()
+//              << " globalX: " << event->globalX() << " globalY: " << event->globalY()
+//              << std::endl;
 
     if(event->delta() < 0)
     {

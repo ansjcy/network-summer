@@ -17,10 +17,21 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "main:testForceLayout.cpp">
+      </ContextState>
+      <ContextState
          contextName = "Betweenness::brandes_implementation(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;):betweenness.cpp">
          <PersistentStrings>
             <PersistentString
                value = "cost_store">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::insertEdge(Node*, Node*, double):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "cost_store[src][dest]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

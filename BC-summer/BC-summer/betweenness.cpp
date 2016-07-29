@@ -283,7 +283,6 @@ void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::ve
     
     
     auto aa = path_count[0];
-    std::cout << "here";
     
     /*
      brandes_betweenness_centrality(const Graph& g,
@@ -318,11 +317,14 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
     for(int i = 0; i < nodes.size(); i++)
     {
         std::map<Node*, double> cost_per_node;
+
         for(int j = 0; j < nodes[i]->edges.size(); j++)
         {
             cost_per_node[nodes[i]->edges[j]->node1] = nodes[i]->edges[j]->weight;
         }
         cost_store[nodes[i]] = cost_per_node;
+//        for(auto iter = cost_per_node.begin(); iter != cost_per_node.end(); iter++)
+//            cost_store[nodes[i]][iter->first] = iter->second;
     }
 
     
@@ -393,13 +395,9 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         sigma_store[r] = sigma;
         distance_store[r] = distance;
     }
-    
-    
-    
-    cout << "my result!!" << endl;
-    for(int i = 0; i < nodes.size(); i++)
-        cout << i << ":" << CB[nodes[i]] << " ";
-    
+//    std::cout << "distance store " << distance_store[nodes[50]][nodes[43]] << std::endl;
+//    std::cout << "cost store " << cost_store[nodes[50]][nodes[43]] << std::endl;
+
 }
 void Betweenness::insertEdge(Node* src, Node* dest, double cost)
 {
@@ -408,7 +406,10 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     trackLost.clear();
     pairsDone.clear();
     
+    //mind this, undirected graph...
     cost_store[src][dest] = cost;
+    cost_store[dest][src] = cost;
+//    std::cout << "cost store " << cost_store[src][dest] << std::endl;
     std::vector<Node*> sinks = insertUpdate(dest, src, src);
     std::vector<Node*> sources = insertUpdate(src, dest, dest);
     for(int i = 0; i < sinks.size(); i++)
@@ -431,6 +432,7 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
         Node* y = workSet.back().second;
         workSet.pop_back();
         double alt = cost_store[x][y] + distance_store[y][z];
+        std::cout << "distance store xz: " << distance_store[x][z] << std::endl;
         if(alt < distance_store[x][z])
         {
             if(!isIn(make_pair(x, z), sigma_old))

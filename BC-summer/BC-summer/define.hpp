@@ -15,4 +15,5 @@
 #define DEBGU_CENTRALITY
 //#define DEBUG_CHECK_ITERATION
 //#define DEBUG_FORCE_LAYOUT_POS
+//#define DEBUG_WITHOUT_INCREMENTAL
 #endif /* define_h */

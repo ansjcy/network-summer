@@ -13,6 +13,10 @@
 //        nodes.push_back(tmpNode);
 //    }
 //    
+//    map<int, int> aaa;
+//    aaa[1] = 2;
+//    cout << aaa[2];
+//    
 //    // should add all the edges on the graph!!!!
 ////    nodes[0]->addEdge(nodes[1]);
 ////    nodes[0]->addEdge(nodes[2]);

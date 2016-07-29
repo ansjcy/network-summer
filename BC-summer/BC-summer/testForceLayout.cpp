@@ -488,6 +488,47 @@ int main(int argc, char* argv[])
 //    }
     bc.compute(nodes, false);
     bc.brandes_implementation(nodes);
+    
+    std::cout << "******* my result!! *********" << std::endl;
+    for(int i = 0; i < nodes.size(); i++)
+        std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+    std::cout << std::endl;
+    
+    std::map<Node*, double> CB_record;
+    for(auto iter = bc.CB.begin(); iter != bc.CB.end(); iter++)
+    {
+        CB_record[iter->first] = iter->second;
+    }
+
+#ifdef DEBUG_WITHOUT_INCREMENTAL
+    nodes[43]->addEdge(nodes[50], 1);
+    bc.compute(nodes, false);
+    bc.brandes_implementation(nodes);
+    std::cout << "******* my result 2 !! *********" << std::endl;
+    for(int i = 0; i < nodes.size(); i++)
+        std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+    std::cout << std::endl;
+    std::cout << "******* the difference between 2 results *********" << std::endl;
+    for(int i = 0; i < nodes.size(); i++)
+        std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
+    std::cout << std::endl;
+#endif
+
+    
+    
+    Node* src = nodes[43];
+    Node* dest = nodes[50];
+    
+    bc.insertEdge(src, dest, 1);
+    
+    std::cout << "****** after adding edge " << src->getIndex() << "->" << dest->getIndex() << ": " << std::endl;
+    for(int i = 0; i < nodes.size(); i++)
+        std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+    std::cout << std::endl;
+    std::cout << "******* the difference between 2 results *********" << std::endl;
+    for(int i = 0; i < nodes.size(); i++)
+        std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
+    std::cout << std::endl;
 
 //***************************
 
