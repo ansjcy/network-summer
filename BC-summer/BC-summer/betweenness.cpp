@@ -408,7 +408,7 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     
     //mind this, undirected graph...
     cost_store[src][dest] = cost;
-    cost_store[dest][src] = cost;
+//    cost_store[dest][src] = cost;
 //    std::cout << "cost store " << cost_store[src][dest] << std::endl;
     std::vector<Node*> sinks = insertUpdate(dest, src, src);
     std::vector<Node*> sources = insertUpdate(src, dest, dest);
@@ -432,7 +432,6 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
         Node* y = workSet.back().second;
         workSet.pop_back();
         double alt = cost_store[x][y] + distance_store[y][z];
-        std::cout << "distance store xz: " << distance_store[x][z] << std::endl;
         if(alt < distance_store[x][z])
         {
             if(!isIn(make_pair(x, z), sigma_old))

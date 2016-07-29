@@ -489,21 +489,24 @@ int main(int argc, char* argv[])
     bc.compute(nodes, false);
     bc.brandes_implementation(nodes);
     
+#ifdef DEBUG_SHOW_MY_RESULT
     std::cout << "******* my result!! *********" << std::endl;
     for(int i = 0; i < nodes.size(); i++)
         std::cout << i << ":" << bc.CB[nodes[i]] << " ";
     std::cout << std::endl;
+#endif
     
     std::map<Node*, double> CB_record;
     for(auto iter = bc.CB.begin(); iter != bc.CB.end(); iter++)
     {
         CB_record[iter->first] = iter->second;
     }
-
-#ifdef DEBUG_WITHOUT_INCREMENTAL
     nodes[43]->addEdge(nodes[50], 1);
     bc.compute(nodes, false);
     bc.brandes_implementation(nodes);
+
+
+#ifdef DEBUG_WITHOUT_INCREMENTAL
     std::cout << "******* my result 2 !! *********" << std::endl;
     for(int i = 0; i < nodes.size(); i++)
         std::cout << i << ":" << bc.CB[nodes[i]] << " ";
@@ -514,13 +517,13 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
 #endif
 
-    
-    
+
     Node* src = nodes[43];
     Node* dest = nodes[50];
-    
     bc.insertEdge(src, dest, 1);
     
+    
+#ifdef DEBUG_WITH_INCREMENTAL
     std::cout << "****** after adding edge " << src->getIndex() << "->" << dest->getIndex() << ": " << std::endl;
     for(int i = 0; i < nodes.size(); i++)
         std::cout << i << ":" << bc.CB[nodes[i]] << " ";
@@ -529,6 +532,7 @@ int main(int argc, char* argv[])
     for(int i = 0; i < nodes.size(); i++)
         std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
     std::cout << std::endl;
+#endif
 
 //***************************
 
