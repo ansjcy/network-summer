@@ -18,6 +18,7 @@
 #include <queue>
 #include <stack>
 #include <list>
+#include <tuple>
 #include <fstream>
 #include <float.h>
 #include <boost/graph/graph_traits.hpp>
@@ -63,7 +64,28 @@ class Betweenness
 {
 public:
 //    double btwValue[];
+    
+    std::map<Node*, std::map<Node*, std::vector<Node*> > > P_store;
+    std::map<Node*, std::map<Node*, int> > sigma_store;
+    std::map<Node*, std::map<Node*, double> > distance_store;
+    std::map<Node*, std::map<Node*, double> > cost_store;
+    
+    std::map<Node*, std::map<Node*, int> > sigma_old;
+    std::map<Node*, std::map<Node*, double> > distance_old;
+    std::vector<std::pair<Node*, Node*> > pairsDone;
+    std::vector<std::tuple<Node*, Node*, Node*> > trackLost;
+
+    
     int compute(std::vector<Node*> &nodes, bool needDerivs);
     void brandes_implementation(std::vector<Node*> &nodes);
+    void insertEdge(Node* src, Node* dest, double cost);
+    std::vector<Node*> insertUpdate(Node* src, Node* dest, Node* z);
+    void reduceBetweenness(Node* a, Node* z);
+    void increaseBetweenness();
+    
+    bool isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, double> > container);
+    bool isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, int> > container);
+    bool isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > container);
+    bool isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > container);
 };
 #endif /* betweenness_hpp */

@@ -16,5 +16,13 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "Betweenness::brandes_implementation(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "cost_store">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

@@ -59,5 +59,14 @@
 //    ss.pop();
 //    std::cout << "ss :" << ss.top() << std::endl;
 //    
+//    std::vector<int> test;
+//    test.push_back(1);
+//    test.push_back(2);
+//    test.push_back(3);
+////    std::vector<int>::iterator iter = test.begin()+1;
+////    test.erase(iter);
+//    cout << test.back() << endl;
+//    test.pop_back();
+//    cout << test.back() << endl;
 //    
 //}

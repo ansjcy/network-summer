@@ -59,6 +59,7 @@ Edge* Node::addEdge(Node *n)
         e->setNode0(this);
         e->setNode1(n);
         e->multiplicity = 1;
+        e->weight = 1;      //needs to be modified..
         edges.push_back(e);
         return e;
     }

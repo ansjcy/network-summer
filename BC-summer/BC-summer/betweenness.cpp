@@ -314,6 +314,18 @@ void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::ve
 
 void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
 {
+    //global store..
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        std::map<Node*, double> cost_per_node;
+        for(int j = 0; j < nodes[i]->edges.size(); j++)
+        {
+            cost_per_node[nodes[i]->edges[j]->node1] = nodes[i]->edges[j]->weight;
+        }
+        cost_store[nodes[i]] = cost_per_node;
+    }
+
+    
     std::map<Node*, double> CB;
     for(int i = 0; i < nodes.size(); i++)
         CB[nodes[i]] = 0;
@@ -377,6 +389,10 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
                 CB[w] = CB[w] + delta[w];
             }
         }
+        
+        P_store[r] = P;
+        sigma_store[r] = sigma;
+        distance_store[r] = distance;
     }
     
     cout << "my result!!" << endl;
@@ -384,6 +400,89 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         cout << i << ":" << CB[nodes[i]] << " ";
     
 }
+void Betweenness::insertEdge(Node* src, Node* dest, double cost)
+{
+    sigma_old.clear();
+    distance_old.clear();
+    trackLost.clear();
+    pairsDone.clear();
+    
+    cost_store[src][dest] = cost;
+    std::vector<Node*> sinks = insertUpdate(dest, src, src);
+    std::vector<Node*> sources = insertUpdate(src, dest, dest);
+    for(int i = 0; i < sinks.size(); i++)
+        insertUpdate(src, dest, sinks[i]);
+    for(int i = 0; i < sources.size(); i++)
+        insertUpdate(dest, src, sources[i]);
+    increaseBetweenness();
+}
+std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
+{
+    std::vector<std::pair<Node*, Node*> > workSet;
+    std::vector<Node*> visitedVertices;
+    std::vector<Node*> affectedVertices;
+    
+    workSet.push_back(make_pair(src, dest));
+    visitedVertices.push_back(src);
+    
+    while (workSet.size() != 0) {
+        Node* x = workSet.back().first;
+        Node* y = workSet.back().second;
+        workSet.pop_back();
+        double alt = cost_store[x][y] + distance_store[y][z];
+        if(alt < distance_store[x][z])
+        {
+            if(!isIn(make_pair(x, z), sigma_old))
+            {
+                distance_old[x][z] = distance_store[x][z];
+                sigma_old[x][z] = sigma_store[x][z];
+                reduceBetweenness(x, z);
+                sigma_store[x][z] = 0;
+                P_store[x][z].clear();
+            }
+            if()
+        }
+    }
+    
+    
+    return affectedVertices;
+}
+void Betweenness::reduceBetweenness(Node* a, Node* z)
+{
+    
+}
+void Betweenness::increaseBetweenness()
+{
+    
+}
+
+bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, double> > container)
+{
+    if(container.find(key.first) != container.end())
+        if(container[key.first].find(key.second) != container[key.first].end())
+            return true;
+    return false;
+}
+bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, int> > container)
+{
+    if(container.find(key.first) != container.end())
+        if(container[key.first].find(key.second) != container[key.first].end())
+            return true;
+    return false;
+}
+bool Betweenness::isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > container)
+{
+    if(find(container.begin(), container.end(), value) != container.end())
+        return true;
+    return false;
+}
+bool Betweenness::isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > container)
+{
+    if(find(container.begin(), container.end(), value) != container.end())
+        return true;
+    return false;
+}
+
 
 
 
