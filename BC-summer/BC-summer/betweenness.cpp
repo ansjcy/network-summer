@@ -322,6 +322,13 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         {
             cost_per_node[nodes[i]->edges[j]->node1] = nodes[i]->edges[j]->weight;
         }
+        for(int j = 0; j < nodes.size(); j++)
+        {
+            if(cost_per_node.find(nodes[j]) != cost_per_node.end())
+                continue;
+            cost_per_node[nodes[j]] = DBL_MAX;
+        }
+        cost_per_node[nodes[i]] = 0;
         cost_store[nodes[i]] = cost_per_node;
 //        for(auto iter = cost_per_node.begin(); iter != cost_per_node.end(); iter++)
 //            cost_store[nodes[i]][iter->first] = iter->second;
