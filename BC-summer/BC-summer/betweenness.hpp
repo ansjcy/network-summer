@@ -64,6 +64,7 @@ class Betweenness
 {
 public:
 //    double btwValue[];
+    std::map<Node*, double> CB;
     
     std::map<Node*, std::map<Node*, std::vector<Node*> > > P_store;
     std::map<Node*, std::map<Node*, int> > sigma_store;
@@ -87,5 +88,7 @@ public:
     bool isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, int> > container);
     bool isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > container);
     bool isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > container);
+    
+    bool SP(Node* x, Node* y, Node* z);
 };
 #endif /* betweenness_hpp */

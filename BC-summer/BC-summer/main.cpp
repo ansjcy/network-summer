@@ -43,30 +43,6 @@
 ////    for (int i = 0; i < 7; i++) {
 ////        cout<<nodes[i]->index<<endl;
 ////    }
-//    
-//    std::queue<int> qq;
-//    std::stack<int> ss;
-//    qq.push(1);
-//    qq.push(2);
-//    qq.push(3);
-//    ss.push(1);
-//    ss.push(2);
-//    ss.push(3);
-//    std::cout << "qq :" << qq.front() << std::endl;
-//    qq.pop();
-//    std::cout << "qq :" << qq.front() << std::endl;
-//    std::cout << "ss :" << ss.top() << std::endl;
-//    ss.pop();
-//    std::cout << "ss :" << ss.top() << std::endl;
-//    
-//    std::vector<int> test;
-//    test.push_back(1);
-//    test.push_back(2);
-//    test.push_back(3);
-////    std::vector<int>::iterator iter = test.begin()+1;
-////    test.erase(iter);
-//    cout << test.back() << endl;
-//    test.pop_back();
-//    cout << test.back() << endl;
+//
 //    
 //}

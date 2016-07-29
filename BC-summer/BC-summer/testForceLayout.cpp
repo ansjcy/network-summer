@@ -468,14 +468,24 @@ int main(int argc, char* argv[])
         tmpNode->setIndex(i);
         nodes.push_back(tmpNode);
     }
+    
+    double weight = 1;
     for(int i = 0; i < myEdges.size(); i++)
     {
-        nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], 1);
-        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], 1);
-        
+        nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
+        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
+        //for pred(x)
+        nodes[myEdges[i].second]->pred[weight] = nodes[myEdges[i].first];
         
     }
-
+//    for(int i = 0; i < nodes.size(); i++)
+//    {
+//        std::cout << "node " << i << ": " << std::endl;
+//        for(auto j = nodes[i]->pred.begin(); j != nodes[i]->pred.end(); j++)
+//        {
+//            std::cout << j->first->getIndex() << std::endl;
+//        }
+//    }
     bc.compute(nodes, false);
     bc.brandes_implementation(nodes);
 

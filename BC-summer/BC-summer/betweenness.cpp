@@ -326,7 +326,6 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
     }
 
     
-    std::map<Node*, double> CB;
     for(int i = 0; i < nodes.size(); i++)
         CB[nodes[i]] = 0;
     for(int i = 0; i < nodes.size(); i++)
@@ -394,6 +393,8 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         sigma_store[r] = sigma;
         distance_store[r] = distance;
     }
+    
+    
     
     cout << "my result!!" << endl;
     for(int i = 0; i < nodes.size(); i++)
@@ -463,20 +464,112 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
             pairsDone.push_back(make_pair(x, z));
             affectedVertices.push_back(x);
             // need pred(x)...
-            
+            for(auto iter = x->pred.begin(); iter != x->pred.end(); iter++)
+            {
+                Node* u = iter->second;
+                if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) != visitedVertices.end())
+                {
+                    workSet.push_back(make_pair(u, x));
+                    visitedVertices.push_back(u);
+                }
+            }
         }
     }
-    
-    
     return affectedVertices;
 }
 void Betweenness::reduceBetweenness(Node* a, Node* z)
 {
+    if(sigma_old[a][z] == 0)
+        return;
+    std::vector<Node*> known;
+    std::vector<Node*> stack;
+    for(int i = 0; i < P_store[a][z].size(); i++)
+    {
+        Node* n = P_store[a][z][i];
+        if(distance_store[a][z] != distance_old[a][n] + distance_old[n][z])
+            continue;
+        else if(a != n && n != z)
+        {
+            CB[n] = CB[n] - (sigma_old[a][n] * sigma_old[n][z] / sigma_old[a][z]);
+            trackLost.push_back(make_tuple(a, z, n));
+        }
+        stack.push_back(n);
+        known.push_back(n);
+    }
+    while (stack.size() != 0) {
+        Node* p = stack.back();
+        stack.pop_back();
+        known.push_back(p);
+        for(int i = 0; i < P_store[a][p].size(); i++)
+        {
+            Node* n = P_store[a][p][i];
+            if(distance_store[a][z] != distance_old[a][n] + distance_old[n][z])
+                continue;
+            else if(a != n && n != z && std::find(known.begin(), known.end(), n) != known.end())
+            {
+                CB[n] = CB[n] - (sigma_old[a][n] * sigma_old[n][z] / sigma_old[a][z]);
+                trackLost.push_back(make_tuple(a, z, n));
+            }
+            stack.push_back(n);
+            known.push_back(n);
+        }
+    }
+    std::vector<Node*> alreadyKnown;
+    for(int i = 0; i < known.size(); i++)
+        alreadyKnown.push_back(known[i]);
+    alreadyKnown.push_back(a);
+    for(int i = 0; i < trackLost.size(); i++)
+    {
+        Node* v = std::get<2>(trackLost[i]);
+        Node* v1 = std::get<0>(trackLost[i]);
+        Node* v2 = std::get<1>(trackLost[i]);
+        if(std::find(known.begin(), known.end(), v1) != known.end() && std::find(known.begin(), known.end(), v2) != known.end()
+           && distance_store[a][z] == distance_old[a][v] + distance_old[v][z])
+        {
+            if(std::find(alreadyKnown.begin(), alreadyKnown.end(), v) != alreadyKnown.end())
+            {
+                CB[v] = CB[v] - (sigma_old[a][v] * sigma_old[v][z] / sigma_old[a][z]);
+                alreadyKnown.push_back(v);
+                trackLost.push_back(std::make_tuple(a, z, v));
+            }
+        }
+    }
     
 }
 void Betweenness::increaseBetweenness()
 {
-    
+    for(auto outer = sigma_old.begin(); outer != sigma_old.end(); outer++)
+    {
+        auto src = outer->first;
+        for(auto inner = outer->second.begin(); inner != outer->second.end(); inner++)
+        {
+            auto dest = inner->first;
+            std::vector<Node*> known;
+            std::vector<Node*> stack;
+            for(int i = 0; i < P_store[src][dest].size(); i++)
+            {
+                Node* n = P_store[src][dest][i];
+                stack.push_back(n);
+                known.push_back(n);
+                if(src != n && n != dest)
+                    CB[n] = CB[n] + (sigma_store[src][n] * sigma_store[n][dest] / sigma_store[src][dest]);
+            }
+            while (stack.size() != 0) {
+                Node* n = stack.back();
+                stack.pop_back();
+                for(int i = 0; i < P_store[src][n].size(); i++)
+                {
+                    Node* p = P_store[src][n][i];
+                    if(p != src && p != dest && std::find(known.begin(), known.end(), p) == known.end())
+                    {
+                        stack.push_back(p);
+                        known.push_back(p);
+                         CB[p] = CB[p] + (sigma_store[src][p] * sigma_store[p][dest] / sigma_store[src][dest]);
+                    }
+                }
+            }
+        }
+    }
 }
 
 bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, double> > container)
@@ -503,6 +596,18 @@ bool Betweenness::isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::t
 {
     if(find(container.begin(), container.end(), value) != container.end())
         return true;
+    return false;
+}
+bool Betweenness::SP(Node *x, Node *y, Node *z)
+{
+    if(isIn(make_pair(x, z), distance_store))
+    {
+        if(distance_store[x][z] != DBL_MAX)
+        {
+            if(distance_store[x][z] == cost_store[x][y] + distance_store[y][z])
+                return true;
+        }
+    }
     return false;
 }
 
