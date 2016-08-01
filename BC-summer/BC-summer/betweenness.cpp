@@ -111,6 +111,11 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                     numEdges++;
                 }
             }
+            
+
+            
+            
+            
             graph_traits < Graph >::edge_iterator e, e_end;
             int k=0;
             for (boost::tie(e, e_end) = edges(g); e != e_end; ++e) {

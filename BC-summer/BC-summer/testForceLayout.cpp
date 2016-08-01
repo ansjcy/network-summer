@@ -486,7 +486,7 @@ int main(int argc, char* argv[])
 //            std::cout << j->first->getIndex() << std::endl;
 //        }
 //    }
-    bc.compute(nodes, false);
+    bc.compute(nodes, true);
     bc.brandes_implementation(nodes);
     
 #ifdef DEBUG_SHOW_MY_RESULT
