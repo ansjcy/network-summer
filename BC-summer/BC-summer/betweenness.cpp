@@ -585,6 +585,88 @@ void Betweenness::increaseBetweenness()
     }
 }
 
+void Betweenness::deleteEdge(Node *src, Node *dest)
+{
+    sigma_old.clear();
+    distance_old.clear();
+    trackLost.clear();
+    pairsDone.clear();
+
+    std::vector<Node*> sinks = deleteUpdate(dest, src, src);
+    std::vector<Node*> sources = deleteUpdate(src, dest, dest);
+    for(int i = 0; i < sinks.size(); i++)
+        deleteUpdate(src, dest, sinks[i]);
+    for(int i = 0; i < sources.size(); i++)
+        deleteUpdate(dest, src, sources[i]);
+    increaseBetweenness();
+}
+
+std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
+{
+    std::vector<std::pair<Node*, Node*> > workSet;
+    std::vector<Node*> visitedVertices;
+    std::vector<Node*> affectedVertices;
+    
+    workSet.push_back(make_pair(src, dest));
+    visitedVertices.push_back(src);
+    
+    while (workSet.size() != 0) {
+        Node* x = workSet.back().first;
+        Node* y = workSet.back().second;
+        workSet.pop_back();
+        double alt = cost_store[x][y] + distance_store[y][z];
+        if(alt > distance_store[x][z])
+        {
+            if(!isIn(make_pair(x, z), sigma_old))
+            {
+                distance_old[x][z] = distance_store[x][z];
+                sigma_old[x][z] = sigma_store[x][z];
+                reduceBetweenness(x, z);
+                sigma_store[x][z] = 0;
+                P_store[x][z].clear();
+                for(int iter = 0; iter < x->edges.size(); iter++)
+                {
+                    
+                }
+                
+            }
+            if(isIn(make_pair(x, z), pairsDone))
+                pairsDone.erase(find(pairsDone.begin(), pairsDone.end(), make_pair(x, z)));
+            distance_store[x][z] = alt;
+        }
+        if(alt == distance_store[x][z] && distance_store[x][z] != DBL_MAX)
+        {
+            if(!isIn(make_pair(x, z), pairsDone))
+            {
+                if(!isIn(make_pair(x, z), sigma_old))
+                    reduceBetweenness(x, z);
+                if(sigma_store[x][z] != 0)
+                    sigma_old[x][z] = sigma_store[x][z];
+                
+                sigma_store[x][z] = sigma_store[x][z] + (sigma_store[x][src] * 1 * sigma_store[dest][z]);
+                P_store[x][y].push_back(x);
+                for(int iter = 0; iter < P_store[y][z].size(); iter++)
+                {
+                    P_store[x][z].push_back(P_store[y][z][iter]);
+                }
+            }
+            pairsDone.push_back(make_pair(x, z));
+            affectedVertices.push_back(x);
+            // need pred(x)...
+            for(auto iter = x->pred.begin(); iter != x->pred.end(); iter++)
+            {
+                Node* u = iter->second;
+                if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) != visitedVertices.end())
+                {
+                    workSet.push_back(make_pair(u, x));
+                    visitedVertices.push_back(u);
+                }
+            }
+        }
+    }
+    return affectedVertices;
+}
+
 bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, double> > container)
 {
     if(container.find(key.first) != container.end())

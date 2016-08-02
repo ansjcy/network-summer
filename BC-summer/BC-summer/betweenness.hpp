@@ -84,6 +84,10 @@ public:
     void reduceBetweenness(Node* a, Node* z);
     void increaseBetweenness();
     
+    void deleteEdge(Node* src, Node* dest);
+    std::vector<Node*> deleteUpdate(Node* src, Node* dest, Node* z);
+    
+    
     bool isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, double> > container);
     bool isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, int> > container);
     bool isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > container);

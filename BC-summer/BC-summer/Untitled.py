@@ -24,9 +24,10 @@ def deleteUpdate(src, dest, z):
                 reduceBetweenness(x, z)
                 # find new path and update sigma, P and D..
                 clear P[x][z]
+                sigma(x, z) = 0
                 for all the neighbors v of x:
                     choose the Vs with smallest distance(v, z) + cost(x, v)
-                    sigma(x, z) = sigma(v, z)
+                    sigma(x, z) += sigma(v, z)
                     add P[v][z] to P[x][z]
                 alt = cost(x, v) + distance(v, z) (should be the same)
                 # sigma(x, z) = 0
@@ -43,9 +44,10 @@ def deleteUpdate(src, dest, z):
                     sigma(x, z) = sigma(x, z) - sigma(x, src) * 1 * sigma(dest, z)
                     if sigma(x, z) == 0:
                     #find new path, update sigma, P and D
+                        clear P[x][z]
                         for all the neighbors v of x:
                             choose the v with smallest distance(v, z) + cost(x, v)
-                            sigma(x, z) = sigma(v, z)
+                            sigma(x, z) += sigma(v, z)
                             add P[v][z] to P[x][z]
                         distance(x, z) = cost(x, v) + distance(v, z) (should be the same)
                     else
