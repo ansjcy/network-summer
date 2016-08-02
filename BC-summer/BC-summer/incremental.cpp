@@ -378,8 +378,8 @@ void initFunc()
 {
 
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/test.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/test.edges.csv");
     
 //    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
@@ -475,7 +475,7 @@ int main(int argc, char* argv[])
         nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
 //        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
         //for pred(x)
-        nodes[myEdges[i].second]->pred[weight] = nodes[myEdges[i].first];
+        nodes[myEdges[i].second]->pred[weight].push_back(nodes[myEdges[i].first]);
         
     }
 //    for(int i = 0; i < nodes.size(); i++)
@@ -496,18 +496,22 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
 #endif
     
+    
+    
+    
+
     std::map<Node*, double> CB_record;
     for(auto iter = bc.CB.begin(); iter != bc.CB.end(); iter++)
     {
         CB_record[iter->first] = iter->second;
     }
-    nodes[43]->addEdge(nodes[50], 1);
-    bc.compute(nodes, false);
-    bc.brandes_implementation(nodes);
+//    nodes[3]->addEdge(nodes[5], 1);
+//    bc.compute(nodes, false);
+//    bc.brandes_implementation(nodes);
 
 
 #ifdef DEBUG_WITHOUT_INCREMENTAL
-    std::cout << "******* my result 2 !! *********" << std::endl;
+    std::cout << "******* my result WITHOUT_INCREMENTAL add edge !! *********" << std::endl;
     for(int i = 0; i < nodes.size(); i++)
         std::cout << i << ":" << bc.CB[nodes[i]] << " ";
     std::cout << std::endl;
@@ -518,10 +522,10 @@ int main(int argc, char* argv[])
 #endif
 
 
-    Node* src = nodes[43];
-    Node* dest = nodes[50];
+    Node* src = nodes[3];
+    Node* dest = nodes[5];
     bc.insertEdge(src, dest, 1);
-    
+
     
 #ifdef DEBUG_WITH_INCREMENTAL
     std::cout << "****** after adding edge " << src->getIndex() << "->" << dest->getIndex() << ": " << std::endl;
@@ -535,21 +539,21 @@ int main(int argc, char* argv[])
 #endif
     
     
-    src = nodes[43];
-    dest = nodes[50];
-    bc.deleteEdge(src, dest);
-    
-    
-#ifdef DEBUG_DELETE_INCREMENTAL
-    std::cout << "****** after deleting edge " << src->getIndex() << "->" << dest->getIndex() << ": " << std::endl;
-    for(int i = 0; i < nodes.size(); i++)
-        std::cout << i << ":" << bc.CB[nodes[i]] << " ";
-    std::cout << std::endl;
-    std::cout << "******* the difference between 2 results *********" << std::endl;
-    for(int i = 0; i < nodes.size(); i++)
-        std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
-    std::cout << std::endl;
-#endif
+//    src = nodes[3];
+//    dest = nodes[5];
+//    bc.deleteEdge(src, dest);
+//    
+//    
+//#ifdef DEBUG_DELETE_INCREMENTAL
+//    std::cout << "****** after deleting edge " << src->getIndex() << "->" << dest->getIndex() << ": " << std::endl;
+//    for(int i = 0; i < nodes.size(); i++)
+//        std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+//    std::cout << std::endl;
+//    std::cout << "******* the difference between 2 results *********" << std::endl;
+//    for(int i = 0; i < nodes.size(); i++)
+//        std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
+//    std::cout << std::endl;
+//#endif
 
 //***************************
 

@@ -422,12 +422,14 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     cost_store[src][dest] = cost;
 //    cost_store[dest][src] = cost;
 //    std::cout << "cost store " << cost_store[src][dest] << std::endl;
-    std::vector<Node*> sinks = insertUpdate(dest, src, src);
     std::vector<Node*> sources = insertUpdate(src, dest, dest);
-    for(int i = 0; i < sinks.size(); i++)
-        insertUpdate(src, dest, sinks[i]);
+    std::vector<Node*> sinks = insertUpdate(dest, src, src);
+
     for(int i = 0; i < sources.size(); i++)
         insertUpdate(dest, src, sources[i]);
+    for(int i = 0; i < sinks.size(); i++)
+        insertUpdate(src, dest, sinks[i]);
+
     increaseBetweenness();
 }
 std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
@@ -435,6 +437,10 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
     std::vector<std::pair<Node*, Node*> > workSet;
     std::vector<Node*> visitedVertices;
     std::vector<Node*> affectedVertices;
+    
+//    std::cout << "cost from src to dest::" << cost_store[src][dest] << std::endl;
+//    std::cout << "distance from src to dest::" << distance_store[src][dest] << std::endl;
+
     
     workSet.push_back(make_pair(src, dest));
     visitedVertices.push_back(src);
@@ -479,17 +485,34 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
             // need pred(x)...
             for(auto iter = x->pred.begin(); iter != x->pred.end(); iter++)
             {
-                Node* u = iter->second;
-                if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) != visitedVertices.end())
-                {
-                    workSet.push_back(make_pair(u, x));
-                    visitedVertices.push_back(u);
+                auto pred_vec = iter->second;
+                for (int inner = 0; inner < pred_vec.size(); inner++) {
+                    Node* u = pred_vec[inner];
+                    if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) == visitedVertices.end())
+                    {
+                        workSet.push_back(make_pair(u, x));
+                        visitedVertices.push_back(u);
+                    }
                 }
+                
             }
         }
     }
     return affectedVertices;
 }
+double Betweenness::getDistanceOldVal(Node *x, Node *y)
+{
+    if(isIn(std::make_pair(x, y), distance_old))
+        return distance_old[x][y];
+    return distance_store[x][y];
+}
+int Betweenness::getSigmaOldVal(Node *x, Node *y)
+{
+    if(isIn(std::make_pair(x, y), sigma_old))
+        return sigma_old[x][y];
+    return sigma_store[x][y];
+}
+
 void Betweenness::reduceBetweenness(Node* a, Node* z)
 {
     if(sigma_old[a][z] == 0)
@@ -609,6 +632,9 @@ std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
     std::vector<Node*> visitedVertices;
     std::vector<Node*> affectedVertices;
     
+//    std::cout << "cost from src to dest::" << cost_store[src][dest] << std::endl;
+//    std::cout << "distance from src to dest::" << distance_store[src][dest] << std::endl;
+    
     workSet.push_back(make_pair(src, dest));
     visitedVertices.push_back(src);
     
@@ -653,6 +679,7 @@ std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
         }
         if(alt == distance_store[x][z] && distance_store[x][z] != DBL_MAX)
         {
+            cost_store[src][dest] = DBL_MAX;
             if(!isIn(make_pair(x, z), pairsDone))
             {
                 if(!isIn(make_pair(x, z), sigma_old))
@@ -701,12 +728,16 @@ std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
             // need pred(x)...
             for(auto iter = x->pred.begin(); iter != x->pred.end(); iter++)
             {
-                Node* u = iter->second;
-                if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) != visitedVertices.end())
-                {
-                    workSet.push_back(make_pair(u, x));
-                    visitedVertices.push_back(u);
+                auto pred_vec = iter->second;
+                for (int inner = 0; inner < pred_vec.size(); inner++) {
+                    Node* u = pred_vec[inner];
+                    if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) == visitedVertices.end())
+                    {
+                        workSet.push_back(make_pair(u, x));
+                        visitedVertices.push_back(u);
+                    }
                 }
+                
             }
         }
     }

@@ -19,7 +19,7 @@ class Node
 {
 public:
     std::vector<Edge*> edges;
-    std::map<double, Node*> pred;
+    std::map<double, std::vector<Node*> > pred;
     int index;
     double centralityValue;
     std::vector<double> sensitivityValues;

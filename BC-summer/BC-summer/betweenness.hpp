@@ -93,6 +93,9 @@ public:
     bool isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > container);
     bool isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > container);
     
+    double getDistanceOldVal(Node* x, Node* y);
+    int getSigmaOldVal(Node* x, Node* y);
+    
     bool SP(Node* x, Node* y, Node* z);
 };
 #endif /* betweenness_hpp */
