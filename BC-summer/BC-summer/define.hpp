@@ -18,4 +18,5 @@
 //#define DEBUG_WITHOUT_INCREMENTAL
 //#define DEBUG_SHOW_MY_RESULT
 #define DEBUG_WITH_INCREMENTAL
+#define DEBUG_DELETE_INCREMENTAL
 #endif /* define_h */

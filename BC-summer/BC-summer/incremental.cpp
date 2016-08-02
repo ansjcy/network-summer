@@ -533,6 +533,23 @@ int main(int argc, char* argv[])
         std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
     std::cout << std::endl;
 #endif
+    
+    
+    src = nodes[43];
+    dest = nodes[50];
+    bc.deleteEdge(src, dest);
+    
+    
+#ifdef DEBUG_DELETE_INCREMENTAL
+    std::cout << "****** after deleting edge " << src->getIndex() << "->" << dest->getIndex() << ": " << std::endl;
+    for(int i = 0; i < nodes.size(); i++)
+        std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+    std::cout << std::endl;
+    std::cout << "******* the difference between 2 results *********" << std::endl;
+    for(int i = 0; i < nodes.size(); i++)
+        std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
+    std::cout << std::endl;
+#endif
 
 //***************************
 

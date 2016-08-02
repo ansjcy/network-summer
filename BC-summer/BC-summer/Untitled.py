@@ -1,5 +1,6 @@
 def deleteEdge(src, dest):
     sigma_old = [], distance_old = [], trackLost = [], pairsDone = []
+    cost(src, dest) = DBL_MAX
     sinks = deleteUpdate(dest, src, src)
     sources = deleteUpdate(src, dest, dest)
     for s in sinks:
@@ -68,3 +69,16 @@ def reduceBetweenness(a, z):
 def increaseBetweenness(a, z):
     # the same as before..
     return
+
+
+
+
+
+
+
+
+
+
+
+
+s

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3E154B8C1D3D8F6B00974211 /* testOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E154B8B1D3D8F6B00974211 /* testOpenGL.cpp */; };
-		3E154BAF1D3D94D800974211 /* testForceLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E154BAD1D3D94D800974211 /* testForceLayout.cpp */; };
+		3E154BAF1D3D94D800974211 /* incremental.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E154BAD1D3D94D800974211 /* incremental.cpp */; };
 		3E52BCC21D3EAB45009DE347 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E52BCC11D3EAB45009DE347 /* OpenGL.framework */; };
 		3E52BCC41D3EAB4A009DE347 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E52BCC31D3EAB4A009DE347 /* GLUT.framework */; };
 		3EE0212C1D3D720700F3ECDB /* test_dijkstra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EE0212B1D3D720700F3ECDB /* test_dijkstra.cpp */; };
@@ -33,7 +33,7 @@
 
 /* Begin PBXFileReference section */
 		3E154B8B1D3D8F6B00974211 /* testOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testOpenGL.cpp; sourceTree = "<group>"; };
-		3E154BAD1D3D94D800974211 /* testForceLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testForceLayout.cpp; sourceTree = "<group>"; };
+		3E154BAD1D3D94D800974211 /* incremental.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = incremental.cpp; sourceTree = "<group>"; };
 		3E52BCC11D3EAB45009DE347 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		3E52BCC31D3EAB4A009DE347 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		3EE0212B1D3D720700F3ECDB /* test_dijkstra.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_dijkstra.cpp; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 				3EEDB53F1D38519500D16D18 /* main.cpp */,
 				3EE0212B1D3D720700F3ECDB /* test_dijkstra.cpp */,
 				3E154B8B1D3D8F6B00974211 /* testOpenGL.cpp */,
-				3E154BAD1D3D94D800974211 /* testForceLayout.cpp */,
+				3E154BAD1D3D94D800974211 /* incremental.cpp */,
 				3EE3F5471D41782900603AC2 /* define.hpp */,
 			);
 			path = "BC-summer";
@@ -158,7 +158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EEDB5501D3851B300D16D18 /* properties.cpp in Sources */,
-				3E154BAF1D3D94D800974211 /* testForceLayout.cpp in Sources */,
+				3E154BAF1D3D94D800974211 /* incremental.cpp in Sources */,
 				3EE0212C1D3D720700F3ECDB /* test_dijkstra.cpp in Sources */,
 				3EEDB5511D3851B300D16D18 /* testBoost.cpp in Sources */,
 				3EEDB54F1D3851B300D16D18 /* graph.cpp in Sources */,

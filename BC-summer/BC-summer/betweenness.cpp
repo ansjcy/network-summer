@@ -591,6 +591,8 @@ void Betweenness::deleteEdge(Node *src, Node *dest)
     distance_old.clear();
     trackLost.clear();
     pairsDone.clear();
+    
+//    cost_store[src][dest] = DBL_MAX;
 
     std::vector<Node*> sinks = deleteUpdate(dest, src, src);
     std::vector<Node*> sources = deleteUpdate(src, dest, dest);
@@ -624,9 +626,24 @@ std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
                 reduceBetweenness(x, z);
                 sigma_store[x][z] = 0;
                 P_store[x][z].clear();
+                
+                std::map<double, vector<Node*> > tmp_store;
                 for(int iter = 0; iter < x->edges.size(); iter++)
                 {
-                    
+                    Node* v = x->edges[iter]->getNode1();
+                    if(cost_store[x][v] != DBL_MAX && distance_store[v][z] != DBL_MAX)
+                        tmp_store[distance_store[v][z] + cost_store[x][v]].push_back(v);
+                }
+                if(tmp_store.size() != 0)
+                {
+                    for(int iter = 0; iter < tmp_store[0].size(); iter++)
+                    {
+                        Node* v = tmp_store[0][iter];
+                        sigma_store[x][z] += sigma_store[v][z];
+                        for(int p_iter = 0; p_iter < P_store[v][z].size(); p_iter++)
+                            P_store[x][z].push_back(P_store[v][z][p_iter]);
+                    }
+                    alt = tmp_store.begin()->first;
                 }
                 
             }
@@ -639,16 +656,45 @@ std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
             if(!isIn(make_pair(x, z), pairsDone))
             {
                 if(!isIn(make_pair(x, z), sigma_old))
-                    reduceBetweenness(x, z);
-                if(sigma_store[x][z] != 0)
-                    sigma_old[x][z] = sigma_store[x][z];
-                
-                sigma_store[x][z] = sigma_store[x][z] + (sigma_store[x][src] * 1 * sigma_store[dest][z]);
-                P_store[x][y].push_back(x);
-                for(int iter = 0; iter < P_store[y][z].size(); iter++)
                 {
-                    P_store[x][z].push_back(P_store[y][z][iter]);
+                    reduceBetweenness(x, z);
+                    //if(sigma_store[x][z] != 0)
+                    sigma_old[x][z] = sigma_store[x][z];
+                    sigma_store[x][z] = sigma_store[x][z] - (sigma_store[x][src] * 1 * sigma_store[dest][z]);
+                    if(sigma_store[x][z] == 0)
+                    {
+                        P_store[x][z].clear();
+                        
+                        std::map<double, vector<Node*> > tmp_store;
+                        for(int iter = 0; iter < x->edges.size(); iter++)
+                        {
+                            Node* v = x->edges[iter]->getNode1();
+                            if(cost_store[x][v] != DBL_MAX && distance_store[v][z] != DBL_MAX)
+                                tmp_store[distance_store[v][z] + cost_store[x][v]].push_back(v);
+                        }
+                        if(tmp_store.size() != 0)
+                        {
+                            for(int iter = 0; iter < tmp_store[0].size(); iter++)
+                            {
+                                Node* v = tmp_store[0][iter];
+                                sigma_store[x][z] += sigma_store[v][z];
+                                for(int p_iter = 0; p_iter < P_store[v][z].size(); p_iter++)
+                                    P_store[x][z].push_back(P_store[v][z][p_iter]);
+                            }
+                            distance_store[x][z] = tmp_store.begin()->first;
+                        }
+                        else
+                            distance_store[x][z] = DBL_MAX;
+                    }
+                    else //remove P[y][z] from P[x][z]
+                    {
+                        for(int iter = 0; iter < P_store[y][z].size(); iter++)
+                        {
+                            P_store[x][z].erase(find(P_store[y][z].begin(), P_store[y][z].end(), P_store[y][z][iter]));
+                        }
+                    }
                 }
+
             }
             pairsDone.push_back(make_pair(x, z));
             affectedVertices.push_back(x);
