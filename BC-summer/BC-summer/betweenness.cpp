@@ -515,18 +515,18 @@ int Betweenness::getSigmaOldVal(Node *x, Node *y)
 
 void Betweenness::reduceBetweenness(Node* a, Node* z)
 {
-    if(sigma_old[a][z] == 0)
+    if(getSigmaOldVal(a, z) == 0)
         return;
     std::vector<Node*> known;
     std::vector<Node*> stack;
     for(int i = 0; i < P_store[a][z].size(); i++)
     {
         Node* n = P_store[a][z][i];
-        if(distance_store[a][z] != distance_old[a][n] + distance_old[n][z])
+        if(distance_store[a][z] != getDistanceOldVal(a, n) + getDistanceOldVal(n, z))
             continue;
         else if(a != n && n != z)
         {
-            CB[n] = CB[n] - (sigma_old[a][n] * sigma_old[n][z] / sigma_old[a][z]);
+            CB[n] = CB[n] - (getSigmaOldVal(a, n) * getSigmaOldVal(n, z) / getSigmaOldVal(a, z));
             trackLost.push_back(make_tuple(a, z, n));
         }
         stack.push_back(n);
@@ -539,11 +539,11 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
         for(int i = 0; i < P_store[a][p].size(); i++)
         {
             Node* n = P_store[a][p][i];
-            if(distance_store[a][z] != distance_old[a][n] + distance_old[n][z])
+            if(distance_store[a][z] != getDistanceOldVal(a, n) + getDistanceOldVal(n, z))
                 continue;
             else if(a != n && n != z && std::find(known.begin(), known.end(), n) != known.end())
             {
-                CB[n] = CB[n] - (sigma_old[a][n] * sigma_old[n][z] / sigma_old[a][z]);
+                CB[n] = CB[n] - (getSigmaOldVal(a, n) * getSigmaOldVal(n, z) / getSigmaOldVal(a, z));
                 trackLost.push_back(make_tuple(a, z, n));
             }
             stack.push_back(n);
@@ -560,11 +560,11 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
         Node* v1 = std::get<0>(trackLost[i]);
         Node* v2 = std::get<1>(trackLost[i]);
         if(std::find(known.begin(), known.end(), v1) != known.end() && std::find(known.begin(), known.end(), v2) != known.end()
-           && distance_store[a][z] == distance_old[a][v] + distance_old[v][z])
+           && distance_store[a][z] == getDistanceOldVal(a, v) + getDistanceOldVal(v, z))
         {
             if(std::find(alreadyKnown.begin(), alreadyKnown.end(), v) != alreadyKnown.end())
             {
-                CB[v] = CB[v] - (sigma_old[a][v] * sigma_old[v][z] / sigma_old[a][z]);
+                CB[v] = CB[v] - (getSigmaOldVal(a, v) * getSigmaOldVal(v, z) / getSigmaOldVal(a, z));
                 alreadyKnown.push_back(v);
                 trackLost.push_back(std::make_tuple(a, z, v));
             }
@@ -588,7 +588,7 @@ void Betweenness::increaseBetweenness()
                 stack.push_back(n);
                 known.push_back(n);
                 if(src != n && n != dest)
-                    CB[n] = CB[n] + (sigma_store[src][n] * sigma_store[n][dest] / sigma_store[src][dest]);
+                    CB[n] = CB[n] + ((sigma_store[src][n] * sigma_store[n][dest]) * 1.0 / sigma_store[src][dest]);
             }
             while (stack.size() != 0) {
                 Node* n = stack.back();
@@ -600,7 +600,7 @@ void Betweenness::increaseBetweenness()
                     {
                         stack.push_back(p);
                         known.push_back(p);
-                         CB[p] = CB[p] + (sigma_store[src][p] * sigma_store[p][dest] / sigma_store[src][dest]);
+                         CB[p] = CB[p] + ((sigma_store[src][p] * sigma_store[p][dest])*1.0 / sigma_store[src][dest]);
                     }
                 }
             }

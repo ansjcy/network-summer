@@ -378,8 +378,11 @@ void initFunc()
 {
 
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/test.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/test.edges.csv");
+    
+    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/test.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/test.edges.csv");
     
 //    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
@@ -522,8 +525,8 @@ int main(int argc, char* argv[])
 #endif
 
 
-    Node* src = nodes[3];
-    Node* dest = nodes[5];
+    Node* src = nodes[43];
+    Node* dest = nodes[50];
     bc.insertEdge(src, dest, 1);
 
     
