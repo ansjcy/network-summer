@@ -9,7 +9,7 @@ enum Mode{
     SENSITIVITY_VARIANCE
 } MODE = CENTRALITY;
 
-#define DISTANCE(X,Y,CX,CY) sqrt((X-CX)*(X-CX)+(Y-CY)*(Y-CY))
+
 
 Widget::Widget(QOpenGLWidget *parent) :
     QOpenGLWidget(parent),
@@ -82,10 +82,12 @@ void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
 {
 //    x = (wx-windowX/2)/(windowX/2/scaleTotal) - transformXTotal;
 //    y = -((wy-windowY/2)/(windowY/2/scaleTotal) + transformYTotal);
-    x = (1.0*(wx-windowX/2)/(windowX/2) - transformX)/scaleTime;
-    y = -(1.0*(wy-windowY/2)/(windowY/2) + transformY)/scaleTime;
+    x = (1.0*(wx-windowX/2)/(windowX/2)/scaleTime - transformX);
+    y = -(1.0*(wy-windowY/2)/(windowY/2)/scaleTime + transformY);
 
 #ifdef DEBUG_WINDOW_TRANS_POS
+    std::cout << "trans::" << transformX << " " << transformY << std::endl;
+    std::cout << "scales::" << scaleTime << std::endl;
     std::cout << "window pos::" << wx << " " << wy << std::endl;
     std::cout << "trans pos::" << x << " " << y << std::endl;
 #endif

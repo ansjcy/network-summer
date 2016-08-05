@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.0.3, 2016-07-26T15:41:54. -->
+<!-- Written by QtCreator 4.0.3, 2016-08-05T10:51:29. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -303,8 +303,8 @@
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">BCQT-with-panel</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/anakin/github/network-summer/BCQT-with-panel/BCQT-with-panel.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">BCQT-with-panel2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/anakin/github/network-summer/BCQT-with-panel_save/BCQT-with-panel.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"></value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">BCQT-with-panel.pro</value>
