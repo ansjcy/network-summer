@@ -520,7 +520,7 @@ int main(int argc, char* argv[])
 #ifdef USING_ORIGINAL
     nodes[68]->addEdge(nodes[86], 1);
     nodes[86]->addEdge(nodes[68], 1);
-    bc.compute(nodes, false);
+//    bc.compute(nodes, false);
     bc.brandes_implementation(nodes);
 
 

@@ -10,6 +10,7 @@
 using namespace boost;
 using namespace boost::detail::graph;
 using namespace std;
+
 int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
 {
     int n = (int)nodes.size();
@@ -64,6 +65,7 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
     std::vector<double> vertex_centralities(num_vertices(g));
     std::vector<double> edge_centralities(num_edges(g));
     run_weighted_test((Digraph*)0, n, edgesweighted, numEdges, edge_centralities, vertex_centralities);
+
 
 
 #ifdef DEBGU_CENTRALITY
@@ -477,15 +479,24 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     cost_store[src][dest] = cost;
     cost_store[dest][src] = cost;
 //    std::cout << "cost store " << cost_store[src][dest] << std::endl;
+    TimeLogger* logger = TimeLogger::Instance();
+    logger->start();
+
     std::vector<Node*> sources = insertUpdate(src, dest, dest);
     std::vector<Node*> sinks = insertUpdate(dest, src, src);
+    logger->markIt("after computing source and target: ");
 
     for(int i = 0; i < sources.size(); i++)
         insertUpdate(dest, src, sources[i]);
+    logger->markIt("after finish source: ");
+
     for(int i = 0; i < sinks.size(); i++)
         insertUpdate(src, dest, sinks[i]);
+    logger->markIt("after finish target: ");
 
     increaseBetweenness();
+    logger->markIt("after finish increase betweenness: ");
+    logger->outputToScreen();
 }
 std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
 {

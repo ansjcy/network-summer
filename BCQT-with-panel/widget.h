@@ -32,6 +32,7 @@
 #include "betweenness.h"
 #include "graph.h"
 #include "define.h"
+#include "timelogger.h"
 
 typedef boost::rectangle_topology<> topology_type;
 typedef topology_type::point_type point_type;
@@ -105,6 +106,7 @@ protected:
 
         bool dragFlag = false;
         double prevX, prevY;
+
 
 
 

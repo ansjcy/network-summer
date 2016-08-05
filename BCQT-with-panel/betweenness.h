@@ -40,6 +40,7 @@
 
 #include "graph.h"
 #include "define.h"
+#include "timelogger.h"
 
 
 
@@ -49,6 +50,7 @@ struct weighted_edge
     int source, target;
     double weight;
 };
+
 
 typedef property<edge_weight_t, double, property<edge_index_t, std::size_t>> EdgeProperties;
 typedef adjacency_list<listS, listS, undirectedS, property<vertex_index_t, int>, EdgeProperties> GraphW;
@@ -76,6 +78,8 @@ public:
     std::map<Node*, std::map<Node*, double> > distance_old;
     std::vector<std::pair<Node*, Node*> > pairsDone;
     std::vector<std::tuple<Node*, Node*, Node*> > trackLost;
+
+
 
 
     int compute(std::vector<Node*> &nodes, bool needDerivs);

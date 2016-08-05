@@ -92,37 +92,16 @@ void Widget::coorTrans(const int wx, const int wy, float& x, float& y)
     std::cout << "trans pos::" << x << " " << y << std::endl;
 #endif
 }
-
-//void Widget::DrawCircle(float cx, float cy, float r, int num_segments)
-//{
-//    float theta = 2 * M_PI / float(num_segments);
-//    float c = cosf(theta);//precalculate the sine and cosine
-//    float s = sinf(theta);
-//    float t;
-
-//    float x = r;//we start at angle = 0
-//    float y = 0;
-
-//    glBegin(GL_LINE_LOOP);
-//    for(int ii = 0; ii < num_segments; ii++)
-//    {
-//        glVertex2f(x + cx, y + cy);//output vertex
-//        //apply the rotation matrix
-//        t = x;
-//        x = c * x - s * y;
-//        y = s * t + c * y;
-//    }
-//    glEnd();
-//}
-
 void Widget::initFunc()
 {
 
     this->setFocus();
 
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
 
 //    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
@@ -147,8 +126,6 @@ void Widget::initFunc()
         selectedEdge.push_back(false);
     }
 }
-
-
 //*************** main functions *******************
 void Widget::keyPressEvent(QKeyEvent *event)
 {
@@ -213,7 +190,6 @@ void Widget::keyPressEvent(QKeyEvent *event)
     this->update();
 
 }
-
 void Widget::keyReleaseEvent(QKeyEvent *event)
 {
 
@@ -224,7 +200,6 @@ void Widget::keyReleaseEvent(QKeyEvent *event)
         break;
     }
 }
-
 void Widget::mousePressEvent(QMouseEvent *event)
 {
     this->setFocus();
@@ -258,8 +233,6 @@ void Widget::mousePressEvent(QMouseEvent *event)
 
     QOpenGLWidget::mousePressEvent(event);
 }
-
-
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
     if(dragFlag)
@@ -388,9 +361,8 @@ void Widget::initializeGL(){
 
     }
 
+
     bc.compute(nodes, true);
-
-
 
     bc.brandes_implementation(nodes);
 
@@ -402,22 +374,27 @@ void Widget::initializeGL(){
     #endif
 
 
-
-
         std::map<Node*, double> CB_record;
         for(auto iter = bc.CB.begin(); iter != bc.CB.end(); iter++)
         {
             CB_record[iter->first] = iter->second;
         }
 
-    #define USING_ORIGINAL
-    //#define USING_INCREMENTAL
+//    #define USING_ORIGINAL
+    #define USING_INCREMENTAL
 
     #ifdef USING_ORIGINAL
-        nodes[68]->addEdge(nodes[86], 1);
-        nodes[86]->addEdge(nodes[68], 1);
-        bc.compute(nodes, false);
+        TimeLogger* logger = TimeLogger::Instance();
+        logger->start();
+        nodes[7]->addEdge(nodes[8], 1);
+        nodes[8]->addEdge(nodes[7], 1);
+        //bc.compute(nodes, false);
         bc.brandes_implementation(nodes);
+        logger->markIt("finish computation 1: ");
+
+
+
+        logger->outputToScreen();
 
 
     #ifdef DEBUG_WITHOUT_INCREMENTAL
@@ -435,9 +412,20 @@ void Widget::initializeGL(){
 
 
     #ifdef USING_INCREMENTAL
-        Node* src = nodes[68];
-        Node* dest = nodes[86];
+//        TimeLogger* logger = TimeLogger::Instance();
+//        logger->start();
+
+        Node* src = nodes[14];
+        Node* dest = nodes[15];
         bc.insertEdge(src, dest, 1);
+//        logger->markIt("finish computation 1: ");
+
+//        src = nodes[32];
+//        dest = nodes[18];
+//        bc.insertEdge(src, dest, 1);
+//        logger->markIt("finish computation 2: ");
+
+//        logger->outputToScreen();
 
 
     #ifdef DEBUG_WITH_INCREMENTAL

@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         widget.cpp \
     betweenness.cpp \
-    graph.cpp
+    graph.cpp \
+    timelogger.cpp
 
 HEADERS  += widget.h \
     betweenness.h \
     graph.h \
-    define.h
+    define.h \
+    timelogger.h
 
 FORMS    += widget.ui
 

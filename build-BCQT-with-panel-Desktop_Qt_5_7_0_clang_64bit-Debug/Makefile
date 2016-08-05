@@ -51,11 +51,13 @@ OBJECTS_DIR   = ./
 SOURCES       = ../BCQT-with-panel/main.cpp \
 		../BCQT-with-panel/widget.cpp \
 		../BCQT-with-panel/betweenness.cpp \
-		../BCQT-with-panel/graph.cpp moc_widget.cpp
+		../BCQT-with-panel/graph.cpp \
+		../BCQT-with-panel/timelogger.cpp moc_widget.cpp
 OBJECTS       = main.o \
 		widget.o \
 		betweenness.o \
 		graph.o \
+		timelogger.o \
 		moc_widget.o
 DIST          = ../../../Qt/5.7/clang_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.7/clang_64/mkspecs/qdevice.pri \
@@ -189,6 +191,7 @@ DIST          = ../../../Qt/5.7/clang_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.7/clang_64/mkspecs/features/qt_config.prf \
 		../../../Qt/5.7/clang_64/mkspecs/macx-clang/qmake.conf \
 		../../../Qt/5.7/clang_64/mkspecs/features/spec_post.prf \
+		../BCQT-with-panel/.qmake.stash \
 		../../../Qt/5.7/clang_64/mkspecs/features/exclusive_builds.prf \
 		../../../Qt/5.7/clang_64/mkspecs/features/default_pre.prf \
 		../../../Qt/5.7/clang_64/mkspecs/features/mac/default_pre.prf \
@@ -214,10 +217,12 @@ DIST          = ../../../Qt/5.7/clang_64/mkspecs/features/spec_pre.prf \
 		../BCQT-with-panel/BCQT-with-panel.pro ../BCQT-with-panel/widget.h \
 		../BCQT-with-panel/betweenness.h \
 		../BCQT-with-panel/graph.h \
-		../BCQT-with-panel/define.h ../BCQT-with-panel/main.cpp \
+		../BCQT-with-panel/define.h \
+		../BCQT-with-panel/timelogger.h ../BCQT-with-panel/main.cpp \
 		../BCQT-with-panel/widget.cpp \
 		../BCQT-with-panel/betweenness.cpp \
-		../BCQT-with-panel/graph.cpp
+		../BCQT-with-panel/graph.cpp \
+		../BCQT-with-panel/timelogger.cpp
 QMAKE_TARGET  = BCQT-with-panel
 DESTDIR       = 
 TARGET        = BCQT-with-panel.app/Contents/MacOS/BCQT-with-panel
@@ -362,6 +367,7 @@ Makefile: ../BCQT-with-panel/BCQT-with-panel.pro ../../../Qt/5.7/clang_64/mkspec
 		../../../Qt/5.7/clang_64/mkspecs/features/qt_config.prf \
 		../../../Qt/5.7/clang_64/mkspecs/macx-clang/qmake.conf \
 		../../../Qt/5.7/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../Qt/5.7/clang_64/mkspecs/features/exclusive_builds.prf \
 		../../../Qt/5.7/clang_64/mkspecs/features/default_pre.prf \
 		../../../Qt/5.7/clang_64/mkspecs/features/mac/default_pre.prf \
@@ -521,6 +527,7 @@ Makefile: ../BCQT-with-panel/BCQT-with-panel.pro ../../../Qt/5.7/clang_64/mkspec
 ../../../Qt/5.7/clang_64/mkspecs/features/qt_config.prf:
 ../../../Qt/5.7/clang_64/mkspecs/macx-clang/qmake.conf:
 ../../../Qt/5.7/clang_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../Qt/5.7/clang_64/mkspecs/features/exclusive_builds.prf:
 ../../../Qt/5.7/clang_64/mkspecs/features/default_pre.prf:
 ../../../Qt/5.7/clang_64/mkspecs/features/mac/default_pre.prf:
@@ -576,8 +583,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../BCQT-with-panel/widget.h ../BCQT-with-panel/betweenness.h ../BCQT-with-panel/graph.h ../BCQT-with-panel/define.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../BCQT-with-panel/main.cpp ../BCQT-with-panel/widget.cpp ../BCQT-with-panel/betweenness.cpp ../BCQT-with-panel/graph.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../BCQT-with-panel/widget.h ../BCQT-with-panel/betweenness.h ../BCQT-with-panel/graph.h ../BCQT-with-panel/define.h ../BCQT-with-panel/timelogger.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../BCQT-with-panel/main.cpp ../BCQT-with-panel/widget.cpp ../BCQT-with-panel/betweenness.cpp ../BCQT-with-panel/graph.cpp ../BCQT-with-panel/timelogger.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../BCQT-with-panel/widget.ui $(DISTDIR)/
 
 
@@ -2118,6 +2125,17 @@ moc_widget.cpp: ../../../Qt/5.7/clang_64/lib/QtWidgets.framework/Headers/QOpenGL
 		/usr/local/Cellar/boost/1.60.0_1/include/boost/range/algorithm_ext/iota.hpp \
 		../BCQT-with-panel/graph.h \
 		../BCQT-with-panel/define.h \
+		../BCQT-with-panel/timelogger.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStack \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstack.h \
 		../BCQT-with-panel/widget.h \
 		../../../Qt/5.7/clang_64/bin/moc
 	/Users/anakin/Qt/5.7/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/Users/anakin/Qt/5.7/clang_64/mkspecs/macx-clang -I/Users/anakin/github/network-summer/BCQT-with-panel -I/usr/local/Cellar/boost/1.60.0_1/include -I/Users/anakin/Qt/5.7/clang_64/lib/QtWidgets.framework/Headers -I/Users/anakin/Qt/5.7/clang_64/lib/QtGui.framework/Headers -I/Users/anakin/Qt/5.7/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/7.3.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include -I'/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks (framework directory)' -F/Users/anakin/Qt/5.7/clang_64/lib ../BCQT-with-panel/widget.h -o moc_widget.cpp
@@ -3655,6 +3673,17 @@ main.o: ../BCQT-with-panel/main.cpp ../BCQT-with-panel/widget.h \
 		/usr/local/Cellar/boost/1.60.0_1/include/boost/range/algorithm_ext/iota.hpp \
 		../BCQT-with-panel/graph.h \
 		../BCQT-with-panel/define.h \
+		../BCQT-with-panel/timelogger.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStack \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstack.h \
 		../../../Qt/5.7/clang_64/lib/QtWidgets.framework/Headers/QApplication \
 		../../../Qt/5.7/clang_64/lib/QtWidgets.framework/Headers/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../BCQT-with-panel/main.cpp
@@ -5171,6 +5200,17 @@ widget.o: ../BCQT-with-panel/widget.cpp ../BCQT-with-panel/widget.h \
 		/usr/local/Cellar/boost/1.60.0_1/include/boost/range/algorithm_ext/iota.hpp \
 		../BCQT-with-panel/graph.h \
 		../BCQT-with-panel/define.h \
+		../BCQT-with-panel/timelogger.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStack \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstack.h \
 		ui_widget.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o widget.o ../BCQT-with-panel/widget.cpp
 
@@ -6573,11 +6613,35 @@ betweenness.o: ../BCQT-with-panel/betweenness.cpp ../BCQT-with-panel/betweenness
 		/usr/local/Cellar/boost/1.60.0_1/include/boost/detail/is_sorted.hpp \
 		/usr/local/Cellar/boost/1.60.0_1/include/boost/range/algorithm_ext/iota.hpp \
 		../BCQT-with-panel/graph.h \
-		../BCQT-with-panel/define.h
+		../BCQT-with-panel/define.h \
+		../BCQT-with-panel/timelogger.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStack \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstack.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o betweenness.o ../BCQT-with-panel/betweenness.cpp
 
 graph.o: ../BCQT-with-panel/graph.cpp ../BCQT-with-panel/graph.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o graph.o ../BCQT-with-panel/graph.cpp
+
+timelogger.o: ../BCQT-with-panel/timelogger.cpp ../BCQT-with-panel/timelogger.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QList \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qlist.h \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/QStack \
+		../../../Qt/5.7/clang_64/lib/QtCore.framework/Headers/qstack.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o timelogger.o ../BCQT-with-panel/timelogger.cpp
 
 moc_widget.o: moc_widget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_widget.o moc_widget.cpp
