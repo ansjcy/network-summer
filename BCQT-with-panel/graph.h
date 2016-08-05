@@ -19,6 +19,7 @@ class Node
 {
 public:
     std::vector<Edge*> edges;
+    std::map<double, std::vector<Node*> > pred;
     int index;
     double centralityValue;
     std::vector<double> sensitivityValues;
@@ -34,7 +35,7 @@ public:
             delete edges[i];
     }
 
-    Edge* addEdge(Node* n);
+    Edge* addEdge(Node* n, double weight);
     int findEdge(Node* n);
     Edge* getEdge(int idx);
     void setIndex(int n);

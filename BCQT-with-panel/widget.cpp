@@ -9,6 +9,7 @@ enum Mode{
     SENSITIVITY_VARIANCE
 } MODE = CENTRALITY;
 
+#define DISTANCE(X,Y,CX,CY) sqrt((X-CX)*(X-CX)+(Y-CY)*(Y-CY))
 
 Widget::Widget(QOpenGLWidget *parent) :
     QOpenGLWidget(parent),
@@ -372,13 +373,83 @@ void Widget::initializeGL(){
         tmpNode->setIndex(i);
         nodes.push_back(tmpNode);
     }
+
+    double weight = 1;
     for(int i = 0; i < myEdges.size(); i++)
     {
-        nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second]);
-        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first]);
+        //undirected graph
+        nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
+        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
+        //for pred(x)
+        nodes[myEdges[i].second]->pred[weight].push_back(nodes[myEdges[i].first]);
+        nodes[myEdges[i].first]->pred[weight].push_back(nodes[myEdges[i].second]);
+
     }
 
     bc.compute(nodes, true);
+
+
+
+    bc.brandes_implementation(nodes);
+
+    #ifdef DEBUG_SHOW_MY_RESULT
+        std::cout << "******* my result!! *********" << std::endl;
+        for(int i = 0; i < nodes.size(); i++)
+            std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+        std::cout << std::endl;
+    #endif
+
+
+
+
+        std::map<Node*, double> CB_record;
+        for(auto iter = bc.CB.begin(); iter != bc.CB.end(); iter++)
+        {
+            CB_record[iter->first] = iter->second;
+        }
+
+    #define USING_ORIGINAL
+    //#define USING_INCREMENTAL
+
+    #ifdef USING_ORIGINAL
+        nodes[68]->addEdge(nodes[86], 1);
+        nodes[86]->addEdge(nodes[68], 1);
+        bc.compute(nodes, false);
+        bc.brandes_implementation(nodes);
+
+
+    #ifdef DEBUG_WITHOUT_INCREMENTAL
+        std::cout << "******* my result WITHOUT_INCREMENTAL add edge !! *********" << std::endl;
+        for(int i = 0; i < nodes.size(); i++)
+            std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+        std::cout << std::endl;
+        std::cout << "******* the difference between 2 results *********" << std::endl;
+        for(int i = 0; i < nodes.size(); i++)
+            std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
+        std::cout << std::endl;
+    #endif
+    #endif
+
+
+
+    #ifdef USING_INCREMENTAL
+        Node* src = nodes[68];
+        Node* dest = nodes[86];
+        bc.insertEdge(src, dest, 1);
+
+
+    #ifdef DEBUG_WITH_INCREMENTAL
+        std::cout << "****** after adding edge " << src->getIndex() << "->" << dest->getIndex() << ": " << std::endl;
+        for(int i = 0; i < nodes.size(); i++)
+            std::cout << i << ":" << bc.CB[nodes[i]] << " ";
+        std::cout << std::endl;
+        std::cout << "******* the difference between 2 results *********" << std::endl;
+        for(int i = 0; i < nodes.size(); i++)
+            std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
+        std::cout << std::endl;
+    #endif
+    #endif
+
 }
 void Widget::drawACircle(float cx, float cy, float r, rgb colors, float alpha)
 {

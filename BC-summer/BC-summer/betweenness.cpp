@@ -577,8 +577,8 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
     std::vector<Node*> known;
     std::vector<Node*> stack;
     
-    if(a->getIndex() == 0 && z->getIndex() == 3)
-        std::cout << "here" << endl;
+//    if(a->getIndex() == 0 && z->getIndex() == 3)
+//        std::cout << "here" << endl;
     
     for(int i = 0; i < P_store[a][z].size(); i++)
     {
@@ -587,14 +587,14 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
             continue;
         else if(a != n && n != z)
         {
-            cout << "node" << n->getIndex() << endl;
-            cout << "line num:: 8" << endl;
-            cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-            std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
-            std::cout << getSigmaOldVal(a, z) << endl;
-            std::cout << CB[n] << endl;
+//            cout << "node" << n->getIndex() << endl;
+//            cout << "line num:: 8" << endl;
+//            cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+//            std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
+//            std::cout << getSigmaOldVal(a, z) << endl;
+//            std::cout << CB[n] << endl;
             CB[n] = CB[n] - ((getSigmaOldVal(a, n) * getSigmaOldVal(n, z)*1.0) / getSigmaOldVal(a, z));  //8
-            std::cout << CB[n] << endl;
+//            std::cout << CB[n] << endl;
 //            cout << "8:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
             trackLost.push_back(make_tuple(a, z, n));
         }
@@ -612,14 +612,14 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
                 continue;
             else if(a != n && n != z && std::find(known.begin(), known.end(), n) == known.end())
             {
-                cout << "node" << n->getIndex() << endl;
-                cout << "line num:: 18" << endl;
-                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-                std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
-                std::cout << getSigmaOldVal(a, z) << endl;
-                std::cout << CB[n] << endl;
+//                cout << "node" << n->getIndex() << endl;
+//                cout << "line num:: 18" << endl;
+//                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+//                std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
+//                std::cout << getSigmaOldVal(a, z) << endl;
+//                std::cout << CB[n] << endl;
                 CB[n] = CB[n] - ((getSigmaOldVal(a, n) * getSigmaOldVal(n, z) * 1.0) / getSigmaOldVal(a, z));  //18
-                std::cout << CB[n] << endl;
+//                std::cout << CB[n] << endl;
 //                cout << "18:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
                 trackLost.push_back(make_tuple(a, z, n));
                 stack.push_back(n);
@@ -650,18 +650,18 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
         {
             if(std::find(alreadyKnown.begin(), alreadyKnown.end(), v) == alreadyKnown.end())
             {
-                cout << "node" << v->getIndex() << endl;
-                cout << "line num:: 24" << endl;
-                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-                std::cout << getSigmaOldVal(a, v) * getSigmaOldVal(v, z) << endl;
-                std::cout << getSigmaOldVal(a, z) << endl;
-                std::cout << CB[v] << endl;
+//                cout << "node" << v->getIndex() << endl;
+//                cout << "line num:: 24" << endl;
+//                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+//                std::cout << getSigmaOldVal(a, v) * getSigmaOldVal(v, z) << endl;
+//                std::cout << getSigmaOldVal(a, z) << endl;
+//                std::cout << CB[v] << endl;
                 CB[v] = CB[v] - ((getSigmaOldVal(a, v) * getSigmaOldVal(v, z) * 1.0) / getSigmaOldVal(a, z));  //24
-                std::cout << CB[v] << endl;
+//                std::cout << CB[v] << endl;
                 
                 alreadyKnown.push_back(v);
-                cout << "24::values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << v->getIndex() << endl;
-                cout << "v1 and v2::" << v1->getIndex() << ", " << v2->getIndex() << endl;
+//                cout << "24::values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << v->getIndex() << endl;
+//                cout << "v1 and v2::" << v1->getIndex() << ", " << v2->getIndex() << endl;
                 trackLost.push_back(std::make_tuple(a, z, v));
             }
         }
@@ -678,7 +678,7 @@ void Betweenness::increaseBetweenness()
 //        cout << "<" << a->getIndex() << "," << z->getIndex() << "," << n->getIndex() << ">" << endl;
 //    }
     
-    std::cout << "****** begin increase ******" << endl;
+//    std::cout << "****** begin increase ******" << endl;
     for(auto outer = sigma_old.begin(); outer != sigma_old.end(); outer++)
     {
         auto src = outer->first;
@@ -687,11 +687,11 @@ void Betweenness::increaseBetweenness()
             auto dest = inner->first;
             std::vector<Node*> known;
             std::vector<Node*> stack;
-            std::cout << "******" << endl;
-            cout << "P::" << src->getIndex() <<" to "<< dest->getIndex() << endl;
-            for(int i = 0; i < P_store[src][dest].size(); i++)
-                cout << P_store[src][dest][i]->getIndex() << " ";
-            cout << endl;
+//            std::cout << "******" << endl;
+//            cout << "P::" << src->getIndex() <<" to "<< dest->getIndex() << endl;
+//            for(int i = 0; i < P_store[src][dest].size(); i++)
+//                cout << P_store[src][dest][i]->getIndex() << " ";
+//            cout << endl;
             for(int i = 0; i < P_store[src][dest].size(); i++)
             {
                 Node* n = P_store[src][dest][i];
@@ -700,16 +700,16 @@ void Betweenness::increaseBetweenness()
                 known.push_back(n);
                 if(src != n && n != dest)
                 {
-                    cout << "node" << n->getIndex() << endl;
-                    cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
-                    cout << "line num:: 6" << endl;
-                    std::cout << sigma_store[src][n] * sigma_store[n][dest] << endl;
-                    std::cout << sigma_store[src][dest] << endl;
-                    std::cout << CB[n] << endl;
+//                    cout << "node" << n->getIndex() << endl;
+//                    cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
+//                    cout << "line num:: 6" << endl;
+//                    std::cout << sigma_store[src][n] * sigma_store[n][dest] << endl;
+//                    std::cout << sigma_store[src][dest] << endl;
+//                    std::cout << CB[n] << endl;
                     
                     CB[n] = CB[n] + (((sigma_store[src][n] * sigma_store[n][dest]) * 1.0) / sigma_store[src][dest]); // 6
-                    std::cout << CB[n];
-                    std::cout << endl;
+//                    std::cout << CB[n];
+//                    std::cout << endl;
                     
                 }
                 
@@ -720,11 +720,11 @@ void Betweenness::increaseBetweenness()
                 known.push_back(n);
                 
                 
-                std::cout << "******" << endl;
-                cout << "P::" << src->getIndex() <<" to "<< dest->getIndex() << endl;
-                for(int i = 0; i < P_store[src][dest].size(); i++)
-                    cout << P_store[src][dest][i]->getIndex() << " ";
-                cout << endl;
+//                std::cout << "******" << endl;
+//                cout << "P::" << src->getIndex() <<" to "<< dest->getIndex() << endl;
+//                for(int i = 0; i < P_store[src][dest].size(); i++)
+//                    cout << P_store[src][dest][i]->getIndex() << " ";
+//                cout << endl;
 
                 for(int i = 0; i < P_store[src][n].size(); i++)
                 {
@@ -734,17 +734,17 @@ void Betweenness::increaseBetweenness()
                         stack.push_back(p);
                         known.push_back(p);
                         
-                        cout << "node" << p->getIndex() << endl;
-                        cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
-                        cout << "line num:: 13" << endl;
-                        std::cout << sigma_store[src][p] * sigma_store[p][dest] << endl;
-                        std::cout << sigma_store[src][dest] << endl;
-                        std::cout << CB[p] << endl;
+//                        cout << "node" << p->getIndex() << endl;
+//                        cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
+//                        cout << "line num:: 13" << endl;
+//                        std::cout << sigma_store[src][p] * sigma_store[p][dest] << endl;
+//                        std::cout << sigma_store[src][dest] << endl;
+//                        std::cout << CB[p] << endl;
 
                         CB[p] = CB[p] + ((sigma_store[src][p] * sigma_store[p][dest])*1.0 / sigma_store[src][dest]);  //13
                         
-                        std::cout << CB[p];
-                        std::cout << endl;
+//                        std::cout << CB[p];
+//                        std::cout << endl;
                     }
                 }
             }

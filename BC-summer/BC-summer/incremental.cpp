@@ -388,8 +388,8 @@ void initFunc()
 //    nodeFile.open("/Users/anakin/Downloads/data_test/test8.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/test8.edges.csv");
     
-//    nodeFile.open("/Users/anakin/Downloads/data_test/netscience.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data_test/netscience.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/celegansneural.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/celegansneural.edges.csv");
     
     std::vector<std::string> result = getNextLineAndSplitIntoTokens(nodeFile);
     while ((result = getNextLineAndSplitIntoTokens(nodeFile)).size()!=0) {
@@ -514,12 +514,12 @@ int main(int argc, char* argv[])
         CB_record[iter->first] = iter->second;
     }
     
-//#define USING_ORIGINAL
-#define USING_INCREMENTAL
+#define USING_ORIGINAL
+//#define USING_INCREMENTAL
     
 #ifdef USING_ORIGINAL
-    nodes[3]->addEdge(nodes[5], 1);
-    nodes[5]->addEdge(nodes[3], 1);
+    nodes[68]->addEdge(nodes[86], 1);
+    nodes[86]->addEdge(nodes[68], 1);
     bc.compute(nodes, false);
     bc.brandes_implementation(nodes);
 
@@ -539,8 +539,8 @@ int main(int argc, char* argv[])
     
 
 #ifdef USING_INCREMENTAL
-    Node* src = nodes[3];
-    Node* dest = nodes[5];
+    Node* src = nodes[68];
+    Node* dest = nodes[86];
     bc.insertEdge(src, dest, 1);
 
     
