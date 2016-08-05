@@ -379,13 +379,17 @@ void initFunc()
 
     std::ifstream nodeFile, edgeFile;
     
-    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
-//    nodeFile.open("/Users/anakin/Downloads/data/test.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data/test.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
     
-//    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data_test/adjnoun.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data_test/adjnoun.edges.csv");
+    
+//    nodeFile.open("/Users/anakin/Downloads/data_test/test8.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/test8.edges.csv");
+    
+//    nodeFile.open("/Users/anakin/Downloads/data_test/netscience.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/netscience.edges.csv");
     
     std::vector<std::string> result = getNextLineAndSplitIntoTokens(nodeFile);
     while ((result = getNextLineAndSplitIntoTokens(nodeFile)).size()!=0) {
@@ -475,10 +479,12 @@ int main(int argc, char* argv[])
     double weight = 1;
     for(int i = 0; i < myEdges.size(); i++)
     {
+        //undirected graph
         nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
-//        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
+        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
         //for pred(x)
         nodes[myEdges[i].second]->pred[weight].push_back(nodes[myEdges[i].first]);
+        nodes[myEdges[i].first]->pred[weight].push_back(nodes[myEdges[i].second]);
         
     }
 //    for(int i = 0; i < nodes.size(); i++)
@@ -502,15 +508,20 @@ int main(int argc, char* argv[])
     
     
     
-
     std::map<Node*, double> CB_record;
     for(auto iter = bc.CB.begin(); iter != bc.CB.end(); iter++)
     {
         CB_record[iter->first] = iter->second;
     }
-//    nodes[3]->addEdge(nodes[5], 1);
-//    bc.compute(nodes, false);
-//    bc.brandes_implementation(nodes);
+    
+//#define USING_ORIGINAL
+#define USING_INCREMENTAL
+    
+#ifdef USING_ORIGINAL
+    nodes[3]->addEdge(nodes[5], 1);
+    nodes[5]->addEdge(nodes[3], 1);
+    bc.compute(nodes, false);
+    bc.brandes_implementation(nodes);
 
 
 #ifdef DEBUG_WITHOUT_INCREMENTAL
@@ -523,10 +534,13 @@ int main(int argc, char* argv[])
         std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
     std::cout << std::endl;
 #endif
+#endif
+    
+    
 
-
-    Node* src = nodes[43];
-    Node* dest = nodes[50];
+#ifdef USING_INCREMENTAL
+    Node* src = nodes[3];
+    Node* dest = nodes[5];
     bc.insertEdge(src, dest, 1);
 
     
@@ -540,6 +554,14 @@ int main(int argc, char* argv[])
         std::cout << i << ":" << bc.CB[nodes[i]] - CB_record[nodes[i]] << " ";
     std::cout << std::endl;
 #endif
+#endif
+    
+    
+    
+    
+    
+    
+    
     
     
 //    src = nodes[3];
