@@ -255,7 +255,7 @@
 		3EEDB5441D38519500D16D18 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				"HEADER_SEARCH_PATHS[arch=*]" = (
 					/usr/local/Cellar/boost/1.60.0_1/include/,
 					/opt/local/include/,

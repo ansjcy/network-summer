@@ -411,6 +411,96 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
 //    std::cout << "cost store " << cost_store[nodes[50]][nodes[43]] << std::endl;
 
 }
+
+void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
+{
+    
+    for(int i = 0; i < nodes.size(); i++)
+        CB[nodes[i]] = 0;
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        auto r = nodes[i];
+        std::stack<Node*> S;
+        std::map<Node*, std::vector<Node*> > P;
+        std::map<Node*, int> sigma;
+        std::map<Node*, double> distance;
+        for(int j = 0; j < nodes.size(); j++)
+        {
+            sigma[nodes[j]] = 0;
+            distance[nodes[j]] = DBL_MAX;
+            if(j == i)
+            {
+                sigma[nodes[j]] = 1;
+//                distance[nodes[j]] = 0;
+            }
+        }
+        
+        std::unordered_map<Node*, double> seen;
+        seen[r] = 0;
+        int c = 0;
+        std::queue<std::tuple<double, int, Node *, Node *>> Q;
+        
+        Q.push(make_tuple(0, c++, r, r));
+        
+        //dijkstra
+        while(!Q.empty())
+        {
+            auto dist = std::get<0>(Q.front());
+//            auto _ =std::get<1>(Q.front());
+            auto pred = std::get<2>(Q.front());
+            auto v = std::get<3>(Q.front());
+            Q.pop();
+            
+            if(distance[v] != DBL_MAX)
+                continue;
+            sigma[v] += sigma[pred];
+            S.push(v);
+            distance[v] = dist;
+            
+            for(int e = 0; e < v->edges.size(); e++)
+            {
+                auto w = v->edges[e]->getNode1();
+                auto vw_dist = dist + v->edges[e]->weight;
+                
+                if(distance[w] == DBL_MAX && (seen.find(w) == seen.end() || vw_dist < seen[w]))
+                {
+                    seen[w] = vw_dist;
+                    Q.push(make_tuple(vw_dist, c++, v, w));
+                    sigma[w] = 0;
+                    P[w].clear();
+                    P[w].push_back(v);
+                }
+                else if(vw_dist == seen[w])
+                {
+                    sigma[w] = sigma[w] + sigma[v];
+                    P[w].push_back(v);
+                }
+            }
+        }
+        
+        // dependency accumulation
+        std::map<Node*, double> delta;
+        for(int j = 0; j < nodes.size(); j++)
+            delta[nodes[j]] = 0;
+        while (!S.empty()) {
+            auto w = S.top();
+            S.pop();
+            for(int j = 0; j < P[w].size(); j++)
+            {
+                auto v = P[w][j];
+                delta[v] = delta[v] + (sigma[v]*1.0)/(sigma[w])*(1 + delta[w]);
+            }
+            if(w != r)
+            {
+                CB[w] = CB[w] + delta[w];
+            }
+        }
+        
+        P_store[r] = P;
+        sigma_store[r] = sigma;
+        distance_store[r] = distance;
+    }
+}
 void Betweenness::insertEdge(Node* src, Node* dest, double cost)
 {
     

@@ -476,7 +476,7 @@ int main(int argc, char* argv[])
         nodes.push_back(tmpNode);
     }
     
-    double weight = 1;
+    double weight = 2;
     for(int i = 0; i < myEdges.size(); i++)
     {
         //undirected graph
@@ -521,7 +521,7 @@ int main(int argc, char* argv[])
     nodes[68]->addEdge(nodes[86], 1);
     nodes[86]->addEdge(nodes[68], 1);
 //    bc.compute(nodes, false);
-    bc.brandes_implementation(nodes);
+    bc.brandes_implementation_weighted(nodes);
 
 
 #ifdef DEBUG_WITHOUT_INCREMENTAL

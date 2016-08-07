@@ -98,10 +98,12 @@ void Widget::initFunc()
     this->setFocus();
 
     std::ifstream nodeFile, edgeFile;
-//    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
-    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
 
 //    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
@@ -349,7 +351,7 @@ void Widget::initializeGL(){
         nodes.push_back(tmpNode);
     }
 
-    double weight = 1;
+    double weight = 2;
     for(int i = 0; i < myEdges.size(); i++)
     {
         //undirected graph
@@ -361,6 +363,7 @@ void Widget::initializeGL(){
 
     }
 
+    bc.brandes_implementation_init(nodes);
 
     bc.compute(nodes, true);
 
@@ -380,17 +383,20 @@ void Widget::initializeGL(){
             CB_record[iter->first] = iter->second;
         }
 
-//    #define USING_ORIGINAL
-    #define USING_INCREMENTAL
+    #define USING_ORIGINAL
+//    #define USING_INCREMENTAL
 
     #ifdef USING_ORIGINAL
         TimeLogger* logger = TimeLogger::Instance();
         logger->start();
-        nodes[7]->addEdge(nodes[8], 1);
-        nodes[8]->addEdge(nodes[7], 1);
-        //bc.compute(nodes, false);
-        bc.brandes_implementation(nodes);
+        nodes[68]->addEdge(nodes[86], 1);
+        nodes[86]->addEdge(nodes[68], 1);
+
+        bc.brandes_implementation_weighted(nodes);
+//        bc.compute(nodes, false);
+//        bc.brandes_implementation(nodes);
         logger->markIt("finish computation 1: ");
+
 
 
 
@@ -412,20 +418,20 @@ void Widget::initializeGL(){
 
 
     #ifdef USING_INCREMENTAL
-//        TimeLogger* logger = TimeLogger::Instance();
-//        logger->start();
+        TimeLogger* logger = TimeLogger::Instance();
+        logger->start();
 
-        Node* src = nodes[14];
-        Node* dest = nodes[15];
+        Node* src = nodes[68];
+        Node* dest = nodes[86];
         bc.insertEdge(src, dest, 1);
-//        logger->markIt("finish computation 1: ");
+        logger->markIt("finish computation 1: ");
 
 //        src = nodes[32];
 //        dest = nodes[18];
 //        bc.insertEdge(src, dest, 1);
 //        logger->markIt("finish computation 2: ");
 
-//        logger->outputToScreen();
+        logger->outputToScreen();
 
 
     #ifdef DEBUG_WITH_INCREMENTAL

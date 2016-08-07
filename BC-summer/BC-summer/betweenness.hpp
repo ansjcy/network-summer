@@ -80,6 +80,7 @@ public:
     
     int compute(std::vector<Node*> &nodes, bool needDerivs);
     void brandes_implementation(std::vector<Node*> &nodes);
+    void brandes_implementation_weighted(std::vector<Node*> &nodes);
     void insertEdge(Node* src, Node* dest, double cost);
     std::vector<Node*> insertUpdate(Node* src, Node* dest, Node* z);
     void reduceBetweenness(Node* a, Node* z);
