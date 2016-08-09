@@ -27,7 +27,8 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
             Edge* edge = nodes[i]->edges[k];
             add_edge(edge->getNode0()->getIndex(), edge->getNode1()->getIndex(), g);
             
-            float weight = 1.0;
+            float weight = edge->weight;
+            
             //custom the weight value here!!!
             weights.push_back(weight);
             weighted_edge e;
@@ -98,16 +99,15 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                 for(unsigned int k = 0; k < nodes[gi]->edges.size(); k++)
                 {
                     Edge* edge = nodes[gi]->edges[k];
-                    float weight = 1.0;
                     //custom the weight value here!!!
-                    sumWeights += weight;
+                    sumWeights += edge->weight;
                 }
                 for(unsigned int k=0;k<nodes[gi]->edges.size();k++) {
                     Edge * edge = nodes[gi]->edges[k];
                     int gj = edge->getNode1()->getIndex();
-                    float weight = 1.0;
+                    float weight = edge->weight;
                     //custom the weight value here!!!
-                    weights[numEdges] = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
+                    weights[numEdges] = ((i==gi || i==gj) && sumWeights!=0)? weight - weight/sumWeights: weight;
                     numEdges++;
                 }
             }
@@ -137,7 +137,7 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
             cout << "sensitivity: " << i << endl;
             for(int j = 0; j < centrality2.size(); ++j)
             {
-                cout << j << ":" <<centrality2[j]-vertex_centralities[j] << " ";
+                cout << j << ":" << vertex_centralities[j] - centrality2[j] << " ";
             }
             cout << endl;
 #endif
@@ -145,7 +145,7 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
         
             for(int j = 0; j < centrality2.size(); ++j)
             {
-                nodes[i]->sensitivityValues.push_back(centrality2[j]-vertex_centralities[j]);
+                nodes[i]->sensitivityValues.push_back(vertex_centralities[j] - centrality2[j]);
             }
 #ifdef DEBUG_CHECK_ITERATION
             std::cout<<"finish iteration: " << i << endl;
@@ -260,34 +260,30 @@ void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::ve
     
     
     //***************** my try to read sigma, distance values from the function *****
-    typedef typename graph_traits<GraphW>::degree_size_type degree_size_type;
-    typedef typename graph_traits<GraphW>::edge_descriptor edge_descriptor;
-    typedef decltype(make_iterator_property_map(centrality.begin(), get(vertex_index, g), double())) a_centrality_map;
-    typedef typename property_traits<a_centrality_map>::value_type centrality_type;
-
-    
-    std::vector<std::vector<edge_descriptor> > incoming(V);
-    std::vector<centrality_type> distance(V);
-    std::vector<centrality_type> dependency(V);
-    std::vector<degree_size_type> path_count(V);
-    
-//    auto incoming_map = make_iterator_property_map(incoming.begin(), get(vertex_index, g));
-//    auto distance_map = make_iterator_property_map(distance.begin(), get(vertex_index, g));
-//    auto dependency_map = make_iterator_property_map(dependency.begin(), get(vertex_index, g));
-//    auto path_count_map = make_iterator_property_map(path_count.begin(), get(vertex_index, g));
-    
-    brandes_betweenness_centrality(g,
-                                   make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()),
-                                   make_iterator_property_map(edge_centrality2.begin(), get(edge_index, g), double()),
-                                   make_iterator_property_map(incoming.begin(), get(vertex_index, g)),
-                                   make_iterator_property_map(distance.begin(), get(vertex_index, g)),
-                                   make_iterator_property_map(dependency.begin(), get(vertex_index, g)),
-                                   make_iterator_property_map(path_count.begin(), get(vertex_index, g)),
-                                   get(vertex_index, g),
-                                   get(edge_weight, g));
-    
-    
-    auto aa = path_count[0];
+//    typedef typename graph_traits<GraphW>::degree_size_type degree_size_type;
+//    typedef typename graph_traits<GraphW>::edge_descriptor edge_descriptor;
+//    typedef decltype(make_iterator_property_map(centrality.begin(), get(vertex_index, g), double())) a_centrality_map;
+//    typedef typename property_traits<a_centrality_map>::value_type centrality_type;
+//
+//    
+//    std::vector<std::vector<edge_descriptor> > incoming(V);
+//    std::vector<centrality_type> distance(V);
+//    std::vector<centrality_type> dependency(V);
+//    std::vector<degree_size_type> path_count(V);
+//
+//    
+//    brandes_betweenness_centrality(g,
+//                                   make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()),
+//                                   make_iterator_property_map(edge_centrality2.begin(), get(edge_index, g), double()),
+//                                   make_iterator_property_map(incoming.begin(), get(vertex_index, g)),
+//                                   make_iterator_property_map(distance.begin(), get(vertex_index, g)),
+//                                   make_iterator_property_map(dependency.begin(), get(vertex_index, g)),
+//                                   make_iterator_property_map(path_count.begin(), get(vertex_index, g)),
+//                                   get(vertex_index, g),
+//                                   get(edge_weight, g));
+//    
+//    
+//    auto aa = path_count[0];
     
     /*
      brandes_betweenness_centrality(const Graph& g,

@@ -382,11 +382,11 @@ void initFunc()
 //    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
     
-    nodeFile.open("/Users/anakin/Downloads/data_test/adjnoun.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data_test/adjnoun.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/adjnoun.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/adjnoun.edges.csv");
     
-//    nodeFile.open("/Users/anakin/Downloads/data_test/test11.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data_test/test11.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data_test/test11.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data_test/test11.edges.csv");
     
 //    nodeFile.open("/Users/anakin/Downloads/data_test/celegansneural.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/celegansneural.edges.csv");
@@ -487,14 +487,8 @@ int main(int argc, char* argv[])
         nodes[myEdges[i].first]->pred[weight].push_back(nodes[myEdges[i].second]);
         
     }
-//    for(int i = 0; i < nodes.size(); i++)
-//    {
-//        std::cout << "node " << i << ": " << std::endl;
-//        for(auto j = nodes[i]->pred.begin(); j != nodes[i]->pred.end(); j++)
-//        {
-//            std::cout << j->first->getIndex() << std::endl;
-//        }
-//    }
+    
+    
     bc.compute(nodes, true);
     bc.brandes_implementation_init(nodes);
     bc.brandes_implementation_weighted(nodes);
@@ -515,8 +509,8 @@ int main(int argc, char* argv[])
         CB_record[iter->first] = iter->second;
     }
     
-#define USING_ORIGINAL
-//#define USING_INCREMENTAL
+//#define USING_ORIGINAL
+#define USING_INCREMENTAL
     
 #ifdef USING_ORIGINAL
     nodes[68]->addEdge(nodes[86], 1);
