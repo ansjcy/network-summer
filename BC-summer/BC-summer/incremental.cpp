@@ -385,8 +385,8 @@ void initFunc()
     nodeFile.open("/Users/anakin/Downloads/data_test/adjnoun.nodes.csv");
     edgeFile.open("/Users/anakin/Downloads/data_test/adjnoun.edges.csv");
     
-//    nodeFile.open("/Users/anakin/Downloads/data_test/test8.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data_test/test8.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/test11.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/test11.edges.csv");
     
 //    nodeFile.open("/Users/anakin/Downloads/data_test/celegansneural.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/celegansneural.edges.csv");
@@ -476,7 +476,7 @@ int main(int argc, char* argv[])
         nodes.push_back(tmpNode);
     }
     
-    double weight = 1;
+    double weight = 2;
     for(int i = 0; i < myEdges.size(); i++)
     {
         //undirected graph
@@ -496,7 +496,8 @@ int main(int argc, char* argv[])
 //        }
 //    }
     bc.compute(nodes, true);
-    bc.brandes_implementation(nodes);
+    bc.brandes_implementation_init(nodes);
+    bc.brandes_implementation_weighted(nodes);
     
 #ifdef DEBUG_SHOW_MY_RESULT
     std::cout << "******* my result!! *********" << std::endl;
@@ -521,7 +522,7 @@ int main(int argc, char* argv[])
     nodes[68]->addEdge(nodes[86], 1);
     nodes[86]->addEdge(nodes[68], 1);
 //    bc.compute(nodes, false);
-    bc.brandes_implementation(nodes);
+    bc.brandes_implementation_weighted(nodes);
 
 
 #ifdef DEBUG_WITHOUT_INCREMENTAL
@@ -539,8 +540,8 @@ int main(int argc, char* argv[])
     
 
 #ifdef USING_INCREMENTAL
-    Node* src = nodes[68];
-    Node* dest = nodes[86];
+    Node* src = nodes[3];
+    Node* dest = nodes[2];
     bc.insertEdge(src, dest, 1);
 
     

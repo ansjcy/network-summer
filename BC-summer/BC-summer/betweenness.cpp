@@ -315,14 +315,13 @@ void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::ve
     }
 }
 
-
-void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
+void Betweenness::brandes_implementation_init(std::vector<Node*> &nodes)
 {
     //global store..
     for(int i = 0; i < nodes.size(); i++)
     {
-        std::map<Node*, double> cost_per_node;
-
+        std::unordered_map<Node*, double> cost_per_node;
+        
         for(int j = 0; j < nodes[i]->edges.size(); j++)
         {
             cost_per_node[nodes[i]->edges[j]->node1] = nodes[i]->edges[j]->weight;
@@ -335,9 +334,31 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         }
         cost_per_node[nodes[i]] = 0;
         cost_store[nodes[i]] = cost_per_node;
-//        for(auto iter = cost_per_node.begin(); iter != cost_per_node.end(); iter++)
-//            cost_store[nodes[i]][iter->first] = iter->second;
     }
+}
+
+void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
+{
+//    //global store..
+//    for(int i = 0; i < nodes.size(); i++)
+//    {
+//        std::unordered_map<Node*, double> cost_per_node;
+//
+//        for(int j = 0; j < nodes[i]->edges.size(); j++)
+//        {
+//            cost_per_node[nodes[i]->edges[j]->node1] = nodes[i]->edges[j]->weight;
+//        }
+//        for(int j = 0; j < nodes.size(); j++)
+//        {
+//            if(cost_per_node.find(nodes[j]) != cost_per_node.end())
+//                continue;
+//            cost_per_node[nodes[j]] = DBL_MAX;
+//        }
+//        cost_per_node[nodes[i]] = 0;
+//        cost_store[nodes[i]] = cost_per_node;
+////        for(auto iter = cost_per_node.begin(); iter != cost_per_node.end(); iter++)
+////            cost_store[nodes[i]][iter->first] = iter->second;
+//    }
 
     
     for(int i = 0; i < nodes.size(); i++)
@@ -347,9 +368,9 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         auto r = nodes[i];
         std::stack<Node*> S;
         std::queue<Node*> Q;
-        std::map<Node*, std::vector<Node*> > P;
-        std::map<Node*, int> sigma;
-        std::map<Node*, double> distance;
+        std::unordered_map<Node*, std::vector<Node*> > P;
+        std::unordered_map<Node*, int> sigma;
+        std::unordered_map<Node*, double> distance;
         for(int j = 0; j < nodes.size(); j++)
         {
             sigma[nodes[j]] = 0;
@@ -411,11 +432,131 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
 //    std::cout << "cost store " << cost_store[nodes[50]][nodes[43]] << std::endl;
 
 }
+
+struct comparator {
+    bool operator()(std::tuple<double, int, Node *, Node *> i, std::tuple<double, int, Node *, Node *> j) {
+        if(std::get<0>(i) == std::get<0>(j))
+            return std::get<1>(i) > std::get<1>(j);
+        return std::get<0>(i) > std::get<0>(j);
+    }
+};
+
+
+void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
+{
+    
+    for(int i = 0; i < nodes.size(); i++)
+        CB[nodes[i]] = 0.0;
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        auto r = nodes[i];
+        std::stack<Node*> S;
+        std::unordered_map<Node*, std::vector<Node*> > P;
+        std::unordered_map<Node*, int> sigma;
+        std::unordered_map<Node*, double> distance;
+        for(int j = 0; j < nodes.size(); j++)
+        {
+            sigma[nodes[j]] = 0;
+            distance[nodes[j]] = DBL_MAX;
+            if(j == i)
+            {
+                sigma[nodes[j]] = 1;
+                //                distance[nodes[j]] = 0;
+            }
+        }
+        
+        std::unordered_map<Node*, double> seen;
+        seen[r] = 0.0;
+        int c = 0;
+        priority_queue<std::tuple<double, int, Node *, Node *>, std::vector<std::tuple<double, int, Node *, Node *>>, comparator> Q;
+//        std::queue<std::tuple<double, int, Node *, Node *>> Q;
+        
+        Q.push(make_tuple(0.0, c++, r, r));
+        
+        
+        //dijkstra
+        while(!Q.empty())
+        {
+            double dist = std::get<0>(Q.top());
+            //            auto _ =std::get<1>(Q.front());
+            auto pred = std::get<2>(Q.top());
+            auto v = std::get<3>(Q.top());
+            Q.pop();
+            
+            if(distance[v] != DBL_MAX)
+                continue;
+            sigma[v] += sigma[pred];
+            
+//            cout << "v: " << v->getIndex() << endl;
+//            for(auto aa = sigma.begin(); aa != sigma.end(); aa++)
+//            {
+//                cout << aa->second << " ";
+//            }
+//            cout << endl;
+            
+            S.push(v);
+            distance[v] = dist;
+            
+            for(int e = 0; e < v->edges.size(); e++)
+            {
+                auto w = v->edges[e]->getNode1();
+                double vw_dist = dist + v->edges[e]->weight;
+//                cout << "v: " << v->getIndex() << " w: " << w->getIndex() << endl;
+//                for(auto aa = sigma.begin(); aa != sigma.end(); aa++)
+//                {
+//                    cout << aa->second << " ";
+//                }
+//                cout << endl;
+
+                
+                if(distance[w] == DBL_MAX && (seen.find(w) == seen.end() || vw_dist < seen[w]))
+                {
+                    seen[w] = vw_dist;
+                    Q.push(make_tuple(vw_dist, c++, v, w));
+                    sigma[w] = 0;
+                    P[w].clear();
+                    P[w].push_back(v);
+                }
+                else if(vw_dist == seen[w])
+                {
+                    sigma[w] = sigma[w] + sigma[v];
+                    P[w].push_back(v);
+                }
+            }
+        }
+        
+        // dependency accumulation
+        std::map<Node*, double> delta;
+        for(int j = 0; j < nodes.size(); j++)
+            delta[nodes[j]] = 0;
+        while (!S.empty()) {
+            auto w = S.top();
+            S.pop();
+            double coeff = (1.0 + delta[w]) / sigma[w];
+            for(int j = 0; j < P[w].size(); j++)
+            {
+                auto v = P[w][j];
+//                delta[v] = delta[v] + (double)(sigma[v]*1.0)/(sigma[w])*(1 + delta[w]);
+                delta[v] += sigma[v] * coeff;
+                //cout << "v:" << v->getIndex() << " delta[v]: " << delta[v] << endl;
+            }
+            if(w != r)
+            {
+                CB[w] = CB[w] + delta[w];
+                //cout << "w:" << w->getIndex() << " CB[w]: " << CB[w] << endl;
+            }
+        }
+        
+        P_store[r] = P;
+        sigma_store[r] = sigma;
+        distance_store[r] = distance;
+    }
+}
 void Betweenness::insertEdge(Node* src, Node* dest, double cost)
 {
     
 //    std::map<Node*, double> CB;
-//    
+//
 //    std::map<Node*, std::map<Node*, std::vector<Node*> > > P_store;
 //    std::map<Node*, std::map<Node*, int> > sigma_store;
 //    std::map<Node*, std::map<Node*, double> > distance_store;
@@ -888,27 +1029,27 @@ std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
     return affectedVertices;
 }
 
-bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, double> > container)
+bool Betweenness::isIn(std::pair<Node*, Node*> key, std::unordered_map<Node*, std::unordered_map<Node*, double> > &container)
 {
     if(container.find(key.first) != container.end())
         if(container[key.first].find(key.second) != container[key.first].end())
             return true;
     return false;
 }
-bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, int> > container)
+bool Betweenness::isIn(std::pair<Node*, Node*> key, std::unordered_map<Node*, std::unordered_map<Node*, int> > &container)
 {
     if(container.find(key.first) != container.end())
         if(container[key.first].find(key.second) != container[key.first].end())
             return true;
     return false;
 }
-bool Betweenness::isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > container)
+bool Betweenness::isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > &container)
 {
     if(find(container.begin(), container.end(), value) != container.end())
         return true;
     return false;
 }
-bool Betweenness::isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > container)
+bool Betweenness::isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > &container)
 {
     if(find(container.begin(), container.end(), value) != container.end())
         return true;

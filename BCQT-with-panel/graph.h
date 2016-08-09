@@ -48,7 +48,7 @@ class Edge
 {
 public:
     int multiplicity;
-    float weight;
+    double weight;
     double centralityValue;
     Node* node0;
     Node* node1;
