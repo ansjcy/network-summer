@@ -385,8 +385,8 @@ void initFunc()
     nodeFile.open("/Users/anakin/Downloads/data_test/adjnoun.nodes.csv");
     edgeFile.open("/Users/anakin/Downloads/data_test/adjnoun.edges.csv");
     
-//    nodeFile.open("/Users/anakin/Downloads/data_test/test8.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data_test/test8.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/test11.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/test11.edges.csv");
     
 //    nodeFile.open("/Users/anakin/Downloads/data_test/celegansneural.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/celegansneural.edges.csv");
@@ -539,8 +539,8 @@ int main(int argc, char* argv[])
     
 
 #ifdef USING_INCREMENTAL
-    Node* src = nodes[68];
-    Node* dest = nodes[86];
+    Node* src = nodes[10];
+    Node* dest = nodes[11];
     bc.insertEdge(src, dest, 1);
 
     

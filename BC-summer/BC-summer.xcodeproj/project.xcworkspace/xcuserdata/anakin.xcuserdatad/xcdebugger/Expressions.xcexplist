@@ -3,6 +3,9 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "main:incremental.cpp">
+      </ContextState>
+      <ContextState
          contextName = "Betweenness::deleteUpdate(Node*, Node*, Node*):betweenness.cpp">
       </ContextState>
       <ContextState
@@ -20,12 +23,26 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "Betweenness::brandes_implementation_weighted(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "r">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::reduceBetweenness(Node*, Node*):betweenness.cpp">
+      </ContextState>
+      <ContextState
          contextName = "Betweenness::insertEdge(Node*, Node*, double):betweenness.cpp">
          <PersistentStrings>
             <PersistentString
                value = "cost_store[src][dest]">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::increaseBetweenness():betweenness.cpp">
       </ContextState>
       <ContextState
          contextName = "main:testForceLayout.cpp">

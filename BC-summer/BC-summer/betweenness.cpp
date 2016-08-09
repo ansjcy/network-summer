@@ -412,11 +412,20 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
 
 }
 
+struct comparator {
+    bool operator()(std::tuple<double, int, Node *, Node *> i, std::tuple<double, int, Node *, Node *> j) {
+        if(std::get<0>(i) == std::get<0>(j))
+            return std::get<1>(i) > std::get<1>(j);
+        return std::get<0>(i) > std::get<0>(j);
+    }
+};
+
+
 void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
 {
     
     for(int i = 0; i < nodes.size(); i++)
-        CB[nodes[i]] = 0;
+        CB[nodes[i]] = 0.0;
     for(int i = 0; i < nodes.size(); i++)
     {
         auto r = nodes[i];
@@ -431,36 +440,53 @@ void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
             if(j == i)
             {
                 sigma[nodes[j]] = 1;
-//                distance[nodes[j]] = 0;
+                //                distance[nodes[j]] = 0;
             }
         }
         
         std::unordered_map<Node*, double> seen;
-        seen[r] = 0;
+        seen[r] = 0.0;
         int c = 0;
-        std::queue<std::tuple<double, int, Node *, Node *>> Q;
+        priority_queue<std::tuple<double, int, Node *, Node *>, std::vector<std::tuple<double, int, Node *, Node *>>, comparator> Q;
+//        std::queue<std::tuple<double, int, Node *, Node *>> Q;
         
-        Q.push(make_tuple(0, c++, r, r));
+        Q.push(make_tuple(0.0, c++, r, r));
+        
         
         //dijkstra
         while(!Q.empty())
         {
-            auto dist = std::get<0>(Q.front());
-//            auto _ =std::get<1>(Q.front());
-            auto pred = std::get<2>(Q.front());
-            auto v = std::get<3>(Q.front());
+            double dist = std::get<0>(Q.top());
+            //            auto _ =std::get<1>(Q.front());
+            auto pred = std::get<2>(Q.top());
+            auto v = std::get<3>(Q.top());
             Q.pop();
             
             if(distance[v] != DBL_MAX)
                 continue;
             sigma[v] += sigma[pred];
+            
+//            cout << "v: " << v->getIndex() << endl;
+//            for(auto aa = sigma.begin(); aa != sigma.end(); aa++)
+//            {
+//                cout << aa->second << " ";
+//            }
+//            cout << endl;
+            
             S.push(v);
             distance[v] = dist;
             
             for(int e = 0; e < v->edges.size(); e++)
             {
                 auto w = v->edges[e]->getNode1();
-                auto vw_dist = dist + v->edges[e]->weight;
+                double vw_dist = dist + v->edges[e]->weight;
+//                cout << "v: " << v->getIndex() << " w: " << w->getIndex() << endl;
+//                for(auto aa = sigma.begin(); aa != sigma.end(); aa++)
+//                {
+//                    cout << aa->second << " ";
+//                }
+//                cout << endl;
+
                 
                 if(distance[w] == DBL_MAX && (seen.find(w) == seen.end() || vw_dist < seen[w]))
                 {
@@ -485,14 +511,18 @@ void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
         while (!S.empty()) {
             auto w = S.top();
             S.pop();
+            double coeff = (1.0 + delta[w]) / sigma[w];
             for(int j = 0; j < P[w].size(); j++)
             {
                 auto v = P[w][j];
-                delta[v] = delta[v] + (sigma[v]*1.0)/(sigma[w])*(1 + delta[w]);
+//                delta[v] = delta[v] + (double)(sigma[v]*1.0)/(sigma[w])*(1 + delta[w]);
+                delta[v] += sigma[v] * coeff;
+                //cout << "v:" << v->getIndex() << " delta[v]: " << delta[v] << endl;
             }
             if(w != r)
             {
                 CB[w] = CB[w] + delta[w];
+                //cout << "w:" << w->getIndex() << " CB[w]: " << CB[w] << endl;
             }
         }
         
@@ -505,7 +535,7 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
 {
     
 //    std::map<Node*, double> CB;
-//    
+//
 //    std::map<Node*, std::map<Node*, std::vector<Node*> > > P_store;
 //    std::map<Node*, std::map<Node*, int> > sigma_store;
 //    std::map<Node*, std::map<Node*, double> > distance_store;

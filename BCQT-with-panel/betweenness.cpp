@@ -533,6 +533,16 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
 //    std::map<Node*, std::map<Node*, int> > sigma_store;
 //    std::map<Node*, std::map<Node*, double> > distance_store;
 //    std::map<Node*, std::map<Node*, double> > cost_store;
+    sigma_old.clear();
+    distance_old.clear();
+    trackLost.clear();
+    pairsDone.clear();
+
+    //mind this, undirected graph...
+    cost_store[src][dest] = cost;
+    cost_store[dest][src] = cost;
+//    TimeLogger* logger = TimeLogger::Instance();
+//    logger->start();
 
 #ifdef DEBGU_GET_STORE_VALUES
     cout << "CB::" << endl;
@@ -545,7 +555,7 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     {
         for(auto j = i->second.begin(); j != i->second.end(); j++)
         {
-            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: ";
+            cout << "P <" << i->first->getIndex() << "," << j->first->getIndex() << ">: ";
             for(int k = 0; k < j->second.size(); k++)
                 cout << j->second[k]->getIndex() << " ";
             cout << endl;
@@ -557,7 +567,7 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     {
         for(auto j = i->second.begin(); j != i->second.end(); j++)
         {
-            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
+            cout << "sigma <" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
         }
     }
 
@@ -566,7 +576,7 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     {
         for(auto j = i->second.begin(); j != i->second.end(); j++)
         {
-            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
+            cout << "distance <" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
         }
     }
 
@@ -575,23 +585,15 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     {
         for(auto j = i->second.begin(); j != i->second.end(); j++)
         {
-            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
+            if(i->first->getIndex() == 10 && j->first->getIndex() == 11)
+                cout << "here::" << endl;
+            cout << "cost <" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
         }
     }
 #endif
 
 
-    sigma_old.clear();
-    distance_old.clear();
-    trackLost.clear();
-    pairsDone.clear();
 
-    //mind this, undirected graph...
-    cost_store[src][dest] = cost;
-    cost_store[dest][src] = cost;
-//    std::cout << "cost store " << cost_store[src][dest] << std::endl;
-//    TimeLogger* logger = TimeLogger::Instance();
-//    logger->start();
 
 
     std::vector<Node*> sources = insertUpdate(src, dest, dest);

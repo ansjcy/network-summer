@@ -367,7 +367,7 @@ void Widget::initializeGL(){
 
     bc.compute(nodes, true);
 
-    bc.brandes_implementation(nodes);
+    bc.brandes_implementation_weighted(nodes);
 
     #ifdef DEBUG_SHOW_MY_RESULT
         std::cout << "******* my result!! *********" << std::endl;
@@ -424,7 +424,7 @@ void Widget::initializeGL(){
         Node* src = nodes[68];
         Node* dest = nodes[86];
         bc.insertEdge(src, dest, 1);
-        logger->markIt("finish computation 1: ");
+        logger->markIt("finish incremental computation: ");
 
 //        src = nodes[32];
 //        dest = nodes[18];
