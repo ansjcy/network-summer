@@ -315,14 +315,13 @@ void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::ve
     }
 }
 
-
-void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
+void Betweenness::brandes_implementation_init(std::vector<Node*> &nodes)
 {
     //global store..
     for(int i = 0; i < nodes.size(); i++)
     {
         std::unordered_map<Node*, double> cost_per_node;
-
+        
         for(int j = 0; j < nodes[i]->edges.size(); j++)
         {
             cost_per_node[nodes[i]->edges[j]->node1] = nodes[i]->edges[j]->weight;
@@ -335,9 +334,31 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         }
         cost_per_node[nodes[i]] = 0;
         cost_store[nodes[i]] = cost_per_node;
-//        for(auto iter = cost_per_node.begin(); iter != cost_per_node.end(); iter++)
-//            cost_store[nodes[i]][iter->first] = iter->second;
     }
+}
+
+void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
+{
+//    //global store..
+//    for(int i = 0; i < nodes.size(); i++)
+//    {
+//        std::unordered_map<Node*, double> cost_per_node;
+//
+//        for(int j = 0; j < nodes[i]->edges.size(); j++)
+//        {
+//            cost_per_node[nodes[i]->edges[j]->node1] = nodes[i]->edges[j]->weight;
+//        }
+//        for(int j = 0; j < nodes.size(); j++)
+//        {
+//            if(cost_per_node.find(nodes[j]) != cost_per_node.end())
+//                continue;
+//            cost_per_node[nodes[j]] = DBL_MAX;
+//        }
+//        cost_per_node[nodes[i]] = 0;
+//        cost_store[nodes[i]] = cost_per_node;
+////        for(auto iter = cost_per_node.begin(); iter != cost_per_node.end(); iter++)
+////            cost_store[nodes[i]][iter->first] = iter->second;
+//    }
 
     
     for(int i = 0; i < nodes.size(); i++)

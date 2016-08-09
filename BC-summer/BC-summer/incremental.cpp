@@ -496,6 +496,7 @@ int main(int argc, char* argv[])
 //        }
 //    }
     bc.compute(nodes, true);
+    bc.brandes_implementation_init(nodes);
     bc.brandes_implementation_weighted(nodes);
     
 #ifdef DEBUG_SHOW_MY_RESULT
