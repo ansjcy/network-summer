@@ -321,7 +321,7 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
     //global store..
     for(int i = 0; i < nodes.size(); i++)
     {
-        std::map<Node*, double> cost_per_node;
+        std::unordered_map<Node*, double> cost_per_node;
 
         for(int j = 0; j < nodes[i]->edges.size(); j++)
         {
@@ -347,9 +347,9 @@ void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
         auto r = nodes[i];
         std::stack<Node*> S;
         std::queue<Node*> Q;
-        std::map<Node*, std::vector<Node*> > P;
-        std::map<Node*, int> sigma;
-        std::map<Node*, double> distance;
+        std::unordered_map<Node*, std::vector<Node*> > P;
+        std::unordered_map<Node*, int> sigma;
+        std::unordered_map<Node*, double> distance;
         for(int j = 0; j < nodes.size(); j++)
         {
             sigma[nodes[j]] = 0;
@@ -430,9 +430,9 @@ void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
     {
         auto r = nodes[i];
         std::stack<Node*> S;
-        std::map<Node*, std::vector<Node*> > P;
-        std::map<Node*, int> sigma;
-        std::map<Node*, double> distance;
+        std::unordered_map<Node*, std::vector<Node*> > P;
+        std::unordered_map<Node*, int> sigma;
+        std::unordered_map<Node*, double> distance;
         for(int j = 0; j < nodes.size(); j++)
         {
             sigma[nodes[j]] = 0;
@@ -1008,27 +1008,27 @@ std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
     return affectedVertices;
 }
 
-bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, double> > container)
+bool Betweenness::isIn(std::pair<Node*, Node*> key, std::unordered_map<Node*, std::unordered_map<Node*, double> > &container)
 {
     if(container.find(key.first) != container.end())
         if(container[key.first].find(key.second) != container[key.first].end())
             return true;
     return false;
 }
-bool Betweenness::isIn(std::pair<Node*, Node*> key, std::map<Node*, std::map<Node*, int> > container)
+bool Betweenness::isIn(std::pair<Node*, Node*> key, std::unordered_map<Node*, std::unordered_map<Node*, int> > &container)
 {
     if(container.find(key.first) != container.end())
         if(container[key.first].find(key.second) != container[key.first].end())
             return true;
     return false;
 }
-bool Betweenness::isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > container)
+bool Betweenness::isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > &container)
 {
     if(find(container.begin(), container.end(), value) != container.end())
         return true;
     return false;
 }
-bool Betweenness::isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > container)
+bool Betweenness::isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > &container)
 {
     if(find(container.begin(), container.end(), value) != container.end())
         return true;

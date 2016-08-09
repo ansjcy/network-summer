@@ -496,7 +496,7 @@ int main(int argc, char* argv[])
 //        }
 //    }
     bc.compute(nodes, true);
-    bc.brandes_implementation(nodes);
+    bc.brandes_implementation_weighted(nodes);
     
 #ifdef DEBUG_SHOW_MY_RESULT
     std::cout << "******* my result!! *********" << std::endl;
@@ -539,8 +539,8 @@ int main(int argc, char* argv[])
     
 
 #ifdef USING_INCREMENTAL
-    Node* src = nodes[10];
-    Node* dest = nodes[11];
+    Node* src = nodes[3];
+    Node* dest = nodes[2];
     bc.insertEdge(src, dest, 1);
 
     
