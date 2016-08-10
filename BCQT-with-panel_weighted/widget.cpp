@@ -348,11 +348,8 @@ void Widget::initializeGL(){
     for(int i = 0; i < myNodes.size(); i++)
     {
         Node* tmpNode = new Node();
-        Node* tmpNode_transpose = new Node();
         tmpNode->setIndex(i);
-        tmpNode_transpose->setIndex(i);
         nodes.push_back(tmpNode);
-        nodes_transpose.push_back(tmpNode_transpose);
     }
 
     double weight = 2;
@@ -360,18 +357,25 @@ void Widget::initializeGL(){
     {
         //undirected graph
         nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
-        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
+        //nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
         //for pred(x)
-        nodes[myEdges[i].second]->pred[weight].push_back(nodes[myEdges[i].first]);
-        nodes[myEdges[i].first]->pred[weight].push_back(nodes[myEdges[i].second]);
+        //nodes[myEdges[i].second]->pred[weight].push_back(nodes[myEdges[i].first]);
+        //nodes[myEdges[i].first]->pred[weight].push_back(nodes[myEdges[i].second]);
 
+
+//        //for transpose:
+//        nodes_transpose[myEdges[i].second]->addEdge(nodes_transpose[myEdges[i].first], weight);
+//        //nodes_transpose[myEdges[i].first]->addEdge(nodes_transpose[myEdges[i].second], weight);
+//        nodes_transpose[myEdges[i].first]->pred[weight].push_back(nodes_transpose[myEdges[i].second]);
+//        //nodes_transpose[myEdges[i].second]->pred[weight].push_back(nodes_transpose[myEdges[i].first]);
     }
 
 
     bc.compute(nodes, true);
-
     bc.brandes_implementation_init(nodes);
-    bc.brandes_implementation_weighted(nodes);
+    bc.brandes_implementation_weighted(nodes, false);
+    bc.brandes_implementation_weighted(nodes, true);
+
 
     #ifdef DEBUG_SHOW_MY_RESULT
         std::cout << "******* my result!! *********" << std::endl;
@@ -398,10 +402,10 @@ void Widget::initializeGL(){
     #ifdef USING_ORIGINAL
         TimeLogger* logger = TimeLogger::Instance();
         logger->start();
-        nodes[3]->addEdge(nodes[5], 1);
-        nodes[5]->addEdge(nodes[3], 1);
-        //bc.compute(nodes, false);
-        bc.brandes_implementation_weighted(nodes);
+        nodes[5]->addEdge(nodes[4], 1);
+//        nodes[5]->addEdge(nodes[3], 1);
+//        bc.compute(nodes, false);
+        bc.brandes_implementation_weighted(nodes, false);
         logger->markIt("finish computation 1: ");
 
 
@@ -427,10 +431,10 @@ void Widget::initializeGL(){
 //        TimeLogger* logger = TimeLogger::Instance();
 //        logger->start();
 
-        Node* src = nodes[2];
-        Node* dest = nodes[3];
+        Node* src = nodes[3];
+        Node* dest = nodes[2];
 
-        bc.insertEdge(src, dest, 2);
+        bc.insertEdge(src, dest, 1);
 //        bc.insertEdge(nodes[0], nodes[1], 1);
 //        bc.insertEdge(nodes[1], nodes[0], 1.6667);
 //        bc.insertEdge(nodes[1], nodes[2], 1.6667);

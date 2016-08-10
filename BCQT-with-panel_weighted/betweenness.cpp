@@ -108,8 +108,8 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                     int gj = edge->getNode1()->getIndex();
                     float weight = edge->weight;
                     //custom the weight value here!!!
-                    cout << gi << " " << gj << " " << numEdges <<endl;
-                    cout << (((i==gi || i==gj) && sumWeights!=0)? weight - weight/sumWeights: weight) << endl;
+//                    cout << gi << " " << gj << " " << numEdges <<endl;
+//                    cout << (((i==gi || i==gj) && sumWeights!=0)? weight - weight/sumWeights: weight) << endl;
 
                     weights[numEdges] = ((i==gi || i==gj) && sumWeights!=0)? weight - weight/sumWeights: weight;
                     numEdges++;
@@ -340,6 +340,23 @@ void Betweenness::brandes_implementation_init(std::vector<Node*> &nodes)
 //        for(auto iter = cost_per_node.begin(); iter != cost_per_node.end(); iter++)
 //            cost_store[nodes[i]][iter->first] = iter->second;
     }
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        std::unordered_map<Node*, double> cost_per_node;
+
+        for(int j = 0; j < nodes[i]->edges_transpose.size(); j++)
+        {
+            cost_per_node[nodes[i]->edges_transpose[j]->node1] = nodes[i]->edges_transpose[j]->weight;
+        }
+        for(int j = 0; j < nodes.size(); j++)
+        {
+            if(cost_per_node.find(nodes[j]) != cost_per_node.end())
+                continue;
+            cost_per_node[nodes[j]] = DBL_MAX;
+        }
+        cost_per_node[nodes[i]] = 0;
+        cost_store_transpose[nodes[i]] = cost_per_node;
+    }
 }
 
 void Betweenness::brandes_implementation(std::vector<Node*> &nodes)
@@ -445,11 +462,17 @@ struct comparator {
 };
 
 
-void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
+void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes, bool isTranspose)
 {
 
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > &P_now = isTranspose? P_store_transpose:P_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_now = isTranspose? sigma_store_transpose:sigma_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_now = isTranspose? distance_store_transpose:distance_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &cost_now = isTranspose? cost_store_transpose:cost_store;
+    std::unordered_map<Node*, double> &CB_now = isTranspose? CB_transpose:CB;
+
     for(int i = 0; i < nodes.size(); i++)
-        CB[nodes[i]] = 0.0;
+        CB_now[nodes[i]] = 0.0;
     for(int i = 0; i < nodes.size(); i++)
     {
         auto r = nodes[i];
@@ -500,10 +523,12 @@ void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
             S.push(v);
             distance[v] = dist;
 
-            for(int e = 0; e < v->edges.size(); e++)
+            int edgeSize = isTranspose? v->edges_transpose.size():v->edges.size();
+            for(int e = 0; e < edgeSize; e++)
             {
-                auto w = v->edges[e]->getNode1();
-                double vw_dist = dist + v->edges[e]->weight;
+                Edge* edge_now = isTranspose? v->edges_transpose[e] : v->edges[e];
+                auto w = edge_now->getNode1();
+                double vw_dist = dist + edge_now->weight;
 //                cout << "v: " << v->getIndex() << " w: " << w->getIndex() << endl;
 //                for(auto aa = sigma.begin(); aa != sigma.end(); aa++)
 //                {
@@ -552,16 +577,135 @@ void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes)
             }
             if(w != r)
             {
-                CB[w] = CB[w] + delta[w];
+                CB_now[w] = CB_now[w] + delta[w];
                 //cout << "w:" << w->getIndex() << " CB[w]: " << CB[w] << endl;
             }
         }
 
-        P_store[r] = P;
-        sigma_store[r] = sigma;
-        distance_store[r] = distance;
+        P_now[r] = P;
+        sigma_now[r] = sigma;
+        distance_now[r] = distance;
     }
 }
+
+//void Betweenness::brandes_implementation_weighted_transpose(std::vector<Node*> &nodes)
+//{
+
+//    for(int i = 0; i < nodes.size(); i++)
+//        CB_transpose[nodes[i]] = 0.0;
+//    for(int i = 0; i < nodes.size(); i++)
+//    {
+//        auto r = nodes[i];
+//        std::stack<Node*> S;
+//        std::unordered_map<Node*, std::vector<Node*> > P;
+//        std::unordered_map<Node*, int> sigma;
+//        std::unordered_map<Node*, double> distance;
+//        for(int j = 0; j < nodes.size(); j++)
+//        {
+//            sigma[nodes[j]] = 0;
+//            distance[nodes[j]] = DBL_MAX;
+//            if(j == i)
+//            {
+//                sigma[nodes[j]] = 1;
+//                //                distance[nodes[j]] = 0;
+//            }
+//        }
+
+//        std::unordered_map<Node*, double> seen;
+//        seen[r] = 0.0;
+//        int c = 0;
+//        priority_queue<std::tuple<double, int, Node *, Node *>, std::vector<std::tuple<double, int, Node *, Node *>>, comparator> Q;
+////        std::queue<std::tuple<double, int, Node *, Node *>> Q;
+
+//        Q.push(make_tuple(0.0, c++, r, r));
+
+
+//        //dijkstra
+//        while(!Q.empty())
+//        {
+//            double dist = std::get<0>(Q.top());
+//            //            auto _ =std::get<1>(Q.front());
+//            auto pred = std::get<2>(Q.top());
+//            auto v = std::get<3>(Q.top());
+//            Q.pop();
+
+//            if(distance[v] != DBL_MAX)
+//                continue;
+//            sigma[v] += sigma[pred];
+
+////            cout << "v: " << v->getIndex() << endl;
+////            for(auto aa = sigma.begin(); aa != sigma.end(); aa++)
+////            {
+////                cout << aa->second << " ";
+////            }
+////            cout << endl;
+
+//            S.push(v);
+//            distance[v] = dist;
+
+//            for(int e = 0; e < v->edges.size(); e++)
+//            {
+//                auto w = v->edges[e]->getNode1();
+//                double vw_dist = dist + v->edges[e]->weight;
+////                cout << "v: " << v->getIndex() << " w: " << w->getIndex() << endl;
+////                for(auto aa = sigma.begin(); aa != sigma.end(); aa++)
+////                {
+////                    cout << aa->second << " ";
+////                }
+////                cout << endl;
+
+
+//                if(distance[w] == DBL_MAX && (seen.find(w) == seen.end() || vw_dist < seen[w]))
+//                {
+//                    seen[w] = vw_dist;
+//                    Q.push(make_tuple(vw_dist, c++, v, w));
+//                    sigma[w] = 0;
+//                    P[w].clear();
+//                    P[w].push_back(v);
+//                }
+//                else if(vw_dist == seen[w])
+//                {
+//                    sigma[w] = sigma[w] + sigma[v];
+//                    P[w].push_back(v);
+//                }
+//            }
+//        }
+
+
+//        //why this happens??
+//        for(auto sigma_iter = sigma.begin(); sigma_iter != sigma.end(); sigma_iter++)
+//            sigma_iter->second /= 2;
+
+
+
+//        // dependency accumulation
+//        std::map<Node*, double> delta;
+//        for(int j = 0; j < nodes.size(); j++)
+//            delta[nodes[j]] = 0;
+//        while (!S.empty()) {
+//            auto w = S.top();
+//            S.pop();
+//            double coeff = (1.0 + delta[w]) / sigma[w];
+//            for(int j = 0; j < P[w].size(); j++)
+//            {
+//                auto v = P[w][j];
+////                delta[v] = delta[v] + (double)(sigma[v]*1.0)/(sigma[w])*(1 + delta[w]);
+//                delta[v] += sigma[v] * coeff;
+//                //cout << "v:" << v->getIndex() << " delta[v]: " << delta[v] << endl;
+//            }
+//            if(w != r)
+//            {
+//                CB_transpose[w] = CB_transpose[w] + delta[w];
+//                //cout << "w:" << w->getIndex() << " CB[w]: " << CB[w] << endl;
+//            }
+//        }
+
+//        P_store_transpose[r] = P;
+//        sigma_store_transpose[r] = sigma;
+//        distance_store_transpose[r] = distance;
+//    }
+//}
+
 void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities)
 {
         int n = nodes.size();
@@ -588,8 +732,8 @@ void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<N
                     if((i==gi || i==gj) && sumWeights!=0)
                     {
 //                        edge->weight = weight - weight/sumWeights;
-                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
-                        cout << weight - weight/sumWeights << endl;
+//                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
+//                        cout << weight - weight/sumWeights << endl;
                         insertEdge(edge->getNode0(), edge->getNode1(), weight - weight/sumWeights);
                     }
                     //edge->weight = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
@@ -635,8 +779,24 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     {
         cout << i->first->getIndex() << ":" << i->second << endl;
     }
+    cout << "CB_transpose::" << endl;
+    for(auto i = CB_transpose.begin(); i != CB_transpose.end(); i++)
+    {
+        cout << i->first->getIndex() << ":" << i->second << endl;
+    }
     cout << "P::" << endl;
     for(auto i = P_store.begin(); i != P_store.end(); i++)
+    {
+        for(auto j = i->second.begin(); j != i->second.end(); j++)
+        {
+            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: ";
+            for(int k = 0; k < j->second.size(); k++)
+                cout << j->second[k]->getIndex() << " ";
+            cout << endl;
+        }
+    }
+    cout << "P_transpose::" << endl;
+    for(auto i = P_store_transpose.begin(); i != P_store_transpose.end(); i++)
     {
         for(auto j = i->second.begin(); j != i->second.end(); j++)
         {
@@ -655,6 +815,14 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
             cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
         }
     }
+    cout << "sigma_transpose::" << endl;
+    for(auto i = sigma_store_transpose.begin(); i != sigma_store_transpose.end(); i++)
+    {
+        for(auto j = i->second.begin(); j != i->second.end(); j++)
+        {
+            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
+        }
+    }
 
     cout << "distance::" << endl;
     for(auto i = distance_store.begin(); i != distance_store.end(); i++)
@@ -664,9 +832,25 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
             cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
         }
     }
+    cout << "distance_transpose::" << endl;
+    for(auto i = distance_store_transpose.begin(); i != distance_store_transpose.end(); i++)
+    {
+        for(auto j = i->second.begin(); j != i->second.end(); j++)
+        {
+            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
+        }
+    }
 
     cout << "cost::" << endl;
     for(auto i = cost_store.begin(); i != cost_store.end(); i++)
+    {
+        for(auto j = i->second.begin(); j != i->second.end(); j++)
+        {
+            cout << "<" << i->first->getIndex() << "," << j->first->getIndex() << ">: " << j->second << endl;
+        }
+    }
+    cout << "cost_transpose::" << endl;
+    for(auto i = cost_store_transpose.begin(); i != cost_store_transpose.end(); i++)
     {
         for(auto j = i->second.begin(); j != i->second.end(); j++)
         {
@@ -683,28 +867,30 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
 
     //mind this, undirected graph...
     cost_store[src][dest] = cost;
+    cost_store_transpose[dest][src] = cost;
+
 //    cost_store[dest][src] = cost;
 
 //    TimeLogger* logger = TimeLogger::Instance();
 //    logger->start();
 
-    std::vector<Node*> sources = insertUpdate(src, dest, dest);
-    std::vector<Node*> sinks = insertUpdate(dest, src, src);
+    std::vector<Node*> sinks = insertUpdate(dest, src, src, true);
+    std::vector<Node*> sources = insertUpdate(src, dest, dest, false);
 //    logger->markIt("after computing source and target: ");
 
+    for(int i = 0; i < sinks.size(); i++)
+        insertUpdate(src, dest, sinks[i], false);
+//    logger->markIt("after finish target: ");
     for(int i = 0; i < sources.size(); i++)
-        insertUpdate(dest, src, sources[i]);
+        insertUpdate(dest, src, sources[i], true);
 //    logger->markIt("after finish source: ");
 
-    for(int i = 0; i < sinks.size(); i++)
-        insertUpdate(src, dest, sinks[i]);
-//    logger->markIt("after finish target: ");
-
-    increaseBetweenness();
+//    increaseBetweenness(true);
+    increaseBetweenness(false);
 //    logger->markIt("after finish increase betweenness: ");
 //    logger->outputToScreen();
 }
-std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
+std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z, bool isTranspose)
 {
     std::vector<std::pair<Node*, Node*> > workSet;
     std::vector<Node*> visitedVertices;
@@ -712,6 +898,11 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
 
 //    std::cout << "cost from src to dest::" << cost_store[src][dest] << std::endl;
 //    std::cout << "distance from src to dest::" << distance_store[src][dest] << std::endl;
+
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > &P_now = isTranspose? P_store_transpose:P_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_now = isTranspose? sigma_store_transpose:sigma_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_now = isTranspose? distance_store_transpose:distance_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &cost_now = isTranspose? cost_store_transpose:cost_store;
 
 
     workSet.push_back(make_pair(src, dest));
@@ -721,52 +912,51 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
         Node* x = workSet.back().first;
         Node* y = workSet.back().second;
         workSet.pop_back();
-        double alt = cost_store[x][y] + distance_store[y][z];
-        cout << "cost_store[x][y]: " << cost_store[x][y] << endl;
-        cout << "distance_store[y][z]: " << distance_store[y][z] << endl;
-        cout << "alt: " << alt << endl;
+        double alt = cost_now[x][y] + distance_now[y][z];
 
-        if(alt < distance_store[x][z])
+        if(alt < distance_now[x][z])
         {
             if(!isIn(make_pair(x, z), sigma_old))
             {
-                distance_old[x][z] = distance_store[x][z];
-                sigma_old[x][z] = sigma_store[x][z];
-                reduceBetweenness(x, z);    // 10
-                sigma_store[x][z] = 0;
-                P_store[x][z].clear();
+                distance_old[x][z] = distance_now[x][z];
+                sigma_old[x][z] = sigma_now[x][z];
+                reduceBetweenness(x, z, false);    // 10
+                sigma_now[x][z] = 0;
+                P_now[x][z].clear();
             }
             if(isIn(make_pair(x, z), pairsDone))
                 pairsDone.erase(find(pairsDone.begin(), pairsDone.end(), make_pair(x, z)));
-            distance_store[x][z] = alt;
+            distance_now[x][z] = alt;
         }
-        if(alt == distance_store[x][z] && distance_store[x][z] != DBL_MAX)
+        if(alt == distance_now[x][z] && distance_now[x][z] != DBL_MAX)
         {
             if(!isIn(make_pair(x, z), pairsDone))
             {
                 if(!isIn(make_pair(x, z), sigma_old))
-                    reduceBetweenness(x, z);    // 18
-                if(sigma_store[x][z] != 0)
-                    sigma_old[x][z] = sigma_store[x][z];
+                    reduceBetweenness(x, z, false);    // 18
+                if(sigma_now[x][z] != 0)
+                    sigma_old[x][z] = sigma_now[x][z];
 
-                sigma_store[x][z] = sigma_store[x][z] + (sigma_store[x][src] * 1 * sigma_store[dest][z]);
-                if(std::find(P_store[x][y].begin(), P_store[x][y].end(), x) == P_store[x][y].end())
-                    P_store[x][y].push_back(x);
-                for(int iter = 0; iter < P_store[y][z].size(); iter++)
+                sigma_now[x][z] = sigma_now[x][z] + (sigma_now[x][src] * 1 * sigma_now[dest][z]);
+                if(std::find(P_now[x][y].begin(), P_now[x][y].end(), x) == P_now[x][y].end())
+                    P_now[x][y].push_back(x);
+                for(int iter = 0; iter < P_now[y][z].size(); iter++)
                 {
-                    if(std::find(P_store[x][z].begin(), P_store[x][z].end(), P_store[y][z][iter]) == P_store[x][z].end())
-                        P_store[x][z].push_back(P_store[y][z][iter]);
+                    if(std::find(P_now[x][z].begin(), P_now[x][z].end(), P_now[y][z][iter]) == P_now[x][z].end())
+                        P_now[x][z].push_back(P_now[y][z][iter]);
                 }
             }
             pairsDone.push_back(make_pair(x, z));
             affectedVertices.push_back(x);
             // need pred(x)...
-            for(auto iter = x->pred.begin(); iter != x->pred.end(); iter++)
+            auto iter = isTranspose?x->pred_transpose.begin():x->pred.begin();
+            auto iter_end = isTranspose?x->pred_transpose.end():x->pred.end();
+            for(; iter != iter_end; iter++)
             {
                 auto pred_vec = iter->second;
                 for (int inner = 0; inner < pred_vec.size(); inner++) {
                     Node* u = pred_vec[inner];
-                    if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) == visitedVertices.end())
+                    if(SP(u, x, src, isTranspose) && std::find(visitedVertices.begin(), visitedVertices.end(), u) == visitedVertices.end())
                     {
                         workSet.push_back(make_pair(u, x));
                         visitedVertices.push_back(u);
@@ -778,22 +968,33 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
     }
     return affectedVertices;
 }
-double Betweenness::getDistanceOldVal(Node *x, Node *y)
+double Betweenness::getDistanceOldVal(Node *x, Node *y, bool isTranspose)
 {
     if(isIn(std::make_pair(x, y), distance_old))
         return distance_old[x][y];
+    else if(isTranspose)
+        return distance_store_transpose[x][y];
     return distance_store[x][y];
 }
-int Betweenness::getSigmaOldVal(Node *x, Node *y)
+int Betweenness::getSigmaOldVal(Node *x, Node *y, bool isTranspose)
 {
     if(isIn(std::make_pair(x, y), sigma_old))
         return sigma_old[x][y];
+    else if(isTranspose)
+        return sigma_store_transpose[x][y];
     return sigma_store[x][y];
 }
 
-void Betweenness::reduceBetweenness(Node* a, Node* z)
+void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
 {
-    if(getSigmaOldVal(a, z) == 0)
+
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > &P_now = isTranspose? P_store_transpose:P_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_now = isTranspose? sigma_store_transpose:sigma_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_now = isTranspose? distance_store_transpose:distance_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &cost_now = isTranspose? cost_store_transpose:cost_store;
+
+
+    if(getSigmaOldVal(a, z, isTranspose) == 0)
         return;
     std::vector<Node*> known;
     std::vector<Node*> stack;
@@ -801,10 +1002,10 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
 //    if(a->getIndex() == 0 && z->getIndex() == 3)
 //        std::cout << "here" << endl;
 
-    for(int i = 0; i < P_store[a][z].size(); i++)
+    for(int i = 0; i < P_now[a][z].size(); i++)
     {
-        Node* n = P_store[a][z][i];
-        if(distance_store[a][z] != getDistanceOldVal(a, n) + getDistanceOldVal(n, z))
+        Node* n = P_now[a][z][i];
+        if(distance_now[a][z] != getDistanceOldVal(a, n, isTranspose) + getDistanceOldVal(n, z, isTranspose))
             continue;
         else if(a != n && n != z)
         {
@@ -814,7 +1015,7 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
 //            std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
 //            std::cout << getSigmaOldVal(a, z) << endl;
 //            std::cout << CB[n] << endl;
-            CB[n] = CB[n] - ((getSigmaOldVal(a, n) * getSigmaOldVal(n, z)*1.0) / getSigmaOldVal(a, z));  //8
+            CB[n] = CB[n] - ((getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose)*1.0) / getSigmaOldVal(a, z, isTranspose));  //8
 //            std::cout << CB[n] << endl;
 //            cout << "8:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
             trackLost.push_back(make_tuple(a, z, n));
@@ -826,10 +1027,10 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
         Node* p = stack.back();
         stack.pop_back();
         known.push_back(p);
-        for(int i = 0; i < P_store[a][p].size(); i++)
+        for(int i = 0; i < P_now[a][p].size(); i++)
         {
-            Node* n = P_store[a][p][i];
-            if(distance_store[a][z] != getDistanceOldVal(a, n) + getDistanceOldVal(n, z))
+            Node* n = P_now[a][p][i];
+            if(distance_now[a][z] != getDistanceOldVal(a, n, isTranspose) + getDistanceOldVal(n, z, isTranspose))
                 continue;
             else if(a != n && n != z && std::find(known.begin(), known.end(), n) == known.end())
             {
@@ -839,7 +1040,7 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
 //                std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
 //                std::cout << getSigmaOldVal(a, z) << endl;
 //                std::cout << CB[n] << endl;
-                CB[n] = CB[n] - ((getSigmaOldVal(a, n) * getSigmaOldVal(n, z) * 1.0) / getSigmaOldVal(a, z));  //18
+                CB[n] = CB[n] - ((getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) * 1.0) / getSigmaOldVal(a, z, isTranspose));  //18
 //                std::cout << CB[n] << endl;
 //                cout << "18:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
                 trackLost.push_back(make_tuple(a, z, n));
@@ -864,10 +1065,10 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
 
 //        if(std::find(known.begin(), known.end(), v1) != known.end() &&
 //           std::find(known.begin(), known.end(), v2) != known.end() &&
-//           distance_store[a][z] == getDistanceOldVal(a, v) + getDistanceOldVal(v, z))
+//           distance_now[a][z] == getDistanceOldVal(a, v, isTranspose) + getDistanceOldVal(v, z, isTranspose))
         if(std::find(alreadyKnown.begin(), alreadyKnown.end(), v1) != alreadyKnown.end() &&
            std::find(alreadyKnown.begin(), alreadyKnown.end(), v2) != alreadyKnown.end() &&
-           distance_store[a][z] == getDistanceOldVal(a, v) + getDistanceOldVal(v, z))
+           distance_now[a][z] == getDistanceOldVal(a, v, isTranspose) + getDistanceOldVal(v, z, isTranspose))
         {
             if(std::find(alreadyKnown.begin(), alreadyKnown.end(), v) == alreadyKnown.end())
             {
@@ -877,7 +1078,7 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
 //                std::cout << getSigmaOldVal(a, v) * getSigmaOldVal(v, z) << endl;
 //                std::cout << getSigmaOldVal(a, z) << endl;
 //                std::cout << CB[v] << endl;
-                CB[v] = CB[v] - ((getSigmaOldVal(a, v) * getSigmaOldVal(v, z) * 1.0) / getSigmaOldVal(a, z));  //24
+                CB[v] = CB[v] - ((getSigmaOldVal(a, v, isTranspose) * getSigmaOldVal(v, z, isTranspose) * 1.0) / getSigmaOldVal(a, z, isTranspose));  //24
 //                std::cout << CB[v] << endl;
 
                 alreadyKnown.push_back(v);
@@ -889,7 +1090,7 @@ void Betweenness::reduceBetweenness(Node* a, Node* z)
     }
 
 }
-void Betweenness::increaseBetweenness()
+void Betweenness::increaseBetweenness(bool isTranspose)
 {
 //    for(int i = 0; i < trackLost.size(); i++)
 //    {
@@ -900,6 +1101,12 @@ void Betweenness::increaseBetweenness()
 //    }
 
 //    std::cout << "****** begin increase ******" << endl;
+
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > &P_now = isTranspose? P_store_transpose:P_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_now = isTranspose? sigma_store_transpose:sigma_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_now = isTranspose? distance_store_transpose:distance_store;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &cost_now = isTranspose? cost_store_transpose:cost_store;
+
     for(auto outer = sigma_old.begin(); outer != sigma_old.end(); outer++)
     {
         auto src = outer->first;
@@ -913,9 +1120,9 @@ void Betweenness::increaseBetweenness()
 //            for(int i = 0; i < P_store[src][dest].size(); i++)
 //                cout << P_store[src][dest][i]->getIndex() << " ";
 //            cout << endl;
-            for(int i = 0; i < P_store[src][dest].size(); i++)
+            for(int i = 0; i < P_now[src][dest].size(); i++)
             {
-                Node* n = P_store[src][dest][i];
+                Node* n = P_now[src][dest][i];
 
                 stack.push_back(n);
                 known.push_back(n);
@@ -928,7 +1135,7 @@ void Betweenness::increaseBetweenness()
 //                    std::cout << sigma_store[src][dest] << endl;
 //                    std::cout << CB[n] << endl;
 
-                    CB[n] = CB[n] + (((sigma_store[src][n] * sigma_store[n][dest]) * 1.0) / sigma_store[src][dest]); // 6
+                    CB[n] = CB[n] + (((sigma_now[src][n] * sigma_now[n][dest]) * 1.0) / sigma_now[src][dest]); // 6
 //                    std::cout << CB[n];
 //                    std::cout << endl;
 
@@ -947,9 +1154,9 @@ void Betweenness::increaseBetweenness()
 //                    cout << P_store[src][dest][i]->getIndex() << " ";
 //                cout << endl;
 
-                for(int i = 0; i < P_store[src][n].size(); i++)
+                for(int i = 0; i < P_now[src][n].size(); i++)
                 {
-                    Node* p = P_store[src][n][i];
+                    Node* p = P_now[src][n][i];
                     if(p != src && p != dest && std::find(known.begin(), known.end(), p) == known.end())
                     {
                         stack.push_back(p);
@@ -962,7 +1169,7 @@ void Betweenness::increaseBetweenness()
 //                        std::cout << sigma_store[src][dest] << endl;
 //                        std::cout << CB[p] << endl;
 
-                        CB[p] = CB[p] + ((sigma_store[src][p] * sigma_store[p][dest])*1.0 / sigma_store[src][dest]);  //13
+                        CB[p] = CB[p] + ((sigma_now[src][p] * sigma_now[p][dest])*1.0 / sigma_now[src][dest]);  //13
 
 //                        std::cout << CB[p];
 //                        std::cout << endl;
@@ -974,141 +1181,141 @@ void Betweenness::increaseBetweenness()
 }
 
 
-void Betweenness::deleteEdge(Node *src, Node *dest)
-{
-    sigma_old.clear();
-    distance_old.clear();
-    trackLost.clear();
-    pairsDone.clear();
+//void Betweenness::deleteEdge(Node *src, Node *dest)
+//{
+//    sigma_old.clear();
+//    distance_old.clear();
+//    trackLost.clear();
+//    pairsDone.clear();
 
-//    cost_store[src][dest] = DBL_MAX;
+////    cost_store[src][dest] = DBL_MAX;
 
-    std::vector<Node*> sinks = deleteUpdate(dest, src, src);
-    std::vector<Node*> sources = deleteUpdate(src, dest, dest);
-    for(int i = 0; i < sinks.size(); i++)
-        deleteUpdate(src, dest, sinks[i]);
-    for(int i = 0; i < sources.size(); i++)
-        deleteUpdate(dest, src, sources[i]);
-    increaseBetweenness();
-}
+//    std::vector<Node*> sinks = deleteUpdate(dest, src, src);
+//    std::vector<Node*> sources = deleteUpdate(src, dest, dest);
+//    for(int i = 0; i < sinks.size(); i++)
+//        deleteUpdate(src, dest, sinks[i]);
+//    for(int i = 0; i < sources.size(); i++)
+//        deleteUpdate(dest, src, sources[i]);
+//    increaseBetweenness();
+//}
 
-std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
-{
-    std::vector<std::pair<Node*, Node*> > workSet;
-    std::vector<Node*> visitedVertices;
-    std::vector<Node*> affectedVertices;
+//std::vector<Node*> Betweenness::deleteUpdate(Node* src, Node* dest, Node* z)
+//{
+//    std::vector<std::pair<Node*, Node*> > workSet;
+//    std::vector<Node*> visitedVertices;
+//    std::vector<Node*> affectedVertices;
 
-//    std::cout << "cost from src to dest::" << cost_store[src][dest] << std::endl;
-//    std::cout << "distance from src to dest::" << distance_store[src][dest] << std::endl;
+////    std::cout << "cost from src to dest::" << cost_store[src][dest] << std::endl;
+////    std::cout << "distance from src to dest::" << distance_store[src][dest] << std::endl;
 
-    workSet.push_back(make_pair(src, dest));
-    visitedVertices.push_back(src);
+//    workSet.push_back(make_pair(src, dest));
+//    visitedVertices.push_back(src);
 
-    while (workSet.size() != 0) {
-        Node* x = workSet.back().first;
-        Node* y = workSet.back().second;
-        workSet.pop_back();
-        double alt = cost_store[x][y] + distance_store[y][z];
-        if(alt > distance_store[x][z])
-        {
-            if(!isIn(make_pair(x, z), sigma_old))
-            {
-                distance_old[x][z] = distance_store[x][z];
-                sigma_old[x][z] = sigma_store[x][z];
-                reduceBetweenness(x, z);
-                sigma_store[x][z] = 0;
-                P_store[x][z].clear();
+//    while (workSet.size() != 0) {
+//        Node* x = workSet.back().first;
+//        Node* y = workSet.back().second;
+//        workSet.pop_back();
+//        double alt = cost_store[x][y] + distance_store[y][z];
+//        if(alt > distance_store[x][z])
+//        {
+//            if(!isIn(make_pair(x, z), sigma_old))
+//            {
+//                distance_old[x][z] = distance_store[x][z];
+//                sigma_old[x][z] = sigma_store[x][z];
+//                reduceBetweenness(x, z);
+//                sigma_store[x][z] = 0;
+//                P_store[x][z].clear();
 
-                std::map<double, vector<Node*> > tmp_store;
-                for(int iter = 0; iter < x->edges.size(); iter++)
-                {
-                    Node* v = x->edges[iter]->getNode1();
-                    if(cost_store[x][v] != DBL_MAX && distance_store[v][z] != DBL_MAX)
-                        tmp_store[distance_store[v][z] + cost_store[x][v]].push_back(v);
-                }
-                if(tmp_store.size() != 0)
-                {
-                    for(int iter = 0; iter < tmp_store[0].size(); iter++)
-                    {
-                        Node* v = tmp_store[0][iter];
-                        sigma_store[x][z] += sigma_store[v][z];
-                        for(int p_iter = 0; p_iter < P_store[v][z].size(); p_iter++)
-                            P_store[x][z].push_back(P_store[v][z][p_iter]);
-                    }
-                    alt = tmp_store.begin()->first;
-                }
+//                std::map<double, vector<Node*> > tmp_store;
+//                for(int iter = 0; iter < x->edges.size(); iter++)
+//                {
+//                    Node* v = x->edges[iter]->getNode1();
+//                    if(cost_store[x][v] != DBL_MAX && distance_store[v][z] != DBL_MAX)
+//                        tmp_store[distance_store[v][z] + cost_store[x][v]].push_back(v);
+//                }
+//                if(tmp_store.size() != 0)
+//                {
+//                    for(int iter = 0; iter < tmp_store[0].size(); iter++)
+//                    {
+//                        Node* v = tmp_store[0][iter];
+//                        sigma_store[x][z] += sigma_store[v][z];
+//                        for(int p_iter = 0; p_iter < P_store[v][z].size(); p_iter++)
+//                            P_store[x][z].push_back(P_store[v][z][p_iter]);
+//                    }
+//                    alt = tmp_store.begin()->first;
+//                }
 
-            }
-            if(isIn(make_pair(x, z), pairsDone))
-                pairsDone.erase(find(pairsDone.begin(), pairsDone.end(), make_pair(x, z)));
-            distance_store[x][z] = alt;
-        }
-        if(alt == distance_store[x][z] && distance_store[x][z] != DBL_MAX)
-        {
-            cost_store[src][dest] = DBL_MAX;
-            if(!isIn(make_pair(x, z), pairsDone))
-            {
-                if(!isIn(make_pair(x, z), sigma_old))
-                {
-                    reduceBetweenness(x, z);
-                    //if(sigma_store[x][z] != 0)
-                    sigma_old[x][z] = sigma_store[x][z];
-                    sigma_store[x][z] = sigma_store[x][z] - (sigma_store[x][src] * 1 * sigma_store[dest][z]);
-                    if(sigma_store[x][z] == 0)
-                    {
-                        P_store[x][z].clear();
+//            }
+//            if(isIn(make_pair(x, z), pairsDone))
+//                pairsDone.erase(find(pairsDone.begin(), pairsDone.end(), make_pair(x, z)));
+//            distance_store[x][z] = alt;
+//        }
+//        if(alt == distance_store[x][z] && distance_store[x][z] != DBL_MAX)
+//        {
+//            cost_store[src][dest] = DBL_MAX;
+//            if(!isIn(make_pair(x, z), pairsDone))
+//            {
+//                if(!isIn(make_pair(x, z), sigma_old))
+//                {
+//                    reduceBetweenness(x, z);
+//                    //if(sigma_store[x][z] != 0)
+//                    sigma_old[x][z] = sigma_store[x][z];
+//                    sigma_store[x][z] = sigma_store[x][z] - (sigma_store[x][src] * 1 * sigma_store[dest][z]);
+//                    if(sigma_store[x][z] == 0)
+//                    {
+//                        P_store[x][z].clear();
 
-                        std::map<double, vector<Node*> > tmp_store;
-                        for(int iter = 0; iter < x->edges.size(); iter++)
-                        {
-                            Node* v = x->edges[iter]->getNode1();
-                            if(cost_store[x][v] != DBL_MAX && distance_store[v][z] != DBL_MAX)
-                                tmp_store[distance_store[v][z] + cost_store[x][v]].push_back(v);
-                        }
-                        if(tmp_store.size() != 0)
-                        {
-                            for(int iter = 0; iter < tmp_store[0].size(); iter++)
-                            {
-                                Node* v = tmp_store[0][iter];
-                                sigma_store[x][z] += sigma_store[v][z];
-                                for(int p_iter = 0; p_iter < P_store[v][z].size(); p_iter++)
-                                    P_store[x][z].push_back(P_store[v][z][p_iter]);
-                            }
-                            distance_store[x][z] = tmp_store.begin()->first;
-                        }
-                        else
-                            distance_store[x][z] = DBL_MAX;
-                    }
-                    else //remove P[y][z] from P[x][z]
-                    {
-                        for(int iter = 0; iter < P_store[y][z].size(); iter++)
-                        {
-                            P_store[x][z].erase(find(P_store[y][z].begin(), P_store[y][z].end(), P_store[y][z][iter]));
-                        }
-                    }
-                }
+//                        std::map<double, vector<Node*> > tmp_store;
+//                        for(int iter = 0; iter < x->edges.size(); iter++)
+//                        {
+//                            Node* v = x->edges[iter]->getNode1();
+//                            if(cost_store[x][v] != DBL_MAX && distance_store[v][z] != DBL_MAX)
+//                                tmp_store[distance_store[v][z] + cost_store[x][v]].push_back(v);
+//                        }
+//                        if(tmp_store.size() != 0)
+//                        {
+//                            for(int iter = 0; iter < tmp_store[0].size(); iter++)
+//                            {
+//                                Node* v = tmp_store[0][iter];
+//                                sigma_store[x][z] += sigma_store[v][z];
+//                                for(int p_iter = 0; p_iter < P_store[v][z].size(); p_iter++)
+//                                    P_store[x][z].push_back(P_store[v][z][p_iter]);
+//                            }
+//                            distance_store[x][z] = tmp_store.begin()->first;
+//                        }
+//                        else
+//                            distance_store[x][z] = DBL_MAX;
+//                    }
+//                    else //remove P[y][z] from P[x][z]
+//                    {
+//                        for(int iter = 0; iter < P_store[y][z].size(); iter++)
+//                        {
+//                            P_store[x][z].erase(find(P_store[y][z].begin(), P_store[y][z].end(), P_store[y][z][iter]));
+//                        }
+//                    }
+//                }
 
-            }
-            pairsDone.push_back(make_pair(x, z));
-            affectedVertices.push_back(x);
-            // need pred(x)...
-            for(auto iter = x->pred.begin(); iter != x->pred.end(); iter++)
-            {
-                auto pred_vec = iter->second;
-                for (int inner = 0; inner < pred_vec.size(); inner++) {
-                    Node* u = pred_vec[inner];
-                    if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) == visitedVertices.end())
-                    {
-                        workSet.push_back(make_pair(u, x));
-                        visitedVertices.push_back(u);
-                    }
-                }
+//            }
+//            pairsDone.push_back(make_pair(x, z));
+//            affectedVertices.push_back(x);
+//            // need pred(x)...
+//            for(auto iter = x->pred.begin(); iter != x->pred.end(); iter++)
+//            {
+//                auto pred_vec = iter->second;
+//                for (int inner = 0; inner < pred_vec.size(); inner++) {
+//                    Node* u = pred_vec[inner];
+//                    if(SP(u, x, src) && std::find(visitedVertices.begin(), visitedVertices.end(), u) == visitedVertices.end())
+//                    {
+//                        workSet.push_back(make_pair(u, x));
+//                        visitedVertices.push_back(u);
+//                    }
+//                }
 
-            }
-        }
-    }
-    return affectedVertices;
-}
+//            }
+//        }
+//    }
+//    return affectedVertices;
+//}
 
 bool Betweenness::isIn(std::pair<Node*, Node*> key, std::unordered_map<Node*, std::unordered_map<Node*, double> > &container)
 {
@@ -1136,15 +1343,32 @@ bool Betweenness::isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::t
         return true;
     return false;
 }
-bool Betweenness::SP(Node *x, Node *y, Node *z)
+bool Betweenness::SP(Node *x, Node *y, Node *z, bool isTranspose)
 {
-    if(isIn(make_pair(x, z), distance_store))
+    if(!isTranspose)
     {
-        if(distance_store[x][z] != DBL_MAX)
+        if(isIn(make_pair(x, z), distance_store))
         {
-            if(distance_store[x][z] == cost_store[x][y] + distance_store[y][z])
-                return true;
+            if(distance_store[x][z] != DBL_MAX)
+            {
+                if(distance_store[x][z] == cost_store[x][y] + distance_store[y][z])
+                    return true;
+            }
         }
+        return false;
     }
-    return false;
+    else
+    {
+        if(isIn(make_pair(x, z), distance_store_transpose))
+        {
+            if(distance_store_transpose[x][z] != DBL_MAX)
+            {
+                if(distance_store_transpose[x][z] == cost_store_transpose[x][y] + distance_store_transpose[y][z])
+                    return true;
+            }
+        }
+        return false;
+    }
+
 }
+

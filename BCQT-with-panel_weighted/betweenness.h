@@ -68,6 +68,7 @@ class Betweenness
 public:
 //    double btwValue[];
     std::unordered_map<Node*, double> CB;
+    std::unordered_map<Node*, double> CB_transpose;
 
     std::unordered_map<Node*, std::unordered_map<Node*, double> >sensitivityRes;
 
@@ -75,6 +76,11 @@ public:
     std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store;
     std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store;
     std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store;
+
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_transpose;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_transpose;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store_transpose;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store_transpose;
 
     std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_old;
     std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_old;
@@ -87,17 +93,18 @@ public:
     int compute(std::vector<Node*> &nodes, bool needDerivs);
     void brandes_implementation_init(std::vector<Node*> &nodes);
     void brandes_implementation(std::vector<Node*> &nodes);
-    void brandes_implementation_weighted(std::vector<Node*> &nodes);
+    void brandes_implementation_weighted(std::vector<Node*> &nodes, bool isTranspose);
+    //void brandes_implementation_weighted_transpose(std::vector<Node*> &nodes);
 
     void insertEdge(Node* src, Node* dest, double cost);
-    std::vector<Node*> insertUpdate(Node* src, Node* dest, Node* z);
-    void reduceBetweenness(Node* a, Node* z);
-    void increaseBetweenness();
+    std::vector<Node*> insertUpdate(Node* src, Node* dest, Node* z, bool isTranspose);
+    void reduceBetweenness(Node* a, Node* z, bool isTranspose);
+    void increaseBetweenness(bool isTranspose);
 
     void calSensitivity(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities);
 
-    void deleteEdge(Node* src, Node* dest);
-    std::vector<Node*> deleteUpdate(Node* src, Node* dest, Node* z);
+//    void deleteEdge(Node* src, Node* dest);
+//    std::vector<Node*> deleteUpdate(Node* src, Node* dest, Node* z);
 
 
     bool isIn(std::pair<Node*, Node*> key, std::unordered_map<Node*, std::unordered_map<Node*, double> > &container);
@@ -105,9 +112,9 @@ public:
     bool isIn(std::pair<Node*, Node*> value, std::vector<std::pair<Node*, Node*> > &container);
     bool isIn(std::tuple<Node*, Node*, Node*> value, std::vector<std::tuple<Node*, Node*, Node*> > &container);
 
-    double getDistanceOldVal(Node* x, Node* y);
-    int getSigmaOldVal(Node* x, Node* y);
+    double getDistanceOldVal(Node* x, Node* y, bool isTranspose);
+    int getSigmaOldVal(Node* x, Node* y, bool isTranspose);
 
-    bool SP(Node* x, Node* y, Node* z);
+    bool SP(Node* x, Node* y, Node* z, bool isTranspose);
 };
 #endif /* betweenness_hpp */

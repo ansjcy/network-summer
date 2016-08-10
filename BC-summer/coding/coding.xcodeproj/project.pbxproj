@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3E538DC01D5AD05E0010CA29 /* demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E538DBF1D5AD05E0010CA29 /* demo.cpp */; };
 		3EE3F5411D40427F00603AC2 /* two-sum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EE3F5401D40427F00603AC2 /* two-sum.cpp */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3E538DBF1D5AD05E0010CA29 /* demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = demo.cpp; sourceTree = "<group>"; };
 		3EE3F53D1D40427F00603AC2 /* coding */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = coding; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EE3F5401D40427F00603AC2 /* two-sum.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "two-sum.cpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				3EE3F5401D40427F00603AC2 /* two-sum.cpp */,
+				3E538DBF1D5AD05E0010CA29 /* demo.cpp */,
 			);
 			path = coding;
 			sourceTree = "<group>";
@@ -118,6 +121,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E538DC01D5AD05E0010CA29 /* demo.cpp in Sources */,
 				3EE3F5411D40427F00603AC2 /* two-sum.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,6 +243,7 @@
 				3EE3F5461D40427F00603AC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

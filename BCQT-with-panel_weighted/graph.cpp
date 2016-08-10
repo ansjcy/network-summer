@@ -61,13 +61,28 @@ Edge* Node::addEdge(Node *n, double weight)
         e->multiplicity = 1;
         e->weight = weight;      //needs to be modified..
         edges.push_back(e);
+        n->pred[weight].push_back(this);
+
+        Edge* e_transpose = new Edge;
+        e_transpose->setNode0(n);
+        e_transpose->setNode1(this);
+        e_transpose->multiplicity = 1;
+        e_transpose->weight = weight;      //needs to be modified..
+        n->edges_transpose.push_back(e_transpose);
+        pred_transpose[weight].push_back(n);
+
+
         return e;
     }
     else
     {
         edges[k]->multiplicity = edges[k]->multiplicity + 1;
+
+        n->edges_transpose[k]->multiplicity = n->edges_transpose[k]->multiplicity + 1;
+
         return edges[k];
     }
+
 }
 
 hsv rgb2hsv(rgb in)
