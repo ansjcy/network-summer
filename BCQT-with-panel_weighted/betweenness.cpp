@@ -108,6 +108,9 @@ int Betweenness::compute(std::vector<Node *> &nodes, bool needDerivs)
                     int gj = edge->getNode1()->getIndex();
                     float weight = edge->weight;
                     //custom the weight value here!!!
+                    cout << gi << " " << gj << " " << numEdges <<endl;
+                    cout << (((i==gi || i==gj) && sumWeights!=0)? weight - weight/sumWeights: weight) << endl;
+
                     weights[numEdges] = ((i==gi || i==gj) && sumWeights!=0)? weight - weight/sumWeights: weight;
                     numEdges++;
                 }
@@ -564,6 +567,9 @@ void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<N
         int n = nodes.size();
         for(int i = 0; i < n; i++)
         {
+            for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
+                CB[iter->first] = iter->second;
+
             for(int gi = 0; gi < n; gi++)
             {
                 float sumWeights = 0;
@@ -582,6 +588,8 @@ void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<N
                     if((i==gi || i==gj) && sumWeights!=0)
                     {
 //                        edge->weight = weight - weight/sumWeights;
+                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
+                        cout << weight - weight/sumWeights << endl;
                         insertEdge(edge->getNode0(), edge->getNode1(), weight - weight/sumWeights);
                     }
                     //edge->weight = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
@@ -590,10 +598,12 @@ void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<N
 
 #ifdef DEBUG_SENSITIVITY
             cout << "sensitivity incremental: " << i << endl;
-            for(auto j = CB.begin(); j != CB.end(); j++)
-            {
-                cout << j->first->getIndex() << ":" << vertex_centralities[j->first] - j->second << " ";
-            }
+//            for(auto j = CB.begin(); j != CB.end(); j++)
+//            {
+//                cout << j->first->getIndex() << ":" << vertex_centralities[j->first] - j->second << " ";
+//            }
+            for(int j = 0; j < nodes.size(); j++)
+                cout << j << ":" << vertex_centralities[nodes[j]] - CB[nodes[j]] << " ";
             cout << endl;
 #endif
 
@@ -712,6 +722,10 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z)
         Node* y = workSet.back().second;
         workSet.pop_back();
         double alt = cost_store[x][y] + distance_store[y][z];
+        cout << "cost_store[x][y]: " << cost_store[x][y] << endl;
+        cout << "distance_store[y][z]: " << distance_store[y][z] << endl;
+        cout << "alt: " << alt << endl;
+
         if(alt < distance_store[x][z])
         {
             if(!isIn(make_pair(x, z), sigma_old))

@@ -348,8 +348,11 @@ void Widget::initializeGL(){
     for(int i = 0; i < myNodes.size(); i++)
     {
         Node* tmpNode = new Node();
+        Node* tmpNode_transpose = new Node();
         tmpNode->setIndex(i);
+        tmpNode_transpose->setIndex(i);
         nodes.push_back(tmpNode);
+        nodes_transpose.push_back(tmpNode_transpose);
     }
 
     double weight = 2;
@@ -384,8 +387,8 @@ void Widget::initializeGL(){
         }
 
 //    #define USING_ORIGINAL
-//    #define USING_INCREMENTAL
-    #define TEST_SEN
+    #define USING_INCREMENTAL
+//    #define TEST_SEN
 
 
     #ifdef TEST_SEN
@@ -424,9 +427,19 @@ void Widget::initializeGL(){
 //        TimeLogger* logger = TimeLogger::Instance();
 //        logger->start();
 
-        Node* src = nodes[0];
-        Node* dest = nodes[1];
-        bc.insertEdge(src, dest, 1);
+        Node* src = nodes[2];
+        Node* dest = nodes[3];
+
+        bc.insertEdge(src, dest, 2);
+//        bc.insertEdge(nodes[0], nodes[1], 1);
+//        bc.insertEdge(nodes[1], nodes[0], 1.6667);
+//        bc.insertEdge(nodes[1], nodes[2], 1.6667);
+//        bc.insertEdge(nodes[1], nodes[4], 1.6667);
+//        bc.insertEdge(nodes[2], nodes[1], 1.0);
+//        bc.insertEdge(nodes[4], nodes[1], 1.5);
+
+
+
 
 
 

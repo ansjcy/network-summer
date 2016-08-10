@@ -89,6 +89,9 @@ protected:
         std::vector<Node*> nodes;
         std::vector<Edge*> edges;
 
+        std::vector<Node*> nodes_transpose;
+        std::vector<Edge*> edges_transpose;
+
         const GLint windowX = 800, windowY = 800;
         GLfloat scaleTime = 1;
         GLfloat scaleTotal = 1;
