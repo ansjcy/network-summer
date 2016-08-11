@@ -711,8 +711,11 @@ void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<N
         int n = nodes.size();
         for(int i = 0; i < n; i++)
         {
-            for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
-                CB[iter->first] = iter->second;
+            brandes_implementation_init(nodes);
+            brandes_implementation_weighted(nodes, false);
+            brandes_implementation_weighted(nodes, true);
+//            for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
+//                CB[iter->first] = iter->second;
 
             for(int gi = 0; gi < n; gi++)
             {
@@ -732,8 +735,8 @@ void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<N
                     if((i==gi || i==gj) && sumWeights!=0)
                     {
 //                        edge->weight = weight - weight/sumWeights;
-                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
-                        cout << weight - weight/sumWeights << endl;
+//                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
+//                        cout << weight - weight/sumWeights << endl;
                         insertEdge(edge->getNode0(), edge->getNode1(), weight - weight/sumWeights);
                     }
                     //edge->weight = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
@@ -1022,12 +1025,12 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
             continue;
         else if(a != n && n != z)
         {
-            cout << "node" << n->getIndex() << endl;
-            cout << "line num:: 8" << endl;
-            cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-            std::cout << getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) << endl;
-            std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
-            std::cout << CB[n] << endl;
+//            cout << "node" << n->getIndex() << endl;
+//            cout << "line num:: 8" << endl;
+//            cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+//            std::cout << getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) << endl;
+//            std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
+//            std::cout << CB[n] << endl;
             CB[n] = CB[n] - ((getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose)*1.0) / getSigmaOldVal(a, z, isTranspose));  //8
 //            std::cout << CB[n] << endl;
 //            cout << "8:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
@@ -1047,12 +1050,12 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
                 continue;
             else if(a != n && n != z && std::find(known.begin(), known.end(), n) == known.end())
             {
-                cout << "node" << n->getIndex() << endl;
-                cout << "line num:: 18" << endl;
-                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-                std::cout << getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) << endl;
-                std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
-                std::cout << CB[n] << endl;
+//                cout << "node" << n->getIndex() << endl;
+//                cout << "line num:: 18" << endl;
+//                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+//                std::cout << getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) << endl;
+//                std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
+//                std::cout << CB[n] << endl;
                 CB[n] = CB[n] - ((getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) * 1.0) / getSigmaOldVal(a, z, isTranspose));  //18
 //                std::cout << CB[n] << endl;
 //                cout << "18:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
@@ -1085,12 +1088,12 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
         {
             if(std::find(alreadyKnown.begin(), alreadyKnown.end(), v) == alreadyKnown.end())
             {
-                cout << "node" << v->getIndex() << endl;
-                cout << "line num:: 24" << endl;
-                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-                std::cout << getSigmaOldVal(a, v, isTranspose) * getSigmaOldVal(v, z, isTranspose) << endl;
-                std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
-                std::cout << CB[v] << endl;
+//                cout << "node" << v->getIndex() << endl;
+//                cout << "line num:: 24" << endl;
+//                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+//                std::cout << getSigmaOldVal(a, v, isTranspose) * getSigmaOldVal(v, z, isTranspose) << endl;
+//                std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
+//                std::cout << CB[v] << endl;
                 CB[v] = CB[v] - ((getSigmaOldVal(a, v, isTranspose) * getSigmaOldVal(v, z, isTranspose) * 1.0) / getSigmaOldVal(a, z, isTranspose));  //24
 //                std::cout << CB[v] << endl;
 
@@ -1146,9 +1149,9 @@ void Betweenness::increaseBetweenness(bool isTranspose)
                 known.push_back(n);
                 if(src != n && n != dest)
                 {
-                    cout << "node" << n->getIndex() << endl;
-                    cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
-                    cout << "line num:: 6" << endl;
+//                    cout << "node" << n->getIndex() << endl;
+//                    cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
+//                    cout << "line num:: 6" << endl;
 //                    std::cout << sigma_store[src][n] * sigma_store[n][dest] << endl;
 //                    std::cout << sigma_store[src][dest] << endl;
 //                    std::cout << CB[n] << endl;

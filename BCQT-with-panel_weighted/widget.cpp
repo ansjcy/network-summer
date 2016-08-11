@@ -391,8 +391,8 @@ void Widget::initializeGL(){
         }
 
 //    #define USING_ORIGINAL
-    #define USING_INCREMENTAL
-//    #define TEST_SEN
+//    #define USING_INCREMENTAL
+    #define TEST_SEN
 
 
     #ifdef TEST_SEN
