@@ -814,75 +814,6 @@ void Betweenness::calSensitivityIncremental(std::vector<Node*> &nodes, std::unor
         for(int i = 0; i < n; i++)
         {
 
-            //******
-            //std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_;
-            for(auto iter = P_store_.begin(); iter != P_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                    P_store[iter->first][iter_inner->first].clear();
-                    for(int ii = 0; ii < iter_inner->second.size(); ii++)
-                        P_store[iter->first][iter_inner->first].push_back(iter_inner->second[ii]);
-                }
-            }
-            for(auto iter = P_store_transpose_.begin(); iter != P_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                    P_store_transpose[iter->first][iter_inner->first].clear();
-                    for(int ii = 0; ii < iter_inner->second.size(); ii++)
-                        P_store_transpose[iter->first][iter_inner->first].push_back(iter_inner->second[ii]);
-                }
-            }
-            //std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_;
-            for(auto iter = sigma_store_.begin(); iter != sigma_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        sigma_store[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = sigma_store_transpose_.begin(); iter != sigma_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        sigma_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = distance_store_.begin(); iter != distance_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        distance_store[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = distance_store_transpose_.begin(); iter != distance_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        distance_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = cost_store_.begin(); iter != cost_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        cost_store[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = cost_store_transpose_.begin(); iter != cost_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        cost_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
-                CB[iter->first] = iter->second;
-
-            //******
-
-
 //            brandes_implementation_init(nodes);
 //            brandes_implementation_weighted(nodes, false);
 //            brandes_implementation_weighted(nodes, true);
@@ -1865,3 +1796,4 @@ bool Betweenness::SP(Node *x, Node *y, Node *z, bool isTranspose)
     }
 
 }
+
