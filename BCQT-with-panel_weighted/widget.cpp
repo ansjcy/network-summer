@@ -437,48 +437,6 @@ void Widget::initializeGL(){
 //        bc.insertEdge(src, dest, 1);
 
         //******************** my try **********************
-//        std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store;
-//        std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store;
-//        std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store;
-//        std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store;
-
-//        std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_transpose;
-//        std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_transpose;
-//        std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store_transpose;
-//        std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store_transpose;
-
-//        std::unordered_map<Node*, int> sigma;
-//        std::unordered_map<Node*, double> distance;
-//        for(auto iter = bc.P_store.begin(); iter != bc.P_store.end(); iter++)
-//        {
-//            std::unordered_map<Node*, std::vector<Node*> > P;
-//            for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-//            {
-//                for(int ii = 0; ii < iter_inner->second.size(); ii++)
-//                    P[iter_inner->first].push_back(iter_inner->second[ii]);
-//            }
-//            P_store[iter->first] = P;
-//        }
-//        for(auto iter = bc.sigma_store.begin(); iter != bc.sigma_store.end(); iter++)
-//        {
-//            std::unordered_map<Node*, int > sigma;
-//            for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-//            {
-//                    sigma[iter_inner->first] = iter_inner->second;
-//            }
-//            sigma_store[iter->first] = sigma;
-//        }
-//        for(auto iter = bc.distance_store.begin(); iter != bc.distance_store.end(); iter++)
-//        {
-//            std::unordered_map<Node*, int > sigma;
-//            for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-//            {
-//                    sigma[iter_inner->first] = iter_inner->second;
-//            }
-//            sigma_store[iter->first] = sigma;
-//        }
-
-        //******************** my try **********************
         bc.insertEdge(nodes[1], nodes[0], 1);
         nodes[1]->addEdge(nodes[0], 2);
         bc.insertEdge(nodes[11], nodes[10], 1);
