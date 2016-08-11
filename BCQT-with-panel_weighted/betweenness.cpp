@@ -732,8 +732,8 @@ void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<N
                     if((i==gi || i==gj) && sumWeights!=0)
                     {
 //                        edge->weight = weight - weight/sumWeights;
-//                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
-//                        cout << weight - weight/sumWeights << endl;
+                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
+                        cout << weight - weight/sumWeights << endl;
                         insertEdge(edge->getNode0(), edge->getNode1(), weight - weight/sumWeights);
                     }
                     //edge->weight = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
@@ -864,6 +864,10 @@ void Betweenness::insertEdge(Node* src, Node* dest, double cost)
     distance_old.clear();
     trackLost.clear();
     pairsDone.clear();
+    sigma_old_transpose.clear();
+    distance_old_transpose.clear();
+    trackLost_transpose.clear();
+    pairsDone_transpose.clear();
 
     //mind this, undirected graph...
     cost_store[src][dest] = cost;
@@ -904,6 +908,10 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z, boo
     std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_now = isTranspose? distance_store_transpose:distance_store;
     std::unordered_map<Node*, std::unordered_map<Node*, double> > &cost_now = isTranspose? cost_store_transpose:cost_store;
 
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_old_now = isTranspose? sigma_old_transpose:sigma_old;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_old_now = isTranspose? distance_old_transpose:distance_old;
+    std::vector<std::pair<Node*, Node*> > &pairsDone_now = /*isTranspose? pairsDone_transpose :*/ pairsDone;
+    std::vector<std::tuple<Node*, Node*, Node*> > &trackLost_now = isTranspose? trackLost_transpose:trackLost;
 
     workSet.push_back(make_pair(src, dest));
     visitedVertices.push_back(src);
@@ -916,26 +924,26 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z, boo
 
         if(alt < distance_now[x][z])
         {
-            if(!isIn(make_pair(x, z), sigma_old))
+            if(!isIn(make_pair(x, z), sigma_old_now))
             {
-                distance_old[x][z] = distance_now[x][z];
-                sigma_old[x][z] = sigma_now[x][z];
+                distance_old_now[x][z] = distance_now[x][z];
+                sigma_old_now[x][z] = sigma_now[x][z];
                 reduceBetweenness(x, z, false);    // 10
                 sigma_now[x][z] = 0;
                 P_now[x][z].clear();
             }
-            if(isIn(make_pair(x, z), pairsDone))
-                pairsDone.erase(find(pairsDone.begin(), pairsDone.end(), make_pair(x, z)));
+            if(isIn(make_pair(x, z), pairsDone_now))
+                pairsDone_now.erase(find(pairsDone_now.begin(), pairsDone_now.end(), make_pair(x, z)));
             distance_now[x][z] = alt;
         }
         if(alt == distance_now[x][z] && distance_now[x][z] != DBL_MAX)
         {
-            if(!isIn(make_pair(x, z), pairsDone))
+            if(!isIn(make_pair(x, z), pairsDone_now))
             {
-                if(!isIn(make_pair(x, z), sigma_old))
+                if(!isIn(make_pair(x, z), sigma_old_now))
                     reduceBetweenness(x, z, false);    // 18
                 if(sigma_now[x][z] != 0)
-                    sigma_old[x][z] = sigma_now[x][z];
+                    sigma_old_now[x][z] = sigma_now[x][z];
 
                 sigma_now[x][z] = sigma_now[x][z] + (sigma_now[x][src] * 1 * sigma_now[dest][z]);
                 if(std::find(P_now[x][y].begin(), P_now[x][y].end(), x) == P_now[x][y].end())
@@ -946,7 +954,7 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z, boo
                         P_now[x][z].push_back(P_now[y][z][iter]);
                 }
             }
-            pairsDone.push_back(make_pair(x, z));
+            pairsDone_now.push_back(make_pair(x, z));
             affectedVertices.push_back(x);
             // need pred(x)...
             auto iter = isTranspose?x->pred_transpose.begin():x->pred.begin();
@@ -970,16 +978,16 @@ std::vector<Node*> Betweenness::insertUpdate(Node* src, Node* dest, Node* z, boo
 }
 double Betweenness::getDistanceOldVal(Node *x, Node *y, bool isTranspose)
 {
-    if(isIn(std::make_pair(x, y), distance_old))
-        return distance_old[x][y];
+    if(isIn(std::make_pair(x, y), isTranspose?distance_old_transpose:distance_old))
+        return isTranspose?distance_old_transpose[x][y]:distance_old[x][y];
     else if(isTranspose)
         return distance_store_transpose[x][y];
     return distance_store[x][y];
 }
 int Betweenness::getSigmaOldVal(Node *x, Node *y, bool isTranspose)
 {
-    if(isIn(std::make_pair(x, y), sigma_old))
-        return sigma_old[x][y];
+    if(isIn(std::make_pair(x, y), isTranspose? sigma_old_transpose:sigma_old))
+        return isTranspose? sigma_old_transpose[x][y]:sigma_old[x][y];
     else if(isTranspose)
         return sigma_store_transpose[x][y];
     return sigma_store[x][y];
@@ -992,6 +1000,11 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
     std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_now = isTranspose? sigma_store_transpose:sigma_store;
     std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_now = isTranspose? distance_store_transpose:distance_store;
     std::unordered_map<Node*, std::unordered_map<Node*, double> > &cost_now = isTranspose? cost_store_transpose:cost_store;
+
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_old_now = isTranspose? sigma_old_transpose:sigma_old;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_old_now = isTranspose? distance_old_transpose:distance_old;
+    std::vector<std::pair<Node*, Node*> > &pairsDone_now = /*isTranspose? pairsDone_transpose :*/ pairsDone;
+    std::vector<std::tuple<Node*, Node*, Node*> > &trackLost_now = isTranspose? trackLost_transpose:trackLost;
 
 
     if(getSigmaOldVal(a, z, isTranspose) == 0)
@@ -1009,16 +1022,16 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
             continue;
         else if(a != n && n != z)
         {
-//            cout << "node" << n->getIndex() << endl;
-//            cout << "line num:: 8" << endl;
-//            cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-//            std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
-//            std::cout << getSigmaOldVal(a, z) << endl;
-//            std::cout << CB[n] << endl;
+            cout << "node" << n->getIndex() << endl;
+            cout << "line num:: 8" << endl;
+            cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+            std::cout << getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) << endl;
+            std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
+            std::cout << CB[n] << endl;
             CB[n] = CB[n] - ((getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose)*1.0) / getSigmaOldVal(a, z, isTranspose));  //8
 //            std::cout << CB[n] << endl;
 //            cout << "8:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
-            trackLost.push_back(make_tuple(a, z, n));
+            trackLost_now.push_back(make_tuple(a, z, n));
         }
         stack.push_back(n);
         known.push_back(n);
@@ -1034,16 +1047,16 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
                 continue;
             else if(a != n && n != z && std::find(known.begin(), known.end(), n) == known.end())
             {
-//                cout << "node" << n->getIndex() << endl;
-//                cout << "line num:: 18" << endl;
-//                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-//                std::cout << getSigmaOldVal(a, n) * getSigmaOldVal(n, z) << endl;
-//                std::cout << getSigmaOldVal(a, z) << endl;
-//                std::cout << CB[n] << endl;
+                cout << "node" << n->getIndex() << endl;
+                cout << "line num:: 18" << endl;
+                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+                std::cout << getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) << endl;
+                std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
+                std::cout << CB[n] << endl;
                 CB[n] = CB[n] - ((getSigmaOldVal(a, n, isTranspose) * getSigmaOldVal(n, z, isTranspose) * 1.0) / getSigmaOldVal(a, z, isTranspose));  //18
 //                std::cout << CB[n] << endl;
 //                cout << "18:: values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << n->getIndex() << endl;
-                trackLost.push_back(make_tuple(a, z, n));
+                trackLost_now.push_back(make_tuple(a, z, n));
                 stack.push_back(n);
                 known.push_back(n);
             }
@@ -1053,15 +1066,15 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
     for(int i = 0; i < known.size(); i++)
         alreadyKnown.push_back(known[i]);
     alreadyKnown.push_back(a);
-    alreadyKnown.push_back(z);
+//    alreadyKnown.push_back(z);
 
 
 
-    for(int i = 0; i < trackLost.size(); i++)
+    for(int i = 0; i < trackLost_now.size(); i++)
     {
-        Node* v = std::get<2>(trackLost[i]);
-        Node* v1 = std::get<0>(trackLost[i]);
-        Node* v2 = std::get<1>(trackLost[i]);
+        Node* v = std::get<2>(trackLost_now[i]);
+        Node* v1 = std::get<0>(trackLost_now[i]);
+        Node* v2 = std::get<1>(trackLost_now[i]);
 
 //        if(std::find(known.begin(), known.end(), v1) != known.end() &&
 //           std::find(known.begin(), known.end(), v2) != known.end() &&
@@ -1072,19 +1085,19 @@ void Betweenness::reduceBetweenness(Node* a, Node* z, bool isTranspose)
         {
             if(std::find(alreadyKnown.begin(), alreadyKnown.end(), v) == alreadyKnown.end())
             {
-//                cout << "node" << v->getIndex() << endl;
-//                cout << "line num:: 24" << endl;
-//                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
-//                std::cout << getSigmaOldVal(a, v) * getSigmaOldVal(v, z) << endl;
-//                std::cout << getSigmaOldVal(a, z) << endl;
-//                std::cout << CB[v] << endl;
+                cout << "node" << v->getIndex() << endl;
+                cout << "line num:: 24" << endl;
+                cout << "from " << a->getIndex() << " to " << z->getIndex() << endl;
+                std::cout << getSigmaOldVal(a, v, isTranspose) * getSigmaOldVal(v, z, isTranspose) << endl;
+                std::cout << getSigmaOldVal(a, z, isTranspose) << endl;
+                std::cout << CB[v] << endl;
                 CB[v] = CB[v] - ((getSigmaOldVal(a, v, isTranspose) * getSigmaOldVal(v, z, isTranspose) * 1.0) / getSigmaOldVal(a, z, isTranspose));  //24
 //                std::cout << CB[v] << endl;
 
                 alreadyKnown.push_back(v);
 //                cout << "24::values of <a,z,n>:" << a->getIndex() << ", " << z->getIndex() << ", " << v->getIndex() << endl;
 //                cout << "v1 and v2::" << v1->getIndex() << ", " << v2->getIndex() << endl;
-                trackLost.push_back(std::make_tuple(a, z, v));
+                trackLost_now.push_back(std::make_tuple(a, z, v));
             }
         }
     }
@@ -1107,7 +1120,12 @@ void Betweenness::increaseBetweenness(bool isTranspose)
     std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_now = isTranspose? distance_store_transpose:distance_store;
     std::unordered_map<Node*, std::unordered_map<Node*, double> > &cost_now = isTranspose? cost_store_transpose:cost_store;
 
-    for(auto outer = sigma_old.begin(); outer != sigma_old.end(); outer++)
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > &sigma_old_now = isTranspose? sigma_old_transpose:sigma_old;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > &distance_old_now = isTranspose? distance_old_transpose:distance_old;
+    std::vector<std::pair<Node*, Node*> > &pairsDone_now = /*isTranspose? pairsDone_transpose :*/ pairsDone;
+    std::vector<std::tuple<Node*, Node*, Node*> > &trackLost_now = isTranspose? trackLost_transpose:trackLost;
+
+    for(auto outer = sigma_old_now.begin(); outer != sigma_old_now.end(); outer++)
     {
         auto src = outer->first;
         for(auto inner = outer->second.begin(); inner != outer->second.end(); inner++)
@@ -1128,9 +1146,9 @@ void Betweenness::increaseBetweenness(bool isTranspose)
                 known.push_back(n);
                 if(src != n && n != dest)
                 {
-//                    cout << "node" << n->getIndex() << endl;
-//                    cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
-//                    cout << "line num:: 6" << endl;
+                    cout << "node" << n->getIndex() << endl;
+                    cout << "path::" << src->getIndex() << "->" << dest->getIndex() << endl;
+                    cout << "line num:: 6" << endl;
 //                    std::cout << sigma_store[src][n] * sigma_store[n][dest] << endl;
 //                    std::cout << sigma_store[src][dest] << endl;
 //                    std::cout << CB[n] << endl;

@@ -98,13 +98,13 @@ void Widget::initFunc()
     this->setFocus();
 
     std::ifstream nodeFile, edgeFile;
-//    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-//    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
 //    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
 
-    nodeFile.open("/Users/anakin/Downloads/data_test/test11.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data_test/test11.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/test12.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/test12.edges.csv");
 
 //    nodeFile.open("/Users/anakin/Downloads/data/netscience.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data/netscience.edges.csv");
@@ -357,7 +357,7 @@ void Widget::initializeGL(){
     {
         //undirected graph
         nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
-        //nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
+//        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
         //for pred(x)
         //nodes[myEdges[i].second]->pred[weight].push_back(nodes[myEdges[i].first]);
         //nodes[myEdges[i].first]->pred[weight].push_back(nodes[myEdges[i].second]);
@@ -402,7 +402,7 @@ void Widget::initializeGL(){
     #ifdef USING_ORIGINAL
         TimeLogger* logger = TimeLogger::Instance();
         logger->start();
-        nodes[5]->addEdge(nodes[4], 1);
+        nodes[2]->addEdge(nodes[31], 1);
 //        nodes[5]->addEdge(nodes[3], 1);
 //        bc.compute(nodes, false);
         bc.brandes_implementation_weighted(nodes, false);
@@ -431,16 +431,70 @@ void Widget::initializeGL(){
 //        TimeLogger* logger = TimeLogger::Instance();
 //        logger->start();
 
-        Node* src = nodes[3];
-        Node* dest = nodes[2];
+        Node* src = nodes[1];
+        Node* dest = nodes[0];
 
-        bc.insertEdge(src, dest, 1);
-//        bc.insertEdge(nodes[0], nodes[1], 1);
+//        bc.insertEdge(src, dest, 1);
+
+        //******************** my try **********************
+//        std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store;
+//        std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store;
+//        std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store;
+//        std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store;
+
+//        std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_transpose;
+//        std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_transpose;
+//        std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store_transpose;
+//        std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store_transpose;
+
+//        std::unordered_map<Node*, int> sigma;
+//        std::unordered_map<Node*, double> distance;
+//        for(auto iter = bc.P_store.begin(); iter != bc.P_store.end(); iter++)
+//        {
+//            std::unordered_map<Node*, std::vector<Node*> > P;
+//            for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+//            {
+//                for(int ii = 0; ii < iter_inner->second.size(); ii++)
+//                    P[iter_inner->first].push_back(iter_inner->second[ii]);
+//            }
+//            P_store[iter->first] = P;
+//        }
+//        for(auto iter = bc.sigma_store.begin(); iter != bc.sigma_store.end(); iter++)
+//        {
+//            std::unordered_map<Node*, int > sigma;
+//            for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+//            {
+//                    sigma[iter_inner->first] = iter_inner->second;
+//            }
+//            sigma_store[iter->first] = sigma;
+//        }
+//        for(auto iter = bc.distance_store.begin(); iter != bc.distance_store.end(); iter++)
+//        {
+//            std::unordered_map<Node*, int > sigma;
+//            for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+//            {
+//                    sigma[iter_inner->first] = iter_inner->second;
+//            }
+//            sigma_store[iter->first] = sigma;
+//        }
+
+        //******************** my try **********************
+        bc.insertEdge(nodes[1], nodes[0], 1);
+        nodes[1]->addEdge(nodes[0], 2);
+        bc.insertEdge(nodes[11], nodes[10], 1);
+//        nodes[1]->pred[1].push_back(nodes[2]);
+//        nodes[2]->pred_transpose[1].push_back(nodes[1]);
+//        bc.insertEdge(nodes[3], nodes[0], 1);
+//        bc.insertEdge(nodes[0], nodes[1], 1.6667);
+
+
+
+
+//        bc.insertEdge(nodes[0], nodes[3], 1.6667);
+//        bc.insertEdge(nodes[0], nodes[5], 1.6667);
 //        bc.insertEdge(nodes[1], nodes[0], 1.6667);
-//        bc.insertEdge(nodes[1], nodes[2], 1.6667);
-//        bc.insertEdge(nodes[1], nodes[4], 1.6667);
-//        bc.insertEdge(nodes[2], nodes[1], 1.0);
-//        bc.insertEdge(nodes[4], nodes[1], 1.5);
+//        bc.insertEdge(nodes[3], nodes[1], 1.0);
+//        bc.insertEdge(nodes[5], nodes[0], 1.5);
 
 
 

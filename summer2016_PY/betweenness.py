@@ -1,11 +1,11 @@
 import networkx as nx
 import csv
 
-# readerEdge = csv.reader(file("/Users/anakin/Downloads/data_test/adjnoun.edges.csv", "rb"))
-# readerNode = csv.reader(file("/Users/anakin/Downloads/data_test/adjnoun.nodes.csv", "rb"))
+readerEdge = csv.reader(file("/Users/anakin/Downloads/data_test/adjnoun.edges.csv", "rb"))
+readerNode = csv.reader(file("/Users/anakin/Downloads/data_test/adjnoun.nodes.csv", "rb"))
 
-readerEdge = csv.reader(file("/Users/anakin/Downloads/data_test/test11.edges.csv", "rb"))
-readerNode = csv.reader(file("/Users/anakin/Downloads/data_test/test11.nodes.csv", "rb"))
+# readerEdge = csv.reader(file("/Users/anakin/Downloads/data_test/test12.edges.csv", "rb"))
+# readerNode = csv.reader(file("/Users/anakin/Downloads/data_test/test12.nodes.csv", "rb"))
 
 # readerEdge = csv.reader(file("/Users/anakin/Downloads/data_test/karate.edges.csv", "rb"))
 # readerNode = csv.reader(file("/Users/anakin/Downloads/data_test/karate.nodes.csv", "rb"))
@@ -34,13 +34,16 @@ for line in readerEdge:
     G.add_edge(int(line[0]), int(line[1]), weight=2.0)
     # G.add_edge(int(line[1]), int(line[0]), weight=2.0)
 
-G.add_edge(3,2,weight=1)
-# G[2][31]['weight'] = 1
+# G.add_edge(1,0,weight=2)
+# G.add_edge(10,11,weight=2)
+# G.add_edge(3,0,weight=1)
+G[1][0]['weight'] = 1
+G[11][10]['weight'] = 1
+# G[0][3]['weight'] = 1.66667
+# G[0][5]['weight'] = 1.66667
 # G[1][0]['weight'] = 1.66667
-# G[1][2]['weight'] = 1.66667
-# G[1][4]['weight'] = 1.66667
-# G[2][1]['weight'] = 1.0
-# G[4][1]['weight'] = 1.5
+# G[3][0]['weight'] = 1.0
+# G[5][0]['weight'] = 1.5
 
 betweenness = nx.betweenness_centrality(G, normalized=False, weight='weight')
 for i in betweenness:

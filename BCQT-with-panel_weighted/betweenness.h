@@ -86,6 +86,10 @@ public:
     std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_old;
     std::vector<std::pair<Node*, Node*> > pairsDone;
     std::vector<std::tuple<Node*, Node*, Node*> > trackLost;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_old_transpose;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_old_transpose;
+    std::vector<std::pair<Node*, Node*> > pairsDone_transpose;
+    std::vector<std::tuple<Node*, Node*, Node*> > trackLost_transpose;
 
 
 
