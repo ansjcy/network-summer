@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "main:incremental.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::deleteUpdate(Node*, Node*, Node*):betweenness.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::brandes_implementation_weighted(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "r">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "void run_weighted_test&lt;boost::adjacency_list&lt;boost::listS, boost::listS, boost::directedS, boost::property&lt;boost::vertex_index_t, int, boost::no_property&gt;, boost::property&lt;boost::edge_weight_t, double, boost::property&lt;boost::edge_index_t, unsigned long, boost::no_property&gt; &gt;, boost::no_property, boost::listS&gt; &gt;(boost::adjacency_list&lt;boost::listS, boost::listS, boost::directedS, boost::property&lt;boost::vertex_index_t, int, boost::no_property&gt;, boost::property&lt;boost::edge_weight_t, double, boost::property&lt;boost::edge_index_t, unsigned long, boost::no_property&gt; &gt;, boost::no_property, boost::listS&gt;*, int, weighted_edge*, int, std::__1::vector&lt;double, std::__1::allocator&lt;double&gt; &gt;&amp;, std::__1::vector&lt;double, std::__1::allocator&lt;double&gt; &gt;&amp;):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "edge_init[3]">
+            </PersistentString>
+            <PersistentString
+               value = "dependency">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[5]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[7]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[9]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[12]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[11]">
+            </PersistentString>
+            <PersistentString
+               value = "path_count">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[0]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[2]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[4]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[6]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[8]">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[10]">
+            </PersistentString>
+            <PersistentString
+               value = "distance">
+            </PersistentString>
+            <PersistentString
+               value = "edge_init[1]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::reduceBetweenness(Node*, Node*):betweenness.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::increaseBetweenness():betweenness.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::insertEdge(Node*, Node*, double):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "cost_store[src][dest]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "main:testForceLayout.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::insertUpdate(Node*, Node*, Node*):betweenness.cpp">
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::brandes_implementation(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "cost_store">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Betweenness::compute(std::__1::vector&lt;Node*, std::__1::allocator&lt;Node*&gt; &gt;&amp;, bool):betweenness.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "weights">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
