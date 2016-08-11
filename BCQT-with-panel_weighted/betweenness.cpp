@@ -708,14 +708,183 @@ void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes, boo
 
 void Betweenness::calSensitivity(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities)
 {
+
+    //***********************
+    //need to store:
+    /*
+        std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store;
+        std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store;
+        std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store;
+        std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store;
+
+        std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_transpose;
+        std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_transpose;
+        std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store_transpose;
+        std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store_transpose;
+     */
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store_;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store_;
+
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_transpose_;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_transpose_;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_store_transpose_;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > cost_store_transpose_;
+
+    for(auto iter = P_store.begin(); iter != P_store.end(); iter++)
+    {
+        std::unordered_map<Node*, std::vector<Node*> > P;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+            for(int ii = 0; ii < iter_inner->second.size(); ii++)
+                P[iter_inner->first].push_back(iter_inner->second[ii]);
+        }
+        P_store_[iter->first] = P;
+    }
+    for(auto iter = P_store_transpose.begin(); iter != P_store_transpose.end(); iter++)
+    {
+        std::unordered_map<Node*, std::vector<Node*> > P;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+            for(int ii = 0; ii < iter_inner->second.size(); ii++)
+                P[iter_inner->first].push_back(iter_inner->second[ii]);
+        }
+        P_store_transpose_[iter->first] = P;
+    }
+    for(auto iter = sigma_store.begin(); iter != sigma_store.end(); iter++)
+    {
+        std::unordered_map<Node*, int > sigma;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+                sigma[iter_inner->first] = iter_inner->second;
+        }
+        sigma_store_[iter->first] = sigma;
+    }
+    for(auto iter = sigma_store_transpose.begin(); iter != sigma_store_transpose.end(); iter++)
+    {
+        std::unordered_map<Node*, int > sigma;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+                sigma[iter_inner->first] = iter_inner->second;
+        }
+        sigma_store_transpose_[iter->first] = sigma;
+    }
+    for(auto iter = distance_store.begin(); iter != distance_store.end(); iter++)
+    {
+        std::unordered_map<Node*, double > distance;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+                distance[iter_inner->first] = iter_inner->second;
+        }
+        distance_store_[iter->first] = distance;
+    }
+    for(auto iter = distance_store_transpose.begin(); iter != distance_store_transpose.end(); iter++)
+    {
+        std::unordered_map<Node*, double > distance;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+                distance[iter_inner->first] = iter_inner->second;
+        }
+        distance_store_transpose_[iter->first] = distance;
+    }
+    for(auto iter = cost_store.begin(); iter != cost_store.end(); iter++)
+    {
+        std::unordered_map<Node*, double > cost;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+                cost[iter_inner->first] = iter_inner->second;
+        }
+        cost_store_[iter->first] = cost;
+    }
+    for(auto iter = cost_store_transpose.begin(); iter != cost_store_transpose.end(); iter++)
+    {
+        std::unordered_map<Node*, double > cost;
+        for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+        {
+                cost[iter_inner->first] = iter_inner->second;
+        }
+        cost_store_transpose_[iter->first] = cost;
+    }
+
+
+
+    //***********************
         int n = nodes.size();
         for(int i = 0; i < n; i++)
         {
-            brandes_implementation_init(nodes);
-            brandes_implementation_weighted(nodes, false);
-            brandes_implementation_weighted(nodes, true);
-//            for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
-//                CB[iter->first] = iter->second;
+            //******
+            //std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_;
+            for(auto iter = P_store_.begin(); iter != P_store_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                    P_store[iter->first][iter_inner->first].clear();
+                    for(int ii = 0; ii < iter_inner->second.size(); ii++)
+                        P_store[iter->first][iter_inner->first].push_back(iter_inner->second[ii]);
+                }
+            }
+            for(auto iter = P_store_transpose_.begin(); iter != P_store_transpose_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                    P_store_transpose[iter->first][iter_inner->first].clear();
+                    for(int ii = 0; ii < iter_inner->second.size(); ii++)
+                        P_store_transpose[iter->first][iter_inner->first].push_back(iter_inner->second[ii]);
+                }
+            }
+            //std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_;
+            for(auto iter = sigma_store_.begin(); iter != sigma_store_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                        sigma_store[iter->first][iter_inner->first] = iter_inner->second;
+                }
+            }
+            for(auto iter = sigma_store_transpose_.begin(); iter != sigma_store_transpose_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                        sigma_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
+                }
+            }
+            for(auto iter = distance_store_.begin(); iter != distance_store_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                        distance_store[iter->first][iter_inner->first] = iter_inner->second;
+                }
+            }
+            for(auto iter = distance_store_transpose_.begin(); iter != distance_store_transpose_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                        distance_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
+                }
+            }
+            for(auto iter = cost_store_.begin(); iter != cost_store_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                        cost_store[iter->first][iter_inner->first] = iter_inner->second;
+                }
+            }
+            for(auto iter = cost_store_transpose_.begin(); iter != cost_store_transpose_.end(); iter++)
+            {
+                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
+                {
+                        cost_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
+                }
+            }
+            for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
+                CB[iter->first] = iter->second;
+
+            //******
+
+
+//            brandes_implementation_init(nodes);
+//            brandes_implementation_weighted(nodes, false);
+//            brandes_implementation_weighted(nodes, true);
 
             for(int gi = 0; gi < n; gi++)
             {
