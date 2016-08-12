@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../BCQT-with-panel_weighted/widget.h"
+#include "../../../Desktop/network-summer_0811/BCQT-with-panel_weighted/widget.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)

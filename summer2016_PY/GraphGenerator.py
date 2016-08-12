@@ -2,10 +2,10 @@ import csv
 import itertools
 import random
 
-nodeNum = 12
-edgeNum = 24
+nodeNum = 300
+edgeNum = 600
 
-with open("/Users/anakin/Downloads/data_test/test11.nodes.csv", "w") as csvFile:
+with open("/Users/anakin/Downloads/data_test/test300.nodes.csv", "w") as csvFile:
     fieldNames = ["id", "x", "y"]
     writer = csv.DictWriter(csvFile, fieldnames=fieldNames)
 
@@ -15,7 +15,7 @@ with open("/Users/anakin/Downloads/data_test/test11.nodes.csv", "w") as csvFile:
         writer.writerow({'id':str(i), 'x':0, 'y':0})
 
 
-with open("/Users/anakin/Downloads/data_test/test11.edges.csv", "w") as csvFile:
+with open("/Users/anakin/Downloads/data_test/test300.edges.csv", "w") as csvFile:
     edges = list(itertools.permutations(range(0,nodeNum),2))
     edges_slice = random.sample(edges, edgeNum)
     fieldNames = ["source", "target"]
