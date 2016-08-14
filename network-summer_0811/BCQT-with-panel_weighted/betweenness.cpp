@@ -709,6 +709,8 @@ void Betweenness::brandes_implementation_weighted(std::vector<Node*> &nodes, boo
 void Betweenness::calSensitivityIncremental(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities)
 {
 
+    TimeLogger* logger = TimeLogger::Instance();
+    logger->push("I-inside:");
     //***********************
     //need to store:
     /*
@@ -806,82 +808,13 @@ void Betweenness::calSensitivityIncremental(std::vector<Node*> &nodes, std::unor
         }
         cost_store_transpose_[iter->first] = cost;
     }
-
+    logger->markIt("I-finish storing values: ");
 
 
     //***********************
         int n = nodes.size();
         for(int i = 0; i < n; i++)
         {
-
-            //******
-            //std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_;
-            for(auto iter = P_store_.begin(); iter != P_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                    P_store[iter->first][iter_inner->first].clear();
-                    for(int ii = 0; ii < iter_inner->second.size(); ii++)
-                        P_store[iter->first][iter_inner->first].push_back(iter_inner->second[ii]);
-                }
-            }
-            for(auto iter = P_store_transpose_.begin(); iter != P_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                    P_store_transpose[iter->first][iter_inner->first].clear();
-                    for(int ii = 0; ii < iter_inner->second.size(); ii++)
-                        P_store_transpose[iter->first][iter_inner->first].push_back(iter_inner->second[ii]);
-                }
-            }
-            //std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_store_;
-            for(auto iter = sigma_store_.begin(); iter != sigma_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        sigma_store[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = sigma_store_transpose_.begin(); iter != sigma_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        sigma_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = distance_store_.begin(); iter != distance_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        distance_store[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = distance_store_transpose_.begin(); iter != distance_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        distance_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = cost_store_.begin(); iter != cost_store_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        cost_store[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = cost_store_transpose_.begin(); iter != cost_store_transpose_.end(); iter++)
-            {
-                for(auto iter_inner = iter->second.begin(); iter_inner != iter->second.end(); iter_inner++)
-                {
-                        cost_store_transpose[iter->first][iter_inner->first] = iter_inner->second;
-                }
-            }
-            for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
-                CB[iter->first] = iter->second;
-
-            //******
-
 
 //            brandes_implementation_init(nodes);
 //            brandes_implementation_weighted(nodes, false);
@@ -907,11 +840,16 @@ void Betweenness::calSensitivityIncremental(std::vector<Node*> &nodes, std::unor
 //                        edge->weight = weight - weight/sumWeights;
 //                        cout << edge->getNode0()->getIndex() << " " << edge->getNode1()->getIndex() << endl;
 //                        cout << weight - weight/sumWeights << endl;
+                        logger->push("start tracking edge " +QString::number(edge->getNode0()->getIndex())+", " + QString::number(edge->getNode1()->getIndex())+": ");
                         insertEdge(edge->getNode0(), edge->getNode1(), weight - weight/sumWeights);
+                        logger->markIt("");
+                        logger->pop("finish tracking edge");
+                        //logger->outputToScreen();
                     }
                     //edge->weight = ((i==gi || i==gj) && sumWeights!=0)? weight + weight/sumWeights: weight;
                 }
             }
+            logger->markIt("I-finish calculation for node "+QString::number(i) + ": ");
 
 #ifdef DEBUG_SENSITIVITY
             cout << "sensitivity incremental: " << i << endl;
@@ -930,9 +868,7 @@ void Betweenness::calSensitivityIncremental(std::vector<Node*> &nodes, std::unor
                 sensitivityRes[nodes[i]][j->first] = vertex_centralities[j->first] - j->second;
                 //nodes[i]->sensitivityValues.push_back(centrality2[j]-vertex_centralities[j]);
             }
-#ifdef DEBUG_CHECK_ITERATION
-            std::cout<<"finish iteration incremental: " << i << endl;
-#endif
+
 
             //******
             //std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_;
@@ -1000,16 +936,25 @@ void Betweenness::calSensitivityIncremental(std::vector<Node*> &nodes, std::unor
             for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
                 CB[iter->first] = iter->second;
 
+//            logger->markIt("I-finish restoring values: ");
+
+
             //******
 
-
+#ifdef DEBUG_CHECK_ITERATION
+            std::cout<<"finish iteration incremental: " << i << endl;
+#endif
         }
+        logger->pop("I-leaving inside: ");
 }
 
 
 
 void Betweenness::calSensitivityOriginal(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities)
 {
+
+    TimeLogger* logger = TimeLogger::Instance();
+    logger->push("O-inside:");
 
     //***********************
     //need to store:
@@ -1108,6 +1053,7 @@ void Betweenness::calSensitivityOriginal(std::vector<Node*> &nodes, std::unorder
         }
         cost_store_transpose_[iter->first] = cost;
     }
+    logger->markIt("O-finish storing values: ");
 
 
 
@@ -1147,6 +1093,7 @@ void Betweenness::calSensitivityOriginal(std::vector<Node*> &nodes, std::unorder
             }
 
             brandes_implementation_weighted(nodes, false);
+            logger->markIt("O-finish calculation for node "+QString::number(i) + ": ");
 
 #ifdef DEBUG_SENSITIVITY
             cout << "sensitivity original: " << i << endl;
@@ -1165,9 +1112,7 @@ void Betweenness::calSensitivityOriginal(std::vector<Node*> &nodes, std::unorder
                 sensitivityRes[nodes[i]][j->first] = vertex_centralities[j->first] - j->second;
                 //nodes[i]->sensitivityValues.push_back(centrality2[j]-vertex_centralities[j]);
             }
-#ifdef DEBUG_CHECK_ITERATION
-            std::cout<<"finish iteration incremental: " << i << endl;
-#endif
+
             //******
             //std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_store_;
             for(auto iter = P_store_.begin(); iter != P_store_.end(); iter++)
@@ -1234,9 +1179,167 @@ void Betweenness::calSensitivityOriginal(std::vector<Node*> &nodes, std::unorder
             for(auto iter = vertex_centralities.begin(); iter != vertex_centralities.end(); iter++)
                 CB[iter->first] = iter->second;
 
+//            logger->markIt("O-finish restoring values: ");
+
             //******
+#ifdef DEBUG_CHECK_ITERATION
+            std::cout<<"finish iteration original: " << i << endl;
+#endif
         }
+        logger->pop("O-leaving inside: ");
 }
+void Betweenness::vertexUpdate(std::vector<Node*> &nodes, Node* v, double cost)
+{
+    //Algorithm-5: dist-to-v:
+//    cost_store[src][dest] = cost;
+    //*****
+    //change the cost_store for all the edges incident to v..
+    //*****
+
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        if(nodes[i] == v)
+            continue;
+        distanceToV(nodes[i], v);
+    }
+    for(int i = 0; i < nodes.size(); i++)
+    {
+        for(int j = 0; j < nodes.size(); j++)
+        {
+            if(nodes[j] == v)
+                continue;
+            getAllPairDistance(nodes[i], nodes[j], v);
+        }
+    }
+
+
+
+}
+void Betweenness::distanceToV(Node *s, Node *v)
+{
+    /*
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_prime;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_prime;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_prime_caret;
+     */
+    double D_prime;
+    sigma_prime_caret[s][v] = 0;
+    sigma_prime[s][v] = sigma_store[s][v];  //mind this for sigma_transpose
+    D_prime = distance_store[s][v]; //mind this for distance_transpose
+    for(auto iter = v->pred.begin(); iter != v->pred.end(); iter++)
+    {
+        for(auto i = 0; i < iter->second.size(); i++)
+        {
+            Node* ui = iter->second[i];
+            if(D_prime == distance_store[s][ui] + cost_store[ui][v])
+            {
+                sigma_prime[s][v] = sigma_prime[s][v] + sigma_store[s][ui];
+                sigma_prime_caret[s][v] = sigma_prime_caret[s][v] + sigma_store[s][ui];
+            }
+            else if(D_prime > distance_store[s][ui] + cost_store[ui][v])
+            {
+                D_prime = distance_store[s][ui] + cost_store[ui][v];
+                sigma_prime[s][v] = sigma_store[s][ui];
+            }
+        }
+    }
+    distance_prime[s][v] = D_prime;
+}
+void Betweenness::getAllPairDistance(Node* s, Node* t, Node* v)
+{
+    double Dst = distance_prime[s][v] + distance_store[v][t];
+    int SIGMAst = sigma_store[s][t] + sigma_prime_caret[s][v] * sigma_store[v][t];
+    int SIGMAst_prime = sigma_store[s][t] + sigma_prime[s][v] * sigma_store[v][t];
+    if(distance_store[s][t] < Dst)
+    {
+        distance_prime[s][t] = distance_store[s][t];
+        sigma_prime[s][t] = sigma_store[s][t];
+        flag[s][t] = UNchanged;
+    }
+    else if(distance_store[s][t] < Dst && distance_store[s][v] == distance_prime[s][v])
+    {
+        distance_prime[s][t] = distance_store[s][t];
+        sigma_prime[s][t] = SIGMAst;
+        flag[s][t] = NUMchanged;
+    }
+    else if(distance_store[s][t] < Dst && distance_store[s][v] > distance_prime[s][v])
+    {
+        distance_prime[s][t] = distance_store[s][t];
+        sigma_prime[s][t] = SIGMAst_prime;
+        flag[s][t] = NUMchanged;
+    }
+    else if(distance_store[s][t] > Dst)
+    {
+        distance_prime[s][t] = Dst;
+        sigma_prime[s][t] = sigma_prime[s][v] * sigma_store[v][t];
+        flag[s][t] = WTchanged;
+    }
+}
+void Betweenness::updateDAG(std::vector<Node*>& nodes, Node* s, Node* v)
+{
+    H_store.clear();
+    for(auto i = P_prime.begin(); i != P_prime.end(); i++)
+    {
+        for(auto j = i->second.begin(); j != i->second.end(); j++)
+            j->second.clear();
+    }
+    for(auto i = P_store[s].begin(); i != P_store[s].end(); i++)
+    {
+        Node* a = i->first;
+        for(auto j = 0; j < i->second.size(); j++)
+        {
+            Node* b = i->second[j];
+            //(a, b) != (u, v)
+            // std::map<double, std::vector<Node*> > pred;
+            bool skipFlag = false;
+            if(b == v)
+            for(auto iter = v->pred.begin(); iter != v->pred.end(); iter++)
+            {
+                for(int iter_inner = 0; iter_inner < iter->second.size(); iter_inner++)
+                {
+                    if(iter->second[iter_inner] == a)
+                        skipFlag = true;
+                }
+            }
+            if(skipFlag)
+                continue;
+            if(flag[s][b] == UNchanged || flag[s][b] == NUMchanged)
+            {
+                H_store.push_back(make_pair(a,b));
+                P_prime[s][b].push_back(a);
+            }
+        }
+    }
+    for(auto i = P_store[v].begin(); i != P_store[v].end(); i++)
+    {
+        Node* a = i->first;
+        for(auto j = 0; j < i->second.size(); j++)
+        {
+            Node* b = i->second[j];
+            if(flag[s][b] == NUMchanged || flag[s][b] == WTchanged)
+            {
+                H_store.push_back(make_pair(a,b));
+                P_prime[s][b].push_back(a);
+            }
+        }
+    }
+    if(flag[s][v] == NUMchanged || flag[s][v] == WTchanged)
+    {
+        for(auto iter = v->pred.begin(); iter != v->pred.end(); iter++)
+        {
+            for(int iter_inner = 0; iter_inner < iter->second.size(); iter_inner++)
+            {
+                Node* ui = iter->second[iter_inner];
+                if(distance_prime[s][v] == distance_prime[s][ui] + distance_prime[ui][v])
+                {
+                    H_store.push_back(make_pair(ui, v));
+                    P_prime[s][v].push_back(ui);
+                }
+            }
+        }
+    }
+}
+
 
 
 void Betweenness::insertEdge(Node* src, Node* dest, double cost)
@@ -1865,3 +1968,4 @@ bool Betweenness::SP(Node *x, Node *y, Node *z, bool isTranspose)
     }
 
 }
+

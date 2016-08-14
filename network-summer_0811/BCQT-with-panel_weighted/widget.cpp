@@ -98,8 +98,51 @@ void Widget::initFunc()
     this->setFocus();
 
     std::ifstream nodeFile, edgeFile;
-    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
-    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/dolphins.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/dolphins.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/lesmis.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/lesmis.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/polbooks.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/polbooks.edges.csv");
+
+    nodeFile.open("/Users/anakin/Downloads/data_test/test300.nodes.csv");
+    edgeFile.open("/Users/anakin/Downloads/data_test/test300.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/serengeti-foodweb.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/serengeti-foodweb.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/celegansneural.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/celegansneural.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/netscience.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/netscience.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/power.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/power.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/hep-th.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/hep-th.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/cond-mat.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/cond-mat.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/as-22july06.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/as-22july06.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/pgp-strong-2009.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/pgp-strong-2009.edges.csv");
+
+
+
+
 //    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
 
@@ -400,10 +443,10 @@ void Widget::initializeGL(){
 
         TimeLogger* logger = TimeLogger::Instance();
         logger->start();
-        bc.calSensitivityOriginal(nodes, CB_record);
-        logger->markIt("finish computation sensitivity using ORIGINAL way: ");
         bc.calSensitivityIncremental(nodes, CB_record);
         logger->markIt("finish computation sensitivity using INCREMENTAL way: ");
+        bc.calSensitivityOriginal(nodes, CB_record);
+        logger->markIt("finish computation sensitivity using ORIGINAL way: ");
         logger->outputToScreen();
     #endif
 
