@@ -100,6 +100,51 @@ void Widget::initFunc()
     std::ifstream nodeFile, edgeFile;
     nodeFile.open("/Users/anakin/Downloads/data/adjnoun.nodes.csv");
     edgeFile.open("/Users/anakin/Downloads/data/adjnoun.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/dolphins.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/dolphins.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/lesmis.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/lesmis.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/polbooks.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/polbooks.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/test300.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/test300.edges.csv");
+//    nodeFile.open("/Users/anakin/Downloads/data_test/test11.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/test11.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/serengeti-foodweb.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/serengeti-foodweb.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/celegansneural.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/celegansneural.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/netscience.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/netscience.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/power.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/power.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/hep-th.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/hep-th.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/cond-mat.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/cond-mat.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/as-22july06.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/as-22july06.edges.csv");
+
+//    nodeFile.open("/Users/anakin/Downloads/data_test/pgp-strong-2009.nodes.csv");
+//    edgeFile.open("/Users/anakin/Downloads/data_test/pgp-strong-2009.edges.csv");
+
+
+
+
 //    nodeFile.open("/Users/anakin/Downloads/data_test/karate.nodes.csv");
 //    edgeFile.open("/Users/anakin/Downloads/data_test/karate.edges.csv");
 
@@ -356,7 +401,10 @@ void Widget::initializeGL(){
     for(int i = 0; i < myEdges.size(); i++)
     {
         //undirected graph
-        nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
+//        if(myEdges[i].first == 1 || myEdges[i].second == 1)
+//            nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], 1);
+//        else
+            nodes[myEdges[i].first]->addEdge(nodes[myEdges[i].second], weight);
 //        nodes[myEdges[i].second]->addEdge(nodes[myEdges[i].first], weight);
         //for pred(x)
         //nodes[myEdges[i].second]->pred[weight].push_back(nodes[myEdges[i].first]);
@@ -392,7 +440,9 @@ void Widget::initializeGL(){
 
 //    #define USING_ORIGINAL
 //    #define USING_INCREMENTAL
-    #define TEST_SEN
+    #define TEST_VERTEX_UPDATE
+//    #define TEST_SEN
+
 
 
     #ifdef TEST_SEN
@@ -400,11 +450,27 @@ void Widget::initializeGL(){
 
         TimeLogger* logger = TimeLogger::Instance();
         logger->start();
-        bc.calSensitivityOriginal(nodes, CB_record);
-        logger->markIt("finish computation sensitivity using ORIGINAL way: ");
         bc.calSensitivityIncremental(nodes, CB_record);
         logger->markIt("finish computation sensitivity using INCREMENTAL way: ");
+//        bc.calSensitivityIncremental2(nodes, CB_record);
+//        logger->markIt("finish computation sensitivity using INCREMENTAL way 2: ");
+        bc.calSensitivityOriginal(nodes, CB_record);
+        logger->markIt("finish computation sensitivity using ORIGINAL way: ");
         logger->outputToScreen();
+    #endif
+
+    #ifdef TEST_VERTEX_UPDATE
+        Node* updateNode;
+        for(int viter = 0; viter < nodes.size(); viter++)
+        {
+            if(nodes[viter]->getIndex() == 1)
+            {
+                updateNode = nodes[viter];
+                break;
+            }
+        }
+        bc.vertexUpdate(nodes, updateNode, 1);
+
     #endif
 
     #ifdef USING_ORIGINAL
@@ -436,8 +502,8 @@ void Widget::initializeGL(){
 
 
     #ifdef USING_INCREMENTAL
-//        TimeLogger* logger = TimeLogger::Instance();
-//        logger->start();
+        TimeLogger* logger = TimeLogger::Instance();
+        logger->start();
 
         Node* src = nodes[1];
         Node* dest = nodes[0];
@@ -446,8 +512,36 @@ void Widget::initializeGL(){
 
         //******************** my try **********************
         bc.insertEdge(nodes[1], nodes[0], 1);
-        nodes[1]->addEdge(nodes[0], 2);
-        bc.insertEdge(nodes[11], nodes[10], 1);
+        nodes[1]->addEdge(nodes[0], 1);
+        bc.insertEdge(nodes[45], nodes[1], 1);
+        nodes[45]->addEdge(nodes[1], 1);
+        logger->markIt("finish computation 45: ");
+        bc.insertEdge(nodes[46], nodes[1], 1);
+        nodes[46]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[51], nodes[1], 1);
+        nodes[51]->addEdge(nodes[1], 1);
+        logger->markIt("finish computation 51: ");
+        bc.insertEdge(nodes[91], nodes[1], 1);
+        nodes[91]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[102], nodes[1], 1);
+        nodes[102]->addEdge(nodes[1], 1);
+        logger->markIt("finish computation 102: ");
+        bc.insertEdge(nodes[2], nodes[1], 1);
+        nodes[2]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[9], nodes[1], 1);
+        nodes[9]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[14], nodes[1], 1);
+        nodes[14]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[17], nodes[1], 1);
+        nodes[17]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[18], nodes[1], 1);
+        nodes[18]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[19], nodes[1], 1);
+        nodes[19]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[28], nodes[1], 1);
+        nodes[28]->addEdge(nodes[1], 1);
+        bc.insertEdge(nodes[41], nodes[1], 1);
+        nodes[41]->addEdge(nodes[1], 1);
 //        nodes[1]->pred[1].push_back(nodes[2]);
 //        nodes[2]->pred_transpose[1].push_back(nodes[1]);
 //        bc.insertEdge(nodes[3], nodes[0], 1);
@@ -467,14 +561,14 @@ void Widget::initializeGL(){
 
 
 
-//        logger->markIt("finish computation 1: ");
+        logger->markIt("finish computation 1: ");
 
 //        src = nodes[32];
 //        dest = nodes[18];
 //        bc.insertEdge(src, dest, 1);
 //        logger->markIt("finish computation 2: ");
 
-//        logger->outputToScreen();
+        logger->outputToScreen();
 
 
     #ifdef DEBUG_WITH_INCREMENTAL

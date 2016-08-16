@@ -60,7 +60,13 @@ template <typename GraphW>
 void run_weighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::vector<double>& centralities, std::vector<double>& node_centralities);
 template <typename GraphW>
 void run_unweighted_test(GraphW*, int V, weighted_edge edge_init[], int E, std::vector<double>&centralities);
-
+enum FLAGS_VAL
+{
+    UNchanged,
+    NUMchanged,
+    WTchanged,
+    DEFAULT
+};
 
 
 class Betweenness
@@ -91,7 +97,24 @@ public:
     std::vector<std::pair<Node*, Node*> > pairsDone_transpose;
     std::vector<std::tuple<Node*, Node*, Node*> > trackLost_transpose;
 
-
+    //meghana's method
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_prime;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_prime;
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_prime;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_prime_caret;
+    std::unordered_map<Node*, std::unordered_map<Node*, FLAGS_VAL> > flag;
+    std::vector<std::pair<Node*, Node*> > H_store;
+    std::unordered_map<Node*, std::vector<Node*> > R;
+    std::vector<std::pair<Node*, Node*> > X;
+    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_prime_transpose;
+    std::unordered_map<Node*, std::unordered_map<Node*, double> > distance_prime_transpose;
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_prime_transpose;
+    std::unordered_map<Node*, std::unordered_map<Node*, std::vector<Node*> > > P_prime_store;
+//    std::unordered_map<Node*, std::unordered_map<Node*, int> > sigma_prime_caret_transpose;
+//    std::unordered_map<Node*, std::unordered_map<Node*, FLAGS_VAL> > flag_transpose;
+//    std::vector<std::pair<Node*, Node*> > H_store_transpose;
+//    std::unordered_map<Node*, std::vector<Node*> > R_transpose;
+//    std::vector<std::pair<Node*, Node*> > X_transpose;
 
 
     int compute(std::vector<Node*> &nodes, bool needDerivs);
@@ -100,13 +123,26 @@ public:
     void brandes_implementation_weighted(std::vector<Node*> &nodes, bool isTranspose);
     //void brandes_implementation_weighted_transpose(std::vector<Node*> &nodes);
 
+    //miray kas's method..
     void insertEdge(Node* src, Node* dest, double cost);
     std::vector<Node*> insertUpdate(Node* src, Node* dest, Node* z, bool isTranspose);
     void reduceBetweenness(Node* a, Node* z, bool isTranspose);
     void increaseBetweenness(bool isTranspose);
 
+    //meghana's method
+    void vertexUpdate(std::vector<Node*>& nodes, Node* v, double cost);
+    void distanceToV(Node* s, Node* v, bool isTranspose);
+    void getAllPairDistance(Node *s, Node *t, Node *v, bool isTranspose);
+    void updateDAG(std::vector<Node*>& nodes, Node* s, Node *v, bool isTranspose);
+    void updateRevDAG(std::vector<Node*>& nodes, Node* s, Node* v, bool isTranspose);
+
     void calSensitivityIncremental(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities);
     void calSensitivityOriginal(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities);
+    void calSensitivityIncremental2(std::vector<Node*> &nodes, std::unordered_map<Node*, double> vertex_centralities);
+
+
+
+
 
 
 //    void deleteEdge(Node* src, Node* dest);
