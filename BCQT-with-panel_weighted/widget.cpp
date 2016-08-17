@@ -440,8 +440,8 @@ void Widget::initializeGL(){
 
 //    #define USING_ORIGINAL
 //    #define USING_INCREMENTAL
-    #define TEST_VERTEX_UPDATE
-//    #define TEST_SEN
+//    #define TEST_VERTEX_UPDATE
+    #define TEST_SEN
 
 
 
@@ -452,8 +452,8 @@ void Widget::initializeGL(){
         logger->start();
         bc.calSensitivityIncremental(nodes, CB_record);
         logger->markIt("finish computation sensitivity using INCREMENTAL way: ");
-//        bc.calSensitivityIncremental2(nodes, CB_record);
-//        logger->markIt("finish computation sensitivity using INCREMENTAL way 2: ");
+        bc.calSensitivityIncremental2(nodes, CB_record);
+        logger->markIt("finish computation sensitivity using INCREMENTAL way 2: ");
         bc.calSensitivityOriginal(nodes, CB_record);
         logger->markIt("finish computation sensitivity using ORIGINAL way: ");
         logger->outputToScreen();
@@ -470,6 +470,7 @@ void Widget::initializeGL(){
             }
         }
         bc.vertexUpdate(nodes, updateNode, 1);
+        bc.vertexUpdateChangeed(nodes, updateNode, 1);
 
     #endif
 
@@ -513,35 +514,35 @@ void Widget::initializeGL(){
         //******************** my try **********************
         bc.insertEdge(nodes[1], nodes[0], 1);
         nodes[1]->addEdge(nodes[0], 1);
-        bc.insertEdge(nodes[45], nodes[1], 1);
-        nodes[45]->addEdge(nodes[1], 1);
-        logger->markIt("finish computation 45: ");
-        bc.insertEdge(nodes[46], nodes[1], 1);
-        nodes[46]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[51], nodes[1], 1);
-        nodes[51]->addEdge(nodes[1], 1);
-        logger->markIt("finish computation 51: ");
-        bc.insertEdge(nodes[91], nodes[1], 1);
-        nodes[91]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[102], nodes[1], 1);
-        nodes[102]->addEdge(nodes[1], 1);
-        logger->markIt("finish computation 102: ");
-        bc.insertEdge(nodes[2], nodes[1], 1);
-        nodes[2]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[9], nodes[1], 1);
-        nodes[9]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[14], nodes[1], 1);
-        nodes[14]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[17], nodes[1], 1);
-        nodes[17]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[18], nodes[1], 1);
-        nodes[18]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[19], nodes[1], 1);
-        nodes[19]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[28], nodes[1], 1);
-        nodes[28]->addEdge(nodes[1], 1);
-        bc.insertEdge(nodes[41], nodes[1], 1);
-        nodes[41]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[45], nodes[1], 1);
+//        nodes[45]->addEdge(nodes[1], 1);
+//        logger->markIt("finish computation 45: ");
+//        bc.insertEdge(nodes[46], nodes[1], 1);
+//        nodes[46]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[51], nodes[1], 1);
+//        nodes[51]->addEdge(nodes[1], 1);
+//        logger->markIt("finish computation 51: ");
+//        bc.insertEdge(nodes[91], nodes[1], 1);
+//        nodes[91]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[102], nodes[1], 1);
+//        nodes[102]->addEdge(nodes[1], 1);
+//        logger->markIt("finish computation 102: ");
+//        bc.insertEdge(nodes[2], nodes[1], 1);
+//        nodes[2]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[9], nodes[1], 1);
+//        nodes[9]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[14], nodes[1], 1);
+//        nodes[14]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[17], nodes[1], 1);
+//        nodes[17]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[18], nodes[1], 1);
+//        nodes[18]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[19], nodes[1], 1);
+//        nodes[19]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[28], nodes[1], 1);
+//        nodes[28]->addEdge(nodes[1], 1);
+//        bc.insertEdge(nodes[41], nodes[1], 1);
+//        nodes[41]->addEdge(nodes[1], 1);
 //        nodes[1]->pred[1].push_back(nodes[2]);
 //        nodes[2]->pred_transpose[1].push_back(nodes[1]);
 //        bc.insertEdge(nodes[3], nodes[0], 1);

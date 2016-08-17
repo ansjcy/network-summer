@@ -131,6 +131,7 @@ public:
 
     //meghana's method
     void vertexUpdate(std::vector<Node*>& nodes, Node* v, double cost);
+    void vertexUpdateChangeed(std::vector<Node*>& nodes, Node* v, double cost);
     void distanceToV(Node* s, Node* v, bool isTranspose);
     void getAllPairDistance(Node *s, Node *t, Node *v, bool isTranspose);
     void updateDAG(std::vector<Node*>& nodes, Node* s, Node *v, bool isTranspose);
